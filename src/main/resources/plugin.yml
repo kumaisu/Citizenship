@@ -1,0 +1,17 @@
+main: com.mycompany.citizenship.Citizenship
+name: Citizenship
+version: 0.1
+description: Citizenship Control Manager plugins
+author: Kumaisu
+database: true
+commands:
+    ranks:
+        description: Citizenship Control Admin Commands
+        permission: Citizenship.admin
+        permission-message: You do not have permission.
+        usage: |
+            /<command> reload
+            /<command> status
+            /<command> Time
+            /<command> Groups
+            /<command> Console [full/normal/none]

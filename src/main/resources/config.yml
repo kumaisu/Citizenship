@@ -1,0 +1,12 @@
+#Citizenship Config
+
+#   Debug ( max / full / Default:normal / none )
+Debug: normal
+
+#   MySQL Settings
+mysql:
+  host: localhost
+  port: 3306
+  database: LoginList
+  username: root
+  password: password

@@ -10,3 +10,11 @@ mysql:
   database: LoginList
   username: root
   password: password
+
+#Citizenship Rank
+Rank:
+  - NewFace,0
+  - Civilian,24
+  - Citizen,100
+  - Nation,200
+  - Uiverse,500

@@ -62,18 +62,15 @@ public class MySQLControl {
             Class.forName( "com.mysql.jdbc.Driver" );
             connection = DriverManager.getConnection( "jdbc:mysql://" + Config.host + ":" + Config.port + "/" + Config.database, Config.username, Config.password );
 
-            //  mysql> create table list(id int auto_increment, date DATETIME,name varchar(20), uuid varchar(36), ip INTEGER UNSIGNED, status byte, index(id));
             //  テーブルの作成
+            //		uuid : varchar(36)	player uuid
+            //		name : varchar(20)	player name
+            //		logiut : DATETIME	last Logout Date
+            //		connect : int 		total Login Time
+            //		Rank : int		Citizenship Rank
             //  存在すれば、無視される
-            String sql = "CREATE TABLE IF NOT EXISTS player(id uuid varchar(36), logoutdate DATETIME,name varchar(20), status int, index(id))";
+            String sql = "CREATE TABLE IF NOT EXISTS player(id uuid varchar(36), name varchar(20), logout DATETIME, connect int, rank int, index(id))";
             PreparedStatement preparedStatement = connection.prepareStatement( sql );
-            preparedStatement.executeUpdate();
-
-            //  mysql> create table IF NOT EXISTS unknowns (ip varchar(22), host varchar(60), count int, newdate DATETIME, lastdate DATETIME );
-            //  Unknowns テーブルの作成
-            //  存在すれば、無視される
-            sql = "CREATE TABLE IF NOT EXISTS hosts (ip INTEGER UNSIGNED, host varchar(60), count int, newdate DATETIME, lastdate DATETIME )";
-            preparedStatement = connection.prepareStatement( sql );
             preparedStatement.executeUpdate();
         }
     }
@@ -84,17 +81,17 @@ public class MySQLControl {
      * @param IP
      * @param Host
      */
-    public void AddHostToSQL( String IP, String Host ) {
+    public void AddSQL( Player player, int con, inr rank ) {
         try {
             openConnection();
 
-            String sql = "INSERT INTO hosts ( ip, host, count, newdate, lastdate ) VALUES ( INET_ATON( ? ), ?, ?, ?, ? );";
+            String sql = "INSERT INTO player ( uuid, name, logout, connect, rank ) VALUES ( ?, ?, ?, ?, ? );";
             PreparedStatement preparedStatement = connection.prepareStatement( sql );
-            preparedStatement.setString( 1, IP );
-            preparedStatement.setString( 2, Host );
-            preparedStatement.setInt( 3, 0 );
-            preparedStatement.setString( 4, sdf.format( new Date() ) );
-            preparedStatement.setString( 5, sdf.format( new Date() ) );
+            preparedStatement.setString( 1, player.getUUID() );
+            preparedStatement.setString( 2, player.getDisplayName() );
+            preparedStatement.setString( 3, sdf.format( new Date() ) );
+            preparedStatement.setInt( 4, con );
+            preparedStatement.setInt( 5, rank );
 
             preparedStatement.executeUpdate();
 
@@ -109,7 +106,7 @@ public class MySQLControl {
      * @param IP
      * @return
      */
-    public boolean DelHostFromSQL( String IP ) {
+    public boolean DelSQL( String IP ) {
         try {
             openConnection();
             String sql = "DELETE FROM hosts WHERE INET_NTOA(ip) = '" + IP + "'";
@@ -128,11 +125,11 @@ public class MySQLControl {
      * @param IP
      * @return
      */
-    public String GetHost( String IP ) {
+    public String GetSQL( Player player ) {
         try {
             openConnection();
             Statement stmt = connection.createStatement();
-            String sql = "SELECT * FROM hosts WHERE INET_NTOA(ip) = '" + IP + "';";
+            String sql = "SELECT * FROM plsyer WHERE uuid = '" + player.getUUID() + "';";
             ResultSet rs = stmt.executeQuery( sql );
             if ( rs.next() ) return rs.getString( "host" );
         } catch ( ClassNotFoundException | SQLException e ) {

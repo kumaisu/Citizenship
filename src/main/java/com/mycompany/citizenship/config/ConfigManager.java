@@ -11,6 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import com.mycompany.kumaisulibraries.Tools;
 import static com.mycompany.citizenship.config.Config.programCode;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -46,6 +48,15 @@ public class ConfigManager {
         Config.username = config.getString( "mysql.username" );
         Config.password = config.getString( "mysql.password" );
 
+        Config.rankName = new ArrayList<>();
+        List< String > getstr = ( List< String > ) config.getList( "PointStone" );
+        for( int i = 0; i<getstr.size(); i++ ) {
+            String[] param = getstr.get( i ).split(",");
+            Config.rankTime.put( param[0], Integer.valueOf( param[1] ) );
+            Config.rankName.add( param[0] );
+            
+        }
+        
         Tools.consoleMode DebugFlag;
         try {
             DebugFlag = Tools.consoleMode.valueOf( config.getString( "Debug" ) );
@@ -63,5 +74,32 @@ public class ConfigManager {
         Tools.Prt( p, ChatColor.WHITE + "Mysql : " + ChatColor.YELLOW + Config.host + ":" + Config.port, consolePrintFlag, programCode );
         Tools.Prt( p, ChatColor.WHITE + "DB Name : " + ChatColor.YELLOW + Config.database, consolePrintFlag, programCode );
         Tools.Prt( p, ChatColor.GREEN + "==========================", consolePrintFlag, programCode );
+    }
+
+    /**
+     * 昇格に必要な時間の取得
+     *
+     * @param userGroup
+     * @return 
+     */
+    public int getNextTime( String userGroup ) {
+        if ( Config.rankName.contains( userGroup ) ) {
+            return Config.rankTime.get( userGroup );
+        }
+        return 0;
+    }
+
+    /**
+     * 次の昇格ランクグループ名の取得
+     *
+     * @param userGroup
+     * @return 
+     */
+    public String getNextRank( String userGroup ) {
+        try {
+            return Config.rankName.get( Config.rankName.indexOf( userGroup ) + 1 );
+        } catch( ArrayIndexOutOfBoundsException e ) {
+            return userGroup;
+        }
     }
 }

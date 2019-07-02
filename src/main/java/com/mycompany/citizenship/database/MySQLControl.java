@@ -5,10 +5,6 @@
  */
 package com.mycompany.citizenship.database;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -17,15 +13,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import com.mycompany.kumaisulibraries.InetCalc;
 import com.mycompany.kumaisulibraries.Tools;
-import com.mycompany.kumaisulibraries.Utility;
 import com.mycompany.citizenship.config.Config;
 import static com.mycompany.citizenship.config.Config.programCode;
+import java.util.UUID;
 
 /**
  *
@@ -36,6 +28,11 @@ public class MySQLControl {
     SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
     private Connection connection;
 
+    public static String name = "Unknown";
+    public static Date logout;
+    public static int connect = 0;
+    public static int rank = 1;
+    
     /**
      * ライブラリー読込時の初期設定
      *
@@ -76,18 +73,19 @@ public class MySQLControl {
     }
 
     /**
-     * ホスト名を新規追加する
+     * プレイヤー情報を新規追加する
      *
-     * @param IP
-     * @param Host
+     * @param player
+     * @param con
+     * @param rank
      */
-    public void AddSQL( Player player, int con, inr rank ) {
+    public void AddSQL( Player player, int con, int rank ) {
         try {
             openConnection();
 
             String sql = "INSERT INTO player ( uuid, name, logout, connect, rank ) VALUES ( ?, ?, ?, ?, ? );";
             PreparedStatement preparedStatement = connection.prepareStatement( sql );
-            preparedStatement.setString( 1, player.getUUID() );
+            preparedStatement.setString( 1, player.getUniqueId().toString() );
             preparedStatement.setString( 2, player.getDisplayName() );
             preparedStatement.setString( 3, sdf.format( new Date() ) );
             preparedStatement.setInt( 4, con );
@@ -96,45 +94,70 @@ public class MySQLControl {
             preparedStatement.executeUpdate();
 
         } catch ( ClassNotFoundException | SQLException e ) {
-            Tools.Prt( "Error AddHostToSQL", programCode );
+            Tools.Prt( "Error AddToSQL", programCode );
         }
     }
 
     /**
-     * 登録IPアドレスを削除する
+     * プレイヤー情報を削除する
      *
-     * @param IP
+     * @param uuid
      * @return
      */
-    public boolean DelSQL( String IP ) {
+    public boolean DelSQL( UUID uuid ) {
         try {
             openConnection();
-            String sql = "DELETE FROM hosts WHERE INET_NTOA(ip) = '" + IP + "'";
+            String sql = "DELETE FROM player WHERE uuid = '" + uuid.toString() + "'";
             PreparedStatement preparedStatement = connection.prepareStatement( sql );
             preparedStatement.executeUpdate();
             return true;
         } catch ( ClassNotFoundException | SQLException e ) {
-            Tools.Prt( "Error DelHostFromSQL", programCode );
+            Tools.Prt( "Error DelFromSQL", programCode );
             return false;
         }
     }
 
     /**
-     * IPアドレスからホスト名を取得する
+     * UUIDからプレイヤー情報を取得する
      *
-     * @param IP
+     * @param uuid
      * @return
      */
-    public String GetSQL( Player player ) {
+    public boolean GetSQL( UUID uuid ) {
         try {
             openConnection();
             Statement stmt = connection.createStatement();
-            String sql = "SELECT * FROM plsyer WHERE uuid = '" + player.getUUID() + "';";
+            String sql = "SELECT * FROM plsyer WHERE uuid = '" + uuid.toString() + "';";
             ResultSet rs = stmt.executeQuery( sql );
-            if ( rs.next() ) return rs.getString( "host" );
+            if ( rs.next() ) {
+                this.name = rs.getString( "name" );
+                this.logout = rs.getDate( "logout" );
+                this.connect = rs.getInt( "connect" );
+                this.rank = rs.getInt( "rank" );
+                return true;
+            }
         } catch ( ClassNotFoundException | SQLException e ) {
-            Tools.Prt( "Error GetUnknownHost", programCode );
+            Tools.Prt( "Error GetPlayer", programCode );
         }
-        return "Unknown";
+        return false;
     }
+
+    /**
+     * UUIDからプレイヤーのログアウト日時を更新する
+     *
+     * @param uuid
+     */
+    public void UpdateSQL( UUID uuid ) {
+        try {
+            openConnection();
+
+            String sql = "UPDATE player SET logout = " + sdf.format( new Date() ) + " WHERE uuid = '" + uuid.toString() + "';";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.executeUpdate();
+
+        } catch ( ClassNotFoundException | SQLException e ) {
+            Tools.Prt( "Error ChangeStatus", programCode );
+        }
+    }
+
 }

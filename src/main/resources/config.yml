@@ -11,10 +11,31 @@ mysql:
   username: root
   password: password
 
-#Citizenship Rank
+#   Citizenship Rank
+#   WorldGuard に設定されているグループ名を正しく指定する事
+#   グループ名、昇格に必要な時間（ｈ）
 Rank:
-  - NewFace,0
-  - Civilian,24
-  - Citizen,100
-  - Nation,200
-  - Uiverse,500
+  - NewFace,24
+  - Civilian,100
+  - Citizen,200
+  - Nation,500
+  - Uiverse,0
+
+#   昇格時Broadcastアナウンスを行うか
+PlayerBroadcast: false
+
+#   牢獄の設定
+#   権限剥奪時のグループ名(WorldGuardに設定しているもの)
+PrisonGroup: Prisoner
+#   剥奪解除に必要な時間（日数）
+PenaltyTime: 1
+#   剥奪時、牢獄エリアにジャンプさせるか？
+Imprisonment: false
+#   牢獄エリアの座標
+world: world
+x: 0
+y: 0
+z: 0
+pitch: 0
+yaw: 0
+

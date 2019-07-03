@@ -36,7 +36,7 @@ public class ConfigManager {
     public void load() {
         // 設定ファイルを保存
         plugin.saveDefaultConfig();
-        if (config != null) { // configが非null == リロードで呼び出された
+        if ( config != null ) { // configが非null == リロードで呼び出された
             Tools.Prt( "Config Reloading now...", programCode );
             plugin.reloadConfig();
         }
@@ -49,12 +49,11 @@ public class ConfigManager {
         Config.password = config.getString( "mysql.password" );
 
         Config.rankName = new ArrayList<>();
-        List< String > getstr = ( List< String > ) config.getList( "PointStone" );
+        List< String > getstr = ( List< String > ) config.getList( "Rank" );
         for( int i = 0; i<getstr.size(); i++ ) {
             String[] param = getstr.get( i ).split(",");
             Config.rankTime.put( param[0], Integer.valueOf( param[1] ) );
             Config.rankName.add( param[0] );
-            
         }
         
         Tools.consoleMode DebugFlag;

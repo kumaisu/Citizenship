@@ -67,5 +67,7 @@ public class Citizenship extends JavaPlugin implements Listener {
             ChatColor.YELLOW + " 時間です" ,
             programCode
         );
+
+        if ( !DBRec.GetSQL( player.getUniqueId() ) ) { Tools.Prt( player,"New Database Entry", Tools.consoleMode.full, programCode ); }
     }
 }

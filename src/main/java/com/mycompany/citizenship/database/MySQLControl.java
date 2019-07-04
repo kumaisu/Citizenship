@@ -30,8 +30,7 @@ public class MySQLControl {
 
     public static String name = "Unknown";
     public static Date logout;
-    public static int connect = 0;
-    public static int rank = 1;
+    public static int offset = 0;
     
     /**
      * ライブラリー読込時の初期設定
@@ -66,7 +65,7 @@ public class MySQLControl {
             //		connect : int 		total Login Time
             //		Rank : int		Citizenship Rank
             //  存在すれば、無視される
-            String sql = "CREATE TABLE IF NOT EXISTS player(id uuid varchar(36), name varchar(20), logout DATETIME, connect int, rank int, index(id))";
+            String sql = "CREATE TABLE IF NOT EXISTS player( uuid varchar(36), name varchar(20), logout DATETIME, offset int )";
             PreparedStatement preparedStatement = connection.prepareStatement( sql );
             preparedStatement.executeUpdate();
         }
@@ -76,22 +75,25 @@ public class MySQLControl {
      * プレイヤー情報を新規追加する
      *
      * @param player
-     * @param con
-     * @param rank
      */
-    public void AddSQL( Player player, int con, int rank ) {
+    public void AddSQL( Player player ) {
         try {
             openConnection();
 
-            String sql = "INSERT INTO player ( uuid, name, logout, connect, rank ) VALUES ( ?, ?, ?, ?, ? );";
+            String sql = "INSERT INTO player (uuid, name, logout, offset) VALUES (?, ?, ?, ?);";
             PreparedStatement preparedStatement = connection.prepareStatement( sql );
             preparedStatement.setString( 1, player.getUniqueId().toString() );
             preparedStatement.setString( 2, player.getDisplayName() );
             preparedStatement.setString( 3, sdf.format( new Date() ) );
-            preparedStatement.setInt( 4, con );
-            preparedStatement.setInt( 5, rank );
+            preparedStatement.setInt( 4, 0 );
 
             preparedStatement.executeUpdate();
+            
+            this.name = player.getDisplayName();
+            this.logout = new Date();
+            this.offset = 0;
+            
+            Tools.Prt( "Add Data to SQL Success.", Tools.consoleMode.full , programCode );
 
         } catch ( ClassNotFoundException | SQLException e ) {
             Tools.Prt( "Error AddToSQL", programCode );
@@ -110,6 +112,7 @@ public class MySQLControl {
             String sql = "DELETE FROM player WHERE uuid = '" + uuid.toString() + "'";
             PreparedStatement preparedStatement = connection.prepareStatement( sql );
             preparedStatement.executeUpdate();
+            Tools.Prt( "Delete Data from SQL Success.", Tools.consoleMode.full , programCode );
             return true;
         } catch ( ClassNotFoundException | SQLException e ) {
             Tools.Prt( "Error DelFromSQL", programCode );
@@ -127,13 +130,13 @@ public class MySQLControl {
         try {
             openConnection();
             Statement stmt = connection.createStatement();
-            String sql = "SELECT * FROM plsyer WHERE uuid = '" + uuid.toString() + "';";
+            String sql = "SELECT * FROM player WHERE uuid = '" + uuid.toString() + "';";
             ResultSet rs = stmt.executeQuery( sql );
             if ( rs.next() ) {
                 this.name = rs.getString( "name" );
                 this.logout = rs.getDate( "logout" );
-                this.connect = rs.getInt( "connect" );
-                this.rank = rs.getInt( "rank" );
+                this.offset = rs.getInt( "offset" );
+                Tools.Prt( "Get Data from SQL Success.", Tools.consoleMode.full , programCode );
                 return true;
             }
         } catch ( ClassNotFoundException | SQLException e ) {
@@ -147,7 +150,7 @@ public class MySQLControl {
      *
      * @param uuid
      */
-    public void UpdateSQL( UUID uuid ) {
+    public void SetLogoutToSQL( UUID uuid ) {
         try {
             openConnection();
 
@@ -155,6 +158,27 @@ public class MySQLControl {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.executeUpdate();
 
+            Tools.Prt( "Set logout Date to SQL Success.", Tools.consoleMode.full , programCode );
+        } catch ( ClassNotFoundException | SQLException e ) {
+            Tools.Prt( "Error ChangeStatus", programCode );
+        }
+    }
+
+    /**
+     * UUIDからプレイヤーのオフセット値を設定する
+     *
+     * @param uuid
+     * @param offset
+     */
+    public void SetOffsetToSQL( UUID uuid, int offset ) {
+        try {
+            openConnection();
+
+            String sql = "UPDATE player SET offset = " + offset + " WHERE uuid = '" + uuid.toString() + "';";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.executeUpdate();
+
+            Tools.Prt( "Set Offset Data to SQL Success.", Tools.consoleMode.full , programCode );
         } catch ( ClassNotFoundException | SQLException e ) {
             Tools.Prt( "Error ChangeStatus", programCode );
         }

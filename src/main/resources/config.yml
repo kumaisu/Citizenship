@@ -1,13 +1,13 @@
 #Citizenship Config
 
 #   Debug ( max / full / Default:normal / none )
-Debug: normal
+Debug: full
 
 #   MySQL Settings
 mysql:
   host: localhost
   port: 3306
-  database: LoginList
+  database: Citizenship
   username: root
   password: password
 
@@ -20,6 +20,9 @@ Rank:
   - Citizen,200
   - Nation,500
   - Uiverse,0
+
+#   降格判定　日数、ゼロならば降格無し
+Demotion: 10
 
 #   昇格時Broadcastアナウンスを行うか
 PlayerBroadcast: false

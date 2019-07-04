@@ -25,4 +25,5 @@ public class Config {
 
     public static Map< String, Integer > rankTime = new HashMap<>();
     public static List< String > rankName;
+    public static int demotion = 0;
 }

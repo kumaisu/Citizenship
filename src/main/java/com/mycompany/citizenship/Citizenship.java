@@ -16,7 +16,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.citizenship.config.ConfigManager;
 import com.mycompany.citizenship.command.RankCommand;
-import com.mycompany.citizenship.database.MySQLControl;
 import static com.mycompany.citizenship.config.Config.programCode;
 
 /**
@@ -26,12 +25,12 @@ import static com.mycompany.citizenship.config.Config.programCode;
 public class Citizenship extends JavaPlugin implements Listener {
 
     public ConfigManager config;
-    private MySQLControl DBRec;
+    private RanksControl RankC;
 
     @Override
     public void onEnable() {
         this.getServer().getPluginManager().registerEvents( this, this );
-        DBRec = new MySQLControl();
+        RankC = new RanksControl( this );
         config = new ConfigManager( this );
         getCommand( "ranks" ).setExecutor( new RankCommand( this ) );
     }
@@ -68,6 +67,6 @@ public class Citizenship extends JavaPlugin implements Listener {
             programCode
         );
 
-        if ( !DBRec.GetSQL( player.getUniqueId() ) ) { Tools.Prt( player,"New Database Entry", Tools.consoleMode.full, programCode ); }
+        RankC.CheckRank( player );
     }
 }

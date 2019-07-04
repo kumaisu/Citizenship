@@ -55,7 +55,9 @@ public class ConfigManager {
             Config.rankTime.put( param[0], Integer.valueOf( param[1] ) );
             Config.rankName.add( param[0] );
         }
-        
+
+        Config.demotion = config.getInt( "Demotion" );
+
         Tools.consoleMode DebugFlag;
         try {
             DebugFlag = Tools.consoleMode.valueOf( config.getString( "Debug" ) );

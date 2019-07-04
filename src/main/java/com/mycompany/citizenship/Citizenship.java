@@ -59,14 +59,6 @@ public class Citizenship extends JavaPlugin implements Listener {
         Tools.Prt( "onPlayerLogin process", Tools.consoleMode.full, programCode );
         Tools.Prt( "PlayTime = " + Float.toString( ( float ) player.getStatistic( Statistic.PLAY_ONE_MINUTE ) ), Tools.consoleMode.full, programCode );
 
-        //  ChatColor.WHITE + Float.toString( ( float ) ( ( float ) player.getStatistic( Statistic.PLAY_ONE_MINUTE ) * 0.05 / 60 / 60 ) ) +
-        Tools.Prt( player,
-            ChatColor.YELLOW + "貴方の通算接続時間は " +
-            ChatColor.WHITE + Math.round( ( double ) player.getStatistic( Statistic.PLAY_ONE_MINUTE ) * 0.05 / 60 / 60 ) +
-            ChatColor.YELLOW + " 時間です" ,
-            programCode
-        );
-
         RankC.CheckRank( player );
     }
 }

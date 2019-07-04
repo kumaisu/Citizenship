@@ -42,8 +42,8 @@ public class ConfigManager {
         }
         config = plugin.getConfig();
 
-        Config.host = config.getString( "mysql.host" );
-        Config.port = config.getString( "mysql.port" );
+        Config.host     = config.getString( "mysql.host" );
+        Config.port     = config.getString( "mysql.port" );
         Config.database = config.getString( "mysql.database" );
         Config.username = config.getString( "mysql.username" );
         Config.password = config.getString( "mysql.password" );
@@ -56,7 +56,10 @@ public class ConfigManager {
             Config.rankName.add( param[0] );
         }
 
-        Config.demotion = config.getInt( "Demotion" );
+        Config.demotion         = config.getInt( "Demotion", 0 );
+        Config.PromotBroadcast  = config.getBoolean( "PlayerBroadcast", false );
+        Config.Prison           = config.getString( "PrisonGroup", "" );
+        Config.Penalty          = config.getInt( "PenaltyTime", 0 );
 
         Tools.consoleMode DebugFlag;
         try {

@@ -10,11 +10,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import com.mycompany.citizenship.config.Config;
+import static com.mycompany.citizenship.config.Config.programCode;
 import com.mycompany.citizenship.database.MySQLControl;
 import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.kumaisulibraries.Utility;
-import static com.mycompany.citizenship.config.Config.programCode;
 import net.milkbowl.vault.permission.Permission;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Statistic;
 
 /**
  *
@@ -60,12 +63,13 @@ public class RanksControl {
             DBRec.AddSQL( player );
         }
 
+        int progress = Utility.dateDiff( MySQLControl.logout, new Date() );
+
         //
         //  降格判定
         //
         if ( Config.demotion != 0 ) {
-            int progress = Utility.dateDiff( MySQLControl.logout, new Date() );
-            Tools.Prt( "Diff Date : " + progress, programCode);
+            Tools.Prt( "Diff Date : " + progress, programCode );
             if ( progress > Config.demotion ) {
                 Demotion();
                 return true;
@@ -88,13 +92,31 @@ public class RanksControl {
         for ( String StrItem1 : perm.getPlayerGroups( player ) ) Tools.Prt( "[" + StrItem1 + "]", Tools.consoleMode.full, programCode );
 
         String NowGroup = perm.getPlayerGroups( player )[0];
-        Tools.Prt( player, "[" + NowGroup + "]", Tools.consoleMode.full, programCode );
-        
-        //  Prisonerである
-        //      ペナルティ時間チェック
-        //          オフセットリセット
-        //              rerutn true:
-        //      Return false;
+        Tools.Prt( player, "NowGroup [" + NowGroup + "]", Tools.consoleMode.full, programCode );
+
+        //
+        //  ペナルティユーザーに対する処理
+        //
+        if ( NowGroup.equals( Config.Prison ) ) {
+            if ( progress > Config.Penalty ) {
+                //  リセット
+                Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), "pex user [player] group set [group]" );
+                DBRec.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
+                return true;
+            }
+            return false;
+        }
+
+        //
+        //  経過時間によるユーザーの昇格処理
+        //
+        Tools.Prt( player,
+            ChatColor.YELLOW + "貴方の通算接続時間は " +
+            ChatColor.AQUA + Math.round( ( double ) player.getStatistic( Statistic.PLAY_ONE_MINUTE ) * 0.05 / 60 / 60 ) +
+            ChatColor.YELLOW + " 時間です" ,
+            programCode
+        );
+
         
         //  通算時間ーオフセット時間
         //  昇格該当する

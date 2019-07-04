@@ -6,7 +6,6 @@
 package com.mycompany.citizenship;
 
 import java.net.UnknownHostException;
-import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -59,6 +58,6 @@ public class Citizenship extends JavaPlugin implements Listener {
         Tools.Prt( "onPlayerLogin process", Tools.consoleMode.full, programCode );
         Tools.Prt( "PlayTime = " + Float.toString( ( float ) player.getStatistic( Statistic.PLAY_ONE_MINUTE ) ), Tools.consoleMode.full, programCode );
 
-        RankC.CheckRank( player );
+        if ( !player.hasPermission( "Citizenship.nocheck" ) ) { RankC.CheckRank( player ); }
     }
 }

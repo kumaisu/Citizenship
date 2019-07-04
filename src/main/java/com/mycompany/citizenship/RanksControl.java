@@ -6,18 +6,18 @@
 package com.mycompany.citizenship;
 
 import java.util.Date;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import com.mycompany.citizenship.config.Config;
-import static com.mycompany.citizenship.config.Config.programCode;
 import com.mycompany.citizenship.database.MySQLControl;
 import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.kumaisulibraries.Utility;
+import static com.mycompany.citizenship.config.Config.programCode;
 import net.milkbowl.vault.permission.Permission;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Statistic;
 
 /**
  *
@@ -35,15 +35,21 @@ public class RanksControl {
 
     /**
      * 昇格
+     *
+     * @param player
      */
-    public void Promotion() {
+    public void Promotion( Player player ) {
+        Tools.Prt( "Promotion Process", Tools.consoleMode.full, programCode );
+        //  ランクを上げ
     }
 
     /**
      * 降格
+     *
+     * @param player
      */
-    public void Demotion(){
-        Tools.Prt( "Demotion Process", programCode );
+    public void Demotion( Player player ){
+        Tools.Prt( "Demotion Process", Tools.consoleMode.full, programCode );
         //  ランクを下げ
         //  Offsetを再セットする
     }
@@ -64,6 +70,7 @@ public class RanksControl {
         }
 
         int progress = Utility.dateDiff( MySQLControl.logout, new Date() );
+        int checkHour = ( int ) Math.round( ( player.getStatistic( Statistic.PLAY_ONE_MINUTE ) - MySQLControl.offset ) * 0.05 / 60 / 60 );
 
         //
         //  降格判定
@@ -71,7 +78,7 @@ public class RanksControl {
         if ( Config.demotion != 0 ) {
             Tools.Prt( "Diff Date : " + progress, programCode );
             if ( progress > Config.demotion ) {
-                Demotion();
+                Demotion( player );
                 return true;
             }
         }
@@ -100,7 +107,9 @@ public class RanksControl {
         if ( NowGroup.equals( Config.Prison ) ) {
             if ( progress > Config.Penalty ) {
                 //  リセット
-                Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), "pex user [player] group set [group]" );
+                String Cmd = "pex user " + player.getDisplayName() + " group set " + Config.rankName.get( 0 );
+                Tools.Prt( "Command : " + Cmd, Tools.consoleMode.full, programCode );
+                Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
                 DBRec.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
                 return true;
             }
@@ -112,18 +121,17 @@ public class RanksControl {
         //
         Tools.Prt( player,
             ChatColor.YELLOW + "貴方の通算接続時間は " +
-            ChatColor.AQUA + Math.round( ( double ) player.getStatistic( Statistic.PLAY_ONE_MINUTE ) * 0.05 / 60 / 60 ) +
+            ChatColor.AQUA + checkHour +
             ChatColor.YELLOW + " 時間です" ,
             programCode
         );
 
-        
-        //  通算時間ーオフセット時間
-        //  昇格該当する
-        //      昇格処理
-        //      Promotion;
-        //      return true;
-        //  return false;
-        return true;
+        Tools.Prt( "Check Time " + Config.rankTime.get( NowGroup ) + " : " + checkHour, Tools.consoleMode.full, programCode );
+        if ( Config.rankTime.get( NowGroup ) > checkHour ) {
+            Promotion( player );
+            return true;
+        }
+
+        return false;
     }
 }

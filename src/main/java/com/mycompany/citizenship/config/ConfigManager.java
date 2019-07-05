@@ -79,31 +79,4 @@ public class ConfigManager {
         Tools.Prt( p, ChatColor.WHITE + "DB Name : " + ChatColor.YELLOW + Config.database, consolePrintFlag, programCode );
         Tools.Prt( p, ChatColor.GREEN + "==========================", consolePrintFlag, programCode );
     }
-
-    /**
-     * 昇格に必要な時間の取得
-     *
-     * @param userGroup
-     * @return 
-     */
-    public int getNextTime( String userGroup ) {
-        if ( Config.rankName.contains( userGroup ) ) {
-            return Config.rankTime.get( userGroup );
-        }
-        return 0;
-    }
-
-    /**
-     * 次の昇格ランクグループ名の取得
-     *
-     * @param userGroup
-     * @return 
-     */
-    public String getNextRank( String userGroup ) {
-        try {
-            return Config.rankName.get( Config.rankName.indexOf( userGroup ) + 1 );
-        } catch( ArrayIndexOutOfBoundsException e ) {
-            return userGroup;
-        }
-    }
 }

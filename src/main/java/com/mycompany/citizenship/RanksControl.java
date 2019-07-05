@@ -37,21 +37,71 @@ public class RanksControl {
      * 昇格
      *
      * @param player
+     * @return 
      */
-    public void Promotion( Player player ) {
+    public boolean Promotion( Player player ) {
         Tools.Prt( "Promotion Process", Tools.consoleMode.full, programCode );
-        //  ランクを上げ
+        String baseGroup = getGroup( player );
+        
+        if ( !baseGroup.equals("") ) {
+            try {
+                String Cmd = "pex user " + player.getDisplayName() + " group set " + Config.rankName.get( Config.rankName.indexOf( baseGroup ) + 1 );
+                Tools.Prt( "Command : " + Cmd, Tools.consoleMode.full, programCode );
+                Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
+                return true;
+            } catch( ArrayIndexOutOfBoundsException e ) {
+                return false;
+            }
+        }
+        return false;
     }
 
     /**
      * 降格
      *
      * @param player
+     * @return 
      */
-    public void Demotion( Player player ){
+    public boolean Demotion( Player player ){
         Tools.Prt( "Demotion Process", Tools.consoleMode.full, programCode );
-        //  ランクを下げ
-        //  Offsetを再セットする
+        String baseGroup = getGroup( player );
+
+        if ( !baseGroup.equals("") ) {
+            try {
+                String Cmd = "pex user " + player.getDisplayName() + " group set " + Config.rankName.get( Config.rankName.indexOf( baseGroup ) -1 );
+                Tools.Prt( "Command : " + Cmd, Tools.consoleMode.full, programCode );
+                Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
+                DBRec.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
+                return true;
+            } catch ( ArrayIndexOutOfBoundsException e ) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * グループ取得
+     *
+     * @param player
+     * @return 
+     */
+    public String getGroup( Player player ) {
+        Permission perm = null;
+        RegisteredServiceProvider<Permission> permissionProvider = plugin.getServer().getServicesManager().getRegistration( net.milkbowl.vault.permission.Permission.class );
+        if (permissionProvider != null) {
+            perm = permissionProvider.getProvider();
+        }
+        if ( perm == null ) {
+            Tools.Prt( "Cant get Group", programCode );
+            return "";
+        }
+        
+        for ( String StrItem1 : perm.getPlayerGroups( player ) ) Tools.Prt( "[" + StrItem1 + "]", Tools.consoleMode.full, programCode );
+
+        String NowGroup = perm.getPlayerGroups( player )[0];
+        Tools.Prt( player, "NowGroup [" + NowGroup + "]", Tools.consoleMode.full, programCode );
+        return NowGroup;
     }
 
     /**
@@ -71,7 +121,8 @@ public class RanksControl {
 
         int progress = Utility.dateDiff( MySQLControl.logout, new Date() );
         int checkHour = ( int ) Math.round( ( player.getStatistic( Statistic.PLAY_ONE_MINUTE ) - MySQLControl.offset ) * 0.05 / 60 / 60 );
-
+        String NowGroup = getGroup( player );
+        
         //
         //  降格判定
         //
@@ -82,24 +133,6 @@ public class RanksControl {
                 return true;
             }
         }
-
-        //
-        //  グループ取得
-        //
-        Permission perm = null;
-        RegisteredServiceProvider<Permission> permissionProvider = plugin.getServer().getServicesManager().getRegistration( net.milkbowl.vault.permission.Permission.class );
-        if (permissionProvider != null) {
-            perm = permissionProvider.getProvider();
-        }
-        if ( perm == null ) {
-            Tools.Prt( "Cant get Group", programCode );
-            return false;
-        }
-        
-        for ( String StrItem1 : perm.getPlayerGroups( player ) ) Tools.Prt( "[" + StrItem1 + "]", Tools.consoleMode.full, programCode );
-
-        String NowGroup = perm.getPlayerGroups( player )[0];
-        Tools.Prt( player, "NowGroup [" + NowGroup + "]", Tools.consoleMode.full, programCode );
 
         //
         //  ペナルティユーザーに対する処理
@@ -127,7 +160,7 @@ public class RanksControl {
         );
 
         Tools.Prt( "Check Time " + Config.rankTime.get( NowGroup ) + " : " + checkHour, Tools.consoleMode.full, programCode );
-        if ( Config.rankTime.get( NowGroup ) > checkHour ) {
+        if ( ( Config.rankTime.get( NowGroup ) > 0 ) && ( Config.rankTime.get( NowGroup ) > checkHour ) ) {
             Promotion( player );
             return true;
         }

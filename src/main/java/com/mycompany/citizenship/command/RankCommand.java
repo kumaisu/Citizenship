@@ -47,11 +47,25 @@ public class RankCommand implements CommandExecutor {
         if ( cmd.getName().toLowerCase().equalsIgnoreCase( "ranks" ) ) {
             String CtlCmd = "None";
             String CmdArg = "none";
+            Player lookPlayer = null;
 
             if ( args.length > 0 ) CtlCmd = args[0];
-            if ( args.length > 1 ) CmdArg = args[1];
+            if ( args.length > 1 ) {
+                CmdArg = args[1];
+                lookPlayer = Bukkit.getServer().getPlayer( CmdArg );
+            }
 
             switch ( CtlCmd ) {
+                case "promotion":
+                    if ( lookPlayer != null ) {
+                        instance.RankC.Promotion( lookPlayer );
+                    }
+                    break;
+                case "demotion":
+                    if ( lookPlayer != null ) {
+                        instance.RankC.Demotion( lookPlayer );
+                    }
+                    break;
                 case "reload":
                     instance.config.load();
                     Tools.Prt( player, Utility.ReplaceString( "%$aLoginList Config Reloaded." ), programCode );
@@ -70,15 +84,13 @@ public class RankCommand implements CommandExecutor {
                     break;
                 case "Time":
                     Tools.Prt( player, "Player Times:", programCode );
-                    Player lookUser = Bukkit.getServer().getPlayer( CmdArg );
-                    if ( lookUser != null ) {
-                        Tools.Prt( player, "PlayTime = " + Float.toString( ( float ) ( ( float ) lookUser.getStatistic( Statistic.PLAY_ONE_MINUTE ) * 0.05 / 60 / 60)) + " h" , programCode );
-                        Tools.Prt( player, "PlayTime = " + Float.toString( ( float ) lookUser.getStatistic( Statistic.PLAY_ONE_MINUTE ) ) + " Ticks(0.05sec)", programCode );
+                    if ( lookPlayer != null ) {
+                        Tools.Prt( player, "PlayTime = " + Float.toString( ( float ) ( ( float ) lookPlayer.getStatistic( Statistic.PLAY_ONE_MINUTE ) * 0.05 / 60 / 60)) + " hour" , programCode );
+                        Tools.Prt( player, "PlayTime = " + Float.toString( ( float ) lookPlayer.getStatistic( Statistic.PLAY_ONE_MINUTE ) ) + " Ticks(0.05sec)", programCode );
                     } else { Tools.Prt( player, ChatColor.RED + "Player が Offline か存在しません", programCode ); }
                     break;
                 case "Groups":
                     Tools.Prt( player, "Player Groups:", programCode );
-                    Player lookPlayer = Bukkit.getServer().getPlayer( CmdArg );
                     if ( lookPlayer != null ) {
                         Permission perm = null;
                         RegisteredServiceProvider<Permission> permissionProvider = instance.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);

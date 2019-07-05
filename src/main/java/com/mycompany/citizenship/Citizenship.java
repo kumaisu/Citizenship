@@ -24,7 +24,7 @@ import static com.mycompany.citizenship.config.Config.programCode;
 public class Citizenship extends JavaPlugin implements Listener {
 
     public ConfigManager config;
-    private RanksControl RankC;
+    public RanksControl RankC;
 
     @Override
     public void onEnable() {

@@ -16,9 +16,6 @@ commands:
             /<command> Groups
             /<command> Console [full/normal/none]
 permissions:
-    citizenship.nocheck:
-        description: No Rankup Check
-        default: false
     citizenship.admin:
         description: Command Permission
         default: op

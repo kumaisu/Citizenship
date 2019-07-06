@@ -30,16 +30,12 @@ public class Config {
     public static boolean PromotBroadcast = false;
     public static String Prison = "";
     public static int Penalty = 0;
-    
-    /*
-#   剥奪時、牢獄エリアにジャンプさせるか？
-Imprisonment: false
-#   牢獄エリアの座標
-world: world
-x: 0
-y: 0
-z: 0
-pitch: 0
-yaw: 0
-    */
+
+    public static boolean Imprisonment = false;
+    public static int fx;
+    public static int fy;
+    public static int fz;
+    public static int fpitch;
+    public static int fyaw;
+    public static String fworld;
 }

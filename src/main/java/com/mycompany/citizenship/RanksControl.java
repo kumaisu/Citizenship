@@ -43,17 +43,28 @@ public class RanksControl {
         Tools.Prt( "Promotion Process", Tools.consoleMode.full, programCode );
         String baseGroup = getGroup( player );
         
-        if ( !baseGroup.equals("") ) {
-            try {
-                String Cmd = "pex user " + player.getDisplayName() + " group set " + Config.rankName.get( Config.rankName.indexOf( baseGroup ) + 1 );
-                Tools.Prt( "Command : " + Cmd, Tools.consoleMode.full, programCode );
-                Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
-                return true;
-            } catch( ArrayIndexOutOfBoundsException e ) {
-                return false;
+        if ( baseGroup.equals("") ) { return false; }
+
+        try {
+            String NewGroup = Config.rankName.get( Config.rankName.indexOf( baseGroup ) + 1 );
+            String Cmd = "pex user " + player.getDisplayName() + " group set " + NewGroup;
+            Tools.Prt( "Command : " + Cmd, Tools.consoleMode.full, programCode );
+            Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
+
+            String LevelupMessage = 
+                ChatColor.YELLOW + player.getDisplayName() + "さんが " +
+                ChatColor.AQUA + NewGroup +
+                ChatColor.YELLOW + " に昇格しました";
+            if ( Config.PromotBroadcast ) {
+                Bukkit.broadcastMessage( "<鯖アナウンス> " + LevelupMessage );
+            } else {
+                Tools.Prt( player, LevelupMessage, Tools.consoleMode.normal, programCode );
             }
+
+            return true;
+        } catch( ArrayIndexOutOfBoundsException e ) {
+            return false;
         }
-        return false;
     }
 
     /**
@@ -66,18 +77,17 @@ public class RanksControl {
         Tools.Prt( "Demotion Process", Tools.consoleMode.full, programCode );
         String baseGroup = getGroup( player );
 
-        if ( !baseGroup.equals("") ) {
-            try {
-                String Cmd = "pex user " + player.getDisplayName() + " group set " + Config.rankName.get( Config.rankName.indexOf( baseGroup ) -1 );
-                Tools.Prt( "Command : " + Cmd, Tools.consoleMode.full, programCode );
-                Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
-                DBRec.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
-                return true;
-            } catch ( ArrayIndexOutOfBoundsException e ) {
-                return false;
-            }
+        if ( baseGroup.equals("") ) { return false; }
+
+        try {
+            String Cmd = "pex user " + player.getDisplayName() + " group set " + Config.rankName.get( Config.rankName.indexOf( baseGroup ) -1 );
+            Tools.Prt( "Command : " + Cmd, Tools.consoleMode.full, programCode );
+            Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
+            DBRec.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
+            return true;
+        } catch ( ArrayIndexOutOfBoundsException e ) {
+            return false;
         }
-        return false;
     }
 
     /**
@@ -97,10 +107,10 @@ public class RanksControl {
             return "";
         }
         
-        for ( String StrItem1 : perm.getPlayerGroups( player ) ) Tools.Prt( "[" + StrItem1 + "]", Tools.consoleMode.full, programCode );
+        for ( String StrItem1 : perm.getPlayerGroups( player ) ) Tools.Prt( "{" + StrItem1 + "}", Tools.consoleMode.full, programCode );
 
         String NowGroup = perm.getPlayerGroups( player )[0];
-        Tools.Prt( player, "NowGroup [" + NowGroup + "]", Tools.consoleMode.full, programCode );
+        Tools.Prt( "NowGroup [" + NowGroup + "]", Tools.consoleMode.full, programCode );
         return NowGroup;
     }
 
@@ -111,6 +121,8 @@ public class RanksControl {
      * @return 
      */
     public boolean CheckRank( Player player ) {
+        Tools.Prt( "PlayTime = " + Float.toString( ( float ) player.getStatistic( Statistic.PLAY_ONE_MINUTE ) ), Tools.consoleMode.full, programCode );
+
         //
         //  DBからデータ取得、無ければ初期化および新規登録
         //
@@ -123,11 +135,20 @@ public class RanksControl {
         int checkHour = ( int ) Math.round( ( player.getStatistic( Statistic.PLAY_ONE_MINUTE ) - MySQLControl.offset ) * 0.05 / 60 / 60 );
         String NowGroup = getGroup( player );
         
+        Tools.Prt( player,
+            ChatColor.YELLOW + "貴方の通算接続時間は " +
+            ChatColor.AQUA + checkHour +
+            ChatColor.YELLOW + " 時間です" ,
+            Tools.consoleMode.normal,
+            programCode
+        );
+        if ( Config.rankTime.get( NowGroup ) == null ) { return false; }
+
         //
         //  降格判定
         //
         if ( Config.demotion != 0 ) {
-            Tools.Prt( "Diff Date : " + progress, programCode );
+            Tools.Prt( "Diff Date : " + progress, Tools.consoleMode.full, programCode );
             if ( progress > Config.demotion ) {
                 Demotion( player );
                 return true;
@@ -152,15 +173,8 @@ public class RanksControl {
         //
         //  経過時間によるユーザーの昇格処理
         //
-        Tools.Prt( player,
-            ChatColor.YELLOW + "貴方の通算接続時間は " +
-            ChatColor.AQUA + checkHour +
-            ChatColor.YELLOW + " 時間です" ,
-            programCode
-        );
-
         Tools.Prt( "Check Time " + Config.rankTime.get( NowGroup ) + " : " + checkHour, Tools.consoleMode.full, programCode );
-        if ( ( Config.rankTime.get( NowGroup ) > 0 ) && ( Config.rankTime.get( NowGroup ) > checkHour ) ) {
+        if ( ( Config.rankTime.get( NowGroup ) > 0 ) && ( Config.rankTime.get( NowGroup ) < checkHour ) ) {
             Promotion( player );
             return true;
         }

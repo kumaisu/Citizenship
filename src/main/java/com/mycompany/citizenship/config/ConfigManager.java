@@ -60,6 +60,14 @@ public class ConfigManager {
         Config.PromotBroadcast  = config.getBoolean( "PlayerBroadcast", false );
         Config.Prison           = config.getString( "PrisonGroup", "" );
         Config.Penalty          = config.getInt( "PenaltyTime", 0 );
+        Config.Imprisonment     = config.getBoolean( "Imprisonment", false );
+        
+        Config.fworld = config.getString( "world" );
+        Config.fx = config.getInt( "x" );
+        Config.fy = config.getInt( "y" );
+        Config.fz = config.getInt( "z" );
+        Config.fpitch = config.getInt( "pitch" );
+        Config.fyaw = config.getInt( "yaw" );
 
         Tools.consoleMode DebugFlag;
         try {
@@ -72,11 +80,27 @@ public class ConfigManager {
     }
 
     public void Status( Player p ) {
-        Tools.consoleMode consolePrintFlag = ( ( p == null ) ? Tools.consoleMode.none:Tools.consoleMode.stop );
-        Tools.Prt( p, ChatColor.GREEN + "=== LoginContrl Status ===", consolePrintFlag, programCode );
-        Tools.Prt( p, ChatColor.WHITE + "Degub Mode : " + ChatColor.YELLOW + Tools.consoleFlag.get( programCode ).toString(), consolePrintFlag, programCode );
-        Tools.Prt( p, ChatColor.WHITE + "Mysql : " + ChatColor.YELLOW + Config.host + ":" + Config.port, consolePrintFlag, programCode );
-        Tools.Prt( p, ChatColor.WHITE + "DB Name : " + ChatColor.YELLOW + Config.database, consolePrintFlag, programCode );
-        Tools.Prt( p, ChatColor.GREEN + "==========================", consolePrintFlag, programCode );
+        Tools.Prt( p, ChatColor.GREEN + "=== Citizenship Status ===", programCode );
+        Tools.Prt( p, ChatColor.WHITE + "Degub Mode   : " + ChatColor.YELLOW + Tools.consoleFlag.get( programCode ).toString(), programCode );
+        Tools.Prt( p, ChatColor.WHITE + "Mysql        : " + ChatColor.YELLOW + Config.host + ":" + Config.port, programCode );
+        Tools.Prt( p, ChatColor.WHITE + "DB Name      : " + ChatColor.YELLOW + Config.database, programCode );
+        Tools.Prt( p, ChatColor.WHITE + "DB UserName  : " + ChatColor.YELLOW + Config.username, programCode );
+        Tools.Prt( p, ChatColor.WHITE + "DB Password  : " + ChatColor.YELLOW + Config.password, programCode );
+        Tools.Prt( p, ChatColor.WHITE + "降格日数     : " + ChatColor.YELLOW + Config.demotion, programCode );
+        Tools.Prt( p, ChatColor.WHITE + "昇格時ｱﾅｳﾝｽ  : " + ChatColor.YELLOW + ( Config.PromotBroadcast ? "する":"しない" ), programCode );
+        Tools.Prt( p, ChatColor.WHITE + "牢獄グループ : " + ChatColor.YELLOW + Config.Prison, programCode );
+        Tools.Prt( p, ChatColor.WHITE + "投獄期間     : " + ChatColor.YELLOW + Config.Penalty + "日", programCode );
+        Tools.Prt( p, ChatColor.WHITE + "牢獄ジャンプ : " + ChatColor.YELLOW + ( Config.Imprisonment ? "する":"しない" ), programCode );
+        if ( Config.Imprisonment ) {
+            Tools.Prt( p, ChatColor.WHITE + "  world:" + ChatColor.YELLOW + Config.fworld, programCode );
+            Tools.Prt( p, ChatColor.WHITE + "  x    :" + ChatColor.YELLOW + String.valueOf( Config.fx ), programCode );
+            Tools.Prt( p, ChatColor.WHITE + "  y    :" + ChatColor.YELLOW + String.valueOf( Config.fy ), programCode );
+            Tools.Prt( p, ChatColor.WHITE + "  z    :" + ChatColor.YELLOW + String.valueOf( Config.fz ), programCode );
+            Tools.Prt( p, ChatColor.WHITE + "  p    :" + ChatColor.YELLOW + String.valueOf( Config.fpitch ), programCode );
+            Tools.Prt( p, ChatColor.WHITE + "  y    :" + ChatColor.YELLOW + String.valueOf( Config.fyaw ), programCode );
+        }
+        Tools.Prt( p, ChatColor.WHITE + "CitizenShip List :",programCode );
+        for( String gn : Config.rankName ) { Tools.Prt( p,ChatColor.WHITE + gn + " : " + ChatColor.YELLOW + Config.rankTime.get( gn ) + " 時間", programCode ); }
+        Tools.Prt( p, ChatColor.GREEN + "==========================", programCode );
     }
 }

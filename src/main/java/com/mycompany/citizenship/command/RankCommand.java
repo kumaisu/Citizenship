@@ -12,12 +12,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import com.mycompany.citizenship.Citizenship;
 import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.kumaisulibraries.Utility;
+import com.mycompany.citizenship.database.MySQLControl;
+import static com.mycompany.citizenship.RanksControl.Demotion;
+import static com.mycompany.citizenship.RanksControl.Promotion;
 import static com.mycompany.citizenship.config.Config.programCode;
-import net.milkbowl.vault.permission.Permission;
 
 /**
  *
@@ -44,69 +45,55 @@ public class RankCommand implements CommandExecutor {
     public boolean onCommand( CommandSender sender,Command cmd, String commandLabel, String[] args ) {
         Player player = ( sender instanceof Player ) ? ( Player )sender:( Player )null;
 
-        if ( cmd.getName().toLowerCase().equalsIgnoreCase( "ranks" ) ) {
-            String CtlCmd = "None";
-            String CmdArg = "none";
-            Player lookPlayer = null;
+        String CtlCmd = "None";
+        String CmdArg = "none";
+        Player lookPlayer = player;
 
-            if ( args.length > 0 ) CtlCmd = args[0];
-            if ( args.length > 1 ) {
-                CmdArg = args[1];
-                lookPlayer = Bukkit.getServer().getPlayer( CmdArg );
-            }
-
-            switch ( CtlCmd ) {
-                case "promotion":
-                    if ( lookPlayer != null ) {
-                        instance.RankC.Promotion( lookPlayer );
-                    }
-                    break;
-                case "demotion":
-                    if ( lookPlayer != null ) {
-                        instance.RankC.Demotion( lookPlayer );
-                    }
-                    break;
-                case "reload":
-                    instance.config.load();
-                    Tools.Prt( player, Utility.ReplaceString( "%$aLoginList Config Reloaded." ), programCode );
-                    return true;
-                case "status":
-                    instance.config.Status( player );
-                    return true;
-                case "Console":
-                    Tools.setDebug( CmdArg, programCode );
-                    Tools.Prt( player,
-                        ChatColor.GREEN + "System Debug Mode is [ " +
-                        ChatColor.RED + Tools.consoleFlag.get( programCode ) +
-                        ChatColor.GREEN + " ]",
-                        programCode
-                    );
-                    break;
-                case "Time":
-                    Tools.Prt( player, "Player Times:", programCode );
-                    if ( lookPlayer != null ) {
-                        Tools.Prt( player, "PlayTime = " + Float.toString( ( float ) ( ( float ) lookPlayer.getStatistic( Statistic.PLAY_ONE_MINUTE ) * 0.05 / 60 / 60)) + " hour" , programCode );
-                        Tools.Prt( player, "PlayTime = " + Float.toString( ( float ) lookPlayer.getStatistic( Statistic.PLAY_ONE_MINUTE ) ) + " Ticks(0.05sec)", programCode );
-                    } else { Tools.Prt( player, ChatColor.RED + "Player が Offline か存在しません", programCode ); }
-                    break;
-                case "Groups":
-                    Tools.Prt( player, "Player Groups:", programCode );
-                    if ( lookPlayer != null ) {
-                        Permission perm = null;
-                        RegisteredServiceProvider<Permission> permissionProvider = instance.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
-                        if (permissionProvider != null) {
-                            perm = permissionProvider.getProvider();
-                        }
-                        if ( perm != null ) { for ( String StrItem1 : perm.getPlayerGroups( lookPlayer ) ) Tools.Prt( player, "[" + StrItem1 + "]", programCode ); }
-                        //PermissionUser user = PermissionEx.getUser( lookPlayer );
-                    } else { Tools.Prt( player, ChatColor.RED + "Player が Offline か存在しません", programCode ); }
-                    break;
-                default:
-                    return false;
-            }
-            return true;
+        if ( args.length > 0 ) CtlCmd = args[0];
+        if ( args.length > 1 ) {
+            CmdArg = args[1];
+            lookPlayer = Bukkit.getServer().getPlayer( CmdArg );
         }
-        return false;
-    }
 
+        switch ( CtlCmd ) {
+            case "promotion":
+                if ( lookPlayer != null ) {
+                    Promotion( lookPlayer );
+                }
+                return true;
+            case "demotion":
+                if ( lookPlayer != null ) {
+                    Demotion( lookPlayer );
+                }
+                return true;
+            case "time":
+                Tools.Prt( player, "Player Times:", programCode );
+                if ( lookPlayer != null ) {
+                    MySQLControl DBRec = new MySQLControl();
+                    DBRec.GetSQL( lookPlayer.getUniqueId() );
+                    Tools.Prt( player, "Total TickTime  : " + Float.toString( ( float ) lookPlayer.getStatistic( Statistic.PLAY_ONE_MINUTE ) ) + " Ticks(0.05sec)", programCode );
+                    Tools.Prt( player, "総接続時間      : " + Float.toString( ( float ) ( lookPlayer.getStatistic( Statistic.PLAY_ONE_MINUTE ) * 0.05 / 60 / 60)) + " hour" , programCode );
+                    Tools.Prt( player, "ランク判定時間  : " + Float.toString( ( float ) ( ( lookPlayer.getStatistic( Statistic.PLAY_ONE_MINUTE ) - MySQLControl.offset ) * 0.05 / 60 / 60)) + " hour" , programCode );
+                } else { Tools.Prt( player, ChatColor.RED + "Player が Offline か存在しません", programCode ); }
+                return true;
+            case "Reload":
+                instance.config.load();
+                Tools.Prt( player, Utility.ReplaceString( "%$aCitizenShip Config Reloaded." ), programCode );
+                return true;
+            case "Status":
+                instance.config.Status( player );
+                return true;
+            case "Console":
+                Tools.setDebug( CmdArg, programCode );
+                Tools.Prt( player,
+                    ChatColor.GREEN + "System Debug Mode is [ " +
+                    ChatColor.RED + Tools.consoleFlag.get( programCode ) +
+                    ChatColor.GREEN + " ]",
+                    programCode
+                );
+                return true;
+            default:
+                return false;
+        }
+    }
 }

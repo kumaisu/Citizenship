@@ -62,12 +62,19 @@ public class ConfigManager {
         Config.Penalty          = config.getInt( "PenaltyTime", 0 );
         Config.Imprisonment     = config.getBoolean( "Imprisonment", false );
         
-        Config.fworld = config.getString( "world" );
-        Config.fx = config.getInt( "x" );
-        Config.fy = config.getInt( "y" );
-        Config.fz = config.getInt( "z" );
-        Config.fpitch = config.getInt( "pitch" );
-        Config.fyaw = config.getInt( "yaw" );
+        Config.fworld   = config.getString( "Prison.world" );
+        Config.fx       = Float.valueOf( config.getString( "Prison.x" ) );
+        Config.fy       = Float.valueOf( config.getString( "Prison.y" ) );
+        Config.fz       = Float.valueOf( config.getString( "Prison.z" ) );
+        Config.fyaw     = Float.valueOf( config.getString( "Prison.yaw" ) );
+        Config.fpitch   = Float.valueOf( config.getString( "Prison.pitch" ) );
+
+        Config.rworld   = config.getString( "Release.world" );
+        Config.rx       = Float.valueOf( config.getString( "Release.x" ) );
+        Config.ry       = Float.valueOf( config.getString( "Release.y" ) );
+        Config.rz       = Float.valueOf( config.getString( "Release.z" ) );
+        Config.ryaw     = Float.valueOf( config.getString( "Release.yaw" ) );
+        Config.rpitch   = Float.valueOf( config.getString( "Release.pitch" ) );
 
         Tools.consoleMode DebugFlag;
         try {
@@ -86,20 +93,28 @@ public class ConfigManager {
         Tools.Prt( p, ChatColor.WHITE + "DB Name      : " + ChatColor.YELLOW + Config.database, programCode );
         Tools.Prt( p, ChatColor.WHITE + "DB UserName  : " + ChatColor.YELLOW + Config.username, programCode );
         Tools.Prt( p, ChatColor.WHITE + "DB Password  : " + ChatColor.YELLOW + Config.password, programCode );
-        Tools.Prt( p, ChatColor.WHITE + "降格日数     : " + ChatColor.YELLOW + Config.demotion, programCode );
+        Tools.Prt( p, ChatColor.WHITE + "降格日数     : " + ChatColor.YELLOW + Config.demotion + " 日", programCode );
         Tools.Prt( p, ChatColor.WHITE + "昇格時ｱﾅｳﾝｽ  : " + ChatColor.YELLOW + ( Config.PromotBroadcast ? "する":"しない" ), programCode );
         Tools.Prt( p, ChatColor.WHITE + "牢獄グループ : " + ChatColor.YELLOW + Config.Prison, programCode );
         Tools.Prt( p, ChatColor.WHITE + "投獄期間     : " + ChatColor.YELLOW + Config.Penalty + "日", programCode );
         Tools.Prt( p, ChatColor.WHITE + "牢獄ジャンプ : " + ChatColor.YELLOW + ( Config.Imprisonment ? "する":"しない" ), programCode );
         if ( Config.Imprisonment ) {
-            Tools.Prt( p, ChatColor.WHITE + "  world:" + ChatColor.YELLOW + Config.fworld, programCode );
-            Tools.Prt( p, ChatColor.WHITE + "  x    :" + ChatColor.YELLOW + String.valueOf( Config.fx ), programCode );
-            Tools.Prt( p, ChatColor.WHITE + "  y    :" + ChatColor.YELLOW + String.valueOf( Config.fy ), programCode );
-            Tools.Prt( p, ChatColor.WHITE + "  z    :" + ChatColor.YELLOW + String.valueOf( Config.fz ), programCode );
-            Tools.Prt( p, ChatColor.WHITE + "  p    :" + ChatColor.YELLOW + String.valueOf( Config.fpitch ), programCode );
-            Tools.Prt( p, ChatColor.WHITE + "  y    :" + ChatColor.YELLOW + String.valueOf( Config.fyaw ), programCode );
+            Tools.Prt( p, ChatColor.WHITE + "牢獄行き先", programCode );
+            Tools.Prt( p, ChatColor.WHITE + "  world: " + ChatColor.YELLOW + Config.fworld, programCode );
+            Tools.Prt( p, ChatColor.WHITE + "  x    : " + ChatColor.YELLOW + String.valueOf( Config.fx ), programCode );
+            Tools.Prt( p, ChatColor.WHITE + "  y    : " + ChatColor.YELLOW + String.valueOf( Config.fy ), programCode );
+            Tools.Prt( p, ChatColor.WHITE + "  z    : " + ChatColor.YELLOW + String.valueOf( Config.fz ), programCode );
+            Tools.Prt( p, ChatColor.WHITE + "  yaw  : " + ChatColor.YELLOW + String.valueOf( Config.fyaw ), programCode );
+            Tools.Prt( p, ChatColor.WHITE + "  pitch: " + ChatColor.YELLOW + String.valueOf( Config.fpitch ), programCode );
+            Tools.Prt( p, ChatColor.WHITE + "釈放行き先", programCode );
+            Tools.Prt( p, ChatColor.WHITE + "  world: " + ChatColor.YELLOW + Config.rworld, programCode );
+            Tools.Prt( p, ChatColor.WHITE + "  x    : " + ChatColor.YELLOW + String.valueOf( Config.rx ), programCode );
+            Tools.Prt( p, ChatColor.WHITE + "  y    : " + ChatColor.YELLOW + String.valueOf( Config.ry ), programCode );
+            Tools.Prt( p, ChatColor.WHITE + "  z    : " + ChatColor.YELLOW + String.valueOf( Config.rz ), programCode );
+            Tools.Prt( p, ChatColor.WHITE + "  yaw  : " + ChatColor.YELLOW + String.valueOf( Config.ryaw ), programCode );
+            Tools.Prt( p, ChatColor.WHITE + "  pitch: " + ChatColor.YELLOW + String.valueOf( Config.rpitch ), programCode );
         }
-        Tools.Prt( p, ChatColor.WHITE + "CitizenShip List :",programCode );
+        Tools.Prt( p, ChatColor.WHITE + "CitizenShip List : 昇格時間",programCode );
         for( String gn : Config.rankName ) { Tools.Prt( p,ChatColor.WHITE + gn + " : " + ChatColor.YELLOW + Config.rankTime.get( gn ) + " 時間", programCode ); }
         Tools.Prt( p, ChatColor.GREEN + "==========================", programCode );
     }

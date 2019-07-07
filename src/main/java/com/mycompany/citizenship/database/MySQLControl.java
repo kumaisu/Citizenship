@@ -83,13 +83,13 @@ public class MySQLControl {
             String sql = "INSERT INTO player (uuid, name, logout, offset) VALUES (?, ?, ?, ?);";
             PreparedStatement preparedStatement = connection.prepareStatement( sql );
             preparedStatement.setString( 1, player.getUniqueId().toString() );
-            preparedStatement.setString( 2, player.getDisplayName() );
+            preparedStatement.setString( 2, player.getName() );
             preparedStatement.setString( 3, sdf.format( new Date() ) );
             preparedStatement.setInt( 4, 0 );
 
             preparedStatement.executeUpdate();
             
-            this.name = player.getDisplayName();
+            this.name = player.getName();
             this.logout = new Date();
             this.offset = 0;
             

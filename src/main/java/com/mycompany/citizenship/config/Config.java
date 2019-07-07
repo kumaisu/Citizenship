@@ -15,7 +15,7 @@ import java.util.HashMap;
  */
 public class Config {
 
-    public static String programCode = "CR";
+    public static String programCode = "CS";
 
     public static String host = "local";
     public static String port = "3306";
@@ -32,10 +32,17 @@ public class Config {
     public static int Penalty = 0;
 
     public static boolean Imprisonment = false;
-    public static int fx;
-    public static int fy;
-    public static int fz;
-    public static int fpitch;
-    public static int fyaw;
+    public static float fx;
+    public static float fy;
+    public static float fz;
+    public static float fyaw;
+    public static float fpitch;
     public static String fworld;
+
+    public static float rx;
+    public static float ry;
+    public static float rz;
+    public static float ryaw;
+    public static float rpitch;
+    public static String rworld;
 }

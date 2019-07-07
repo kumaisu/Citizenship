@@ -7,7 +7,7 @@ Citizenship は、プレイヤーのログイン経過時間に応じて、Permi
 Citizenship is a plugin that changes the Permission group according to the player login elapsed time  
   
 ## Support  
-Open a new issue here: [https//github.com/kumaisu/LoginControl/issues](https://github.com/kumaisu/Citizenship/issues)  
+Open a new issue here: [https//github.com/kumaisu/Citizenship/issues](https://github.com/kumaisu/Citizenship/issues)  
   
 ## Features  
 ログインしていないプレイヤーの投獄処理  
@@ -18,7 +18,7 @@ Github projects have a "releases" link on their home page.
 If you still don't see it, [click here](https://github.com/kumaisu/Citizenship/releases) for PremisesEvent releases.  
   
 ## Wikis  
-[Login Control Wiki](https://github.com/kumaisu/Citizenship/wiki)  
+[Citizen Ship Wiki](https://github.com/kumaisu/Citizenship/wiki)  
   
 ## Function
 1.設定されたログイン時間を経過すると、PermissionExのコマンドでグループを変更します  
@@ -33,10 +33,10 @@ If you still don't see it, [click here](https://github.com/kumaisu/Citizenship/r
   
 ## Usage  
   
-/jail [player name] [reason]    : imprison
-/jail [player name] release     : release
+/jail [player name] [reason]    : imprison  
+/jail [player name] release     : release  
   
-/ranks time [player name]
+/ranks time [player name]  
 /ranks Reload  
 /ranks Status  
 /ranks Console [max/full/normal/none]  

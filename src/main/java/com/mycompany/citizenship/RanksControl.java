@@ -35,7 +35,7 @@ public class RanksControl {
     public static boolean Promotion( Player player ) {
         Tools.Prt( "Promotion Process", Tools.consoleMode.full, programCode );
         String baseGroup = getGroup( player );
-        
+
         if ( baseGroup.equals("") ) { return false; }
 
         try {
@@ -100,7 +100,7 @@ public class RanksControl {
             Tools.Prt( "Cant get Group", programCode );
             return "";
         }
-        
+
         for ( String StrItem1 : perm.getPlayerGroups( player ) ) Tools.Prt( "{" + StrItem1 + "}", Tools.consoleMode.full, programCode );
 
         String NowGroup = perm.getPlayerGroups( player )[0];
@@ -158,6 +158,14 @@ public class RanksControl {
         int checkHour = ( int ) Math.round( ( player.getStatistic( Statistic.PLAY_ONE_MINUTE ) - MySQLControl.offset ) * 0.05 / 60 / 60 );
 
         String NowGroup = getGroup( player );
+
+        //
+        //  不在投獄時処理
+        //
+        if ( MySQLControl.jail = 1 ) {
+            toJail( player, "不在時処理されました" );
+            DBRec.setJailToSQL( player.getUniqueId(), 0 );
+        }
 
         //
         //  降格判定

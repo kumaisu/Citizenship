@@ -18,7 +18,35 @@ import static com.mycompany.citizenship.config.Config.programCode;
  * @author sugichan
  */
 public class PlayerControl {
-    
+
+    /**
+     * 投獄処理
+     *
+     */
+    public static boolean toJail( Player player, String Reason ) {
+        boolean retStat = false;
+
+        //  降格処理
+        if ( !Config.Prison.equals( "" ) ) {
+            Tools.Prt( "Demotion Citizenship", Tools.consoleMode.full, programCode );
+            setGroup( jailPlayer, Config.Prison );
+            retStat = true;
+        }
+
+        //  投獄処理
+        if ( Config.Imprisonment ) {
+            JailTeleport( jailPlayer );
+            jailPlayer.sendTitle(
+                ChatColor.RED + "投獄されました",
+                ChatColor.YELLOW + Reson,
+                0, 100, 0 );
+            Bukkit.broadcastMessage( ChatColor.RED + jailPlayer.getName() + " さんは、投獄されました" );
+            retStat = true;
+        }
+
+        return retStat;
+    }
+
     /**
      * 牢獄エリアへの強制転送コマンド
      *

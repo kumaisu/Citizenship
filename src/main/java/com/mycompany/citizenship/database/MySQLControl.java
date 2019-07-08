@@ -31,7 +31,8 @@ public class MySQLControl {
     public static String name = "Unknown";
     public static Date logout;
     public static int offset = 0;
-    
+    public static int jail = 0;
+
     /**
      * ライブラリー読込時の初期設定
      *
@@ -62,10 +63,10 @@ public class MySQLControl {
             //		uuid : varchar(36)	player uuid
             //		name : varchar(20)	player name
             //		logiut : DATETIME	last Logout Date
-            //		connect : int 		total Login Time
-            //		Rank : int		Citizenship Rank
+            //		offset : int 		total Login Time
+            //		jail : int		to jail flag
             //  存在すれば、無視される
-            String sql = "CREATE TABLE IF NOT EXISTS player( uuid varchar(36), name varchar(20), logout DATETIME, offset int )";
+            String sql = "CREATE TABLE IF NOT EXISTS player( uuid varchar(36), name varchar(20), logout DATETIME, offset int, jail int )";
             PreparedStatement preparedStatement = connection.prepareStatement( sql );
             preparedStatement.executeUpdate();
         }
@@ -80,19 +81,20 @@ public class MySQLControl {
         try {
             openConnection();
 
-            String sql = "INSERT INTO player (uuid, name, logout, offset) VALUES (?, ?, ?, ?);";
+            String sql = "INSERT INTO player (uuid, name, logout, offset, jail) VALUES (?, ?, ?, ?, ?);";
             PreparedStatement preparedStatement = connection.prepareStatement( sql );
             preparedStatement.setString( 1, player.getUniqueId().toString() );
             preparedStatement.setString( 2, player.getName() );
             preparedStatement.setString( 3, sdf.format( new Date() ) );
             preparedStatement.setInt( 4, 0 );
+            preparedStatement.setInt( 5, 0 );
 
             preparedStatement.executeUpdate();
-            
+
             this.name = player.getName();
             this.logout = new Date();
             this.offset = 0;
-            
+
             Tools.Prt( "Add Data to SQL Success.", Tools.consoleMode.full , programCode );
 
         } catch ( ClassNotFoundException | SQLException e ) {
@@ -133,9 +135,10 @@ public class MySQLControl {
             String sql = "SELECT * FROM player WHERE uuid = '" + uuid.toString() + "';";
             ResultSet rs = stmt.executeQuery( sql );
             if ( rs.next() ) {
-                this.name = rs.getString( "name" );
+                this.name   = rs.getString( "name" );
                 this.logout = rs.getDate( "logout" );
                 this.offset = rs.getInt( "offset" );
+                this.jail   = rs.getInt( "jail" );
                 Tools.Prt( "Get Data from SQL Success.", Tools.consoleMode.full , programCode );
                 return true;
             }
@@ -184,4 +187,22 @@ public class MySQLControl {
         }
     }
 
+    /**
+     * Jail Flag
+     * o : 通常
+     * 1 : 未ログイン時の投獄フラグ
+     */
+    public void SetJailToSQL( UUID uuid, int jail ) {
+        try {
+            openConnection();
+
+            String sql = "UPDATE player SET jail = " + jail + " WHERE uuid = '" + uuid.toString() + "';";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.executeUpdate();
+
+            Tools.Prt( "Set Jail Data to SQL Success.", Tools.consoleMode.full , programCode );
+        } catch ( ClassNotFoundException | SQLException e ) {
+            Tools.Prt( "Error ChangeStatus", programCode );
+        }
+    }
 }

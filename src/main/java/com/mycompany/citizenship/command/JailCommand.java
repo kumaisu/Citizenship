@@ -58,8 +58,12 @@ public class JailCommand implements CommandExecutor {
         if ( jailPlayer == null ) {
             Tools.Prt( player, ChatColor.RED + "対象プレイヤーが居ません", programCode );
             return false;
+            //  オフラインプレイヤーの扱い作り込む
+            //  オフライン時に釈放はどうするか？（しなくても良いんじゃね？）
+            //  やるなら、jailステータスを2とかにして、判定
+            setJailToSQL( player.getUniqueId(), 1 );
         }
-        
+
         if ( args.length > 1 ) { Reson = args[1]; }
         Tools.Prt( "Jail Reson : " + Reson, Tools.consoleMode.normal, programCode );
 
@@ -72,21 +76,6 @@ public class JailCommand implements CommandExecutor {
             return true;
         }
 
-        //  降格処理
-        if ( !Config.Prison.equals( "" ) ) {
-            Tools.Prt( "Demotion Citizenship", Tools.consoleMode.full, programCode );
-            setGroup( jailPlayer, Config.Prison );
-        }
-
-        if ( Config.Imprisonment ) {
-            JailTeleport( jailPlayer );
-            jailPlayer.sendTitle(
-                ChatColor.RED + "投獄されました",
-                ChatColor.YELLOW + Reson,
-                0, 100, 0 );
-            Bukkit.broadcastMessage( ChatColor.RED + jailPlayer.getName() + " さんは、投獄されました" );
-        }
-
-        return true;
+        return toJail( jailPlayer, Reason );
     }
 }

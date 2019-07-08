@@ -188,9 +188,13 @@ public class MySQLControl {
     }
 
     /**
-     * Jail Flag
-     * o : 通常
-     * 1 : 未ログイン時の投獄フラグ
+     * Jail Flag 投獄フラグ
+     * o : 通常（なし）
+     * 1 : 未ログイン者の投獄フラグ
+     * 2 : 未ログイン者の釈放フラグ（未使用）
+     *
+     * @param uuid
+     * @param jail
      */
     public void SetJailToSQL( UUID uuid, int jail ) {
         try {

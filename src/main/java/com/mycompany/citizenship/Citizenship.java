@@ -11,10 +11,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.citizenship.config.ConfigManager;
 import com.mycompany.citizenship.command.RankCommand;
 import com.mycompany.citizenship.command.JailCommand;
+import com.mycompany.citizenship.database.MySQLControl;
 import static com.mycompany.citizenship.RanksControl.CheckRank;
 import static com.mycompany.citizenship.config.Config.programCode;
 
@@ -54,9 +56,18 @@ public class Citizenship extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerLogin( PlayerJoinEvent event ) throws UnknownHostException {
         Player player = event.getPlayer();
-
         Tools.Prt( "onPlayerLogin process", Tools.consoleMode.full, programCode );
-
         CheckRank( player );
+    }
+
+    /**
+     * プレイヤーがログアウトした時に発生するイベント
+     *
+     * @param event
+     */
+    @EventHandler
+    public void onPlayerQuit( PlayerQuitEvent event ) {
+        MySQLControl DBRec = new MySQLControl();
+        DBRec.SetLogoutToSQL( event.getPlayer().getUniqueId() );
     }
 }

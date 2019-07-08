@@ -16,7 +16,8 @@ import com.mycompany.citizenship.config.Config;
 import com.mycompany.citizenship.database.MySQLControl;
 import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.kumaisulibraries.Utility;
-import static com.mycompany.citizenship.PlayerControl.ReleaseTeleport;
+import static com.mycompany.citizenship.PlayerControl.toJail;
+import static com.mycompany.citizenship.PlayerControl.outJail;
 import static com.mycompany.citizenship.config.Config.programCode;
 import net.milkbowl.vault.permission.Permission;
 
@@ -162,9 +163,18 @@ public class RanksControl {
         //
         //  不在投獄時処理
         //
-        if ( MySQLControl.jail = 1 ) {
+        if ( MySQLControl.jail == 1 ) {
             toJail( player, "不在時処理されました" );
-            DBRec.setJailToSQL( player.getUniqueId(), 0 );
+            DBRec.SetJailToSQL( player.getUniqueId(), 0 );
+            return true;
+        }
+
+        //
+        //  ペナルティユーザーに対する処理
+        //
+        if ( NowGroup.equals( Config.Prison ) ) {
+            if ( progress > Config.Penalty ) { return outJail( player ); }
+            return false;
         }
 
         //
@@ -176,18 +186,6 @@ public class RanksControl {
                 Demotion( player );
                 return true;
             }
-        }
-
-        //
-        //  ペナルティユーザーに対する処理
-        //
-        if ( NowGroup.equals( Config.Prison ) ) {
-            if ( progress > Config.Penalty ) {
-                setGroup( player, Config.rankName.get( 0 ) );
-                ReleaseTeleport( player );
-                return true;
-            }
-            return false;
         }
 
         //

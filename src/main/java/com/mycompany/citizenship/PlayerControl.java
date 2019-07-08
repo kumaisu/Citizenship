@@ -5,12 +5,15 @@
  */
 package com.mycompany.citizenship;
 
-import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import static org.bukkit.Bukkit.getWorld;
 import com.mycompany.citizenship.config.Config;
 import com.mycompany.kumaisulibraries.Tools;
+import static com.mycompany.citizenship.RanksControl.setGroup;
 import static com.mycompany.citizenship.config.Config.programCode;
 
 /**
@@ -22,6 +25,9 @@ public class PlayerControl {
     /**
      * 投獄処理
      *
+     * @param player
+     * @param Reason
+     * @return 
      */
     public static boolean toJail( Player player, String Reason ) {
         boolean retStat = false;
@@ -29,24 +35,39 @@ public class PlayerControl {
         //  降格処理
         if ( !Config.Prison.equals( "" ) ) {
             Tools.Prt( "Demotion Citizenship", Tools.consoleMode.full, programCode );
-            setGroup( jailPlayer, Config.Prison );
+            setGroup( player, Config.Prison );
             retStat = true;
         }
 
         //  投獄処理
         if ( Config.Imprisonment ) {
-            JailTeleport( jailPlayer );
-            jailPlayer.sendTitle(
+            JailTeleport( player );
+            player.sendTitle(
                 ChatColor.RED + "投獄されました",
-                ChatColor.YELLOW + Reson,
+                ChatColor.YELLOW + Reason,
                 0, 100, 0 );
-            Bukkit.broadcastMessage( ChatColor.RED + jailPlayer.getName() + " さんは、投獄されました" );
+            Bukkit.broadcastMessage( ChatColor.RED + player.getDisplayName() + " さんは、投獄されました" );
             retStat = true;
         }
 
         return retStat;
     }
 
+    /**
+     * 釈放処理
+     *
+     * @param player
+     * @return 
+     */
+    public static boolean outJail( Player player ) {
+        boolean retStat = false;
+
+        setGroup( player, Config.rankName.get( 0 ) );
+        ReleaseTeleport( player );
+
+        return retStat;
+    }
+    
     /**
      * 牢獄エリアへの強制転送コマンド
      *

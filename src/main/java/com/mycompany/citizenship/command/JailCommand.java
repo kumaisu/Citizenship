@@ -8,16 +8,17 @@ package com.mycompany.citizenship.command;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import com.mycompany.citizenship.Citizenship;
 import com.mycompany.citizenship.config.Config;
 import com.mycompany.kumaisulibraries.Tools;
-import static com.mycompany.citizenship.PlayerControl.JailTeleport;
-import static com.mycompany.citizenship.PlayerControl.ReleaseTeleport;
+import com.mycompany.citizenship.database.MySQLControl;
+import static com.mycompany.citizenship.PlayerControl.toJail;
+import static com.mycompany.citizenship.PlayerControl.outJail;
 import static com.mycompany.citizenship.RanksControl.getGroup;
-import static com.mycompany.citizenship.RanksControl.setGroup;
 import static com.mycompany.citizenship.config.Config.programCode;
 
 /**
@@ -49,19 +50,23 @@ public class JailCommand implements CommandExecutor {
 
         Player jailPlayer = null;
         String Reson = "";
+        String PrisonerName = "";
 
         if ( args.length > 0 ) {
-            String CmdArg = args[0];
-            jailPlayer = Bukkit.getServer().getPlayer( CmdArg );
+            PrisonerName = args[0];
+            jailPlayer = Bukkit.getServer().getPlayer( PrisonerName );
         }
 
         if ( jailPlayer == null ) {
-            Tools.Prt( player, ChatColor.RED + "対象プレイヤーが居ません", programCode );
-            return false;
-            //  オフラインプレイヤーの扱い作り込む
-            //  オフライン時に釈放はどうするか？（しなくても良いんじゃね？）
-            //  やるなら、jailステータスを2とかにして、判定
-            setJailToSQL( player.getUniqueId(), 1 );
+            OfflinePlayer offlineJailPlayer = Bukkit.getOfflinePlayer( PrisonerName );
+            if ( offlineJailPlayer == null ) {
+                Tools.Prt( player, ChatColor.RED + "対象プレイヤーが居ません", programCode );
+                return false;
+            } else {
+                MySQLControl DBRec = new MySQLControl();
+                DBRec.SetJailToSQL( offlineJailPlayer.getUniqueId(), 1 );
+                return true;
+            }
         }
 
         if ( args.length > 1 ) { Reson = args[1]; }
@@ -69,13 +74,10 @@ public class JailCommand implements CommandExecutor {
 
         //  釈放処理
         if ( Reson.equalsIgnoreCase( "release" ) ) {
-            if ( getGroup( jailPlayer ).equals( Config.Prison ) ) {
-                setGroup( jailPlayer, Config.rankName.get( 0 ) );
-                ReleaseTeleport( jailPlayer );
-            }
+            if ( getGroup( jailPlayer ).equals( Config.Prison ) ) { outJail( jailPlayer ); }
             return true;
         }
 
-        return toJail( jailPlayer, Reason );
+        return toJail( jailPlayer, Reson );
     }
 }

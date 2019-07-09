@@ -157,7 +157,9 @@ public class MySQLControl {
         try {
             openConnection();
 
-            String sql = "UPDATE player SET logout = " + sdf.format( new Date() ) + " WHERE uuid = '" + uuid.toString() + "';";
+            String sql = "UPDATE player SET logout = '" + sdf.format( new Date() ) + "' WHERE uuid = '" + uuid.toString() + "';";
+            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.full , programCode );
+
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.executeUpdate();
 
@@ -178,6 +180,8 @@ public class MySQLControl {
             openConnection();
 
             String sql = "UPDATE player SET offset = " + offset + " WHERE uuid = '" + uuid.toString() + "';";
+            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.full , programCode );
+
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.executeUpdate();
 
@@ -201,6 +205,8 @@ public class MySQLControl {
             openConnection();
 
             String sql = "UPDATE player SET jail = " + jail + " WHERE uuid = '" + uuid.toString() + "';";
+            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.full , programCode );
+
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.executeUpdate();
 

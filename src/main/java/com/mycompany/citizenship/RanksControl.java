@@ -50,7 +50,9 @@ public class RanksControl {
                 ChatColor.AQUA + NewGroup +
                 ChatColor.YELLOW + " に昇格しました";
             if ( Config.PromotBroadcast ) {
-                Bukkit.broadcastMessage( "<鯖アナウンス> " + LevelupMessage );
+                LevelupMessage = "<鯖アナウンス> " + LevelupMessage;
+                Bukkit.broadcastMessage( LevelupMessage );
+                Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), "discord broadcast " + LevelupMessage );
             } else {
                 Tools.Prt( player, LevelupMessage, Tools.consoleMode.normal, programCode );
             }
@@ -181,6 +183,7 @@ public class RanksControl {
         //  降格判定
         //
         if ( Config.demotion != 0 ) {
+            Tools.Prt( "Logout date = " + MySQLControl.logout.toString(), Tools.consoleMode.full, programCode);
             Tools.Prt( "Diff Date : " + progress + " 日", Tools.consoleMode.full, programCode );
             if ( progress > Config.demotion ) {
                 Demotion( player );

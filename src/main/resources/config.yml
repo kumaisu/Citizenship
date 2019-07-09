@@ -37,16 +37,16 @@ Imprisonment: false
 #   牢獄エリアの座標
 Prison:
   world: world
-  x: 0
-  y: 0
-  z: 0
-  yaw: 0
-  pitch: 0
+  x: 0.0
+  y: 0.0
+  z: 0.0
+  yaw: 0.0
+  pitch: 0.0
 #   釈放時の転送座標
 Release:
   world: world
-  x: 0
-  y: 0
-  z: 0
-  yaw: 0
-  pitch: 0
+  x: 0.0
+  y: 0.0
+  z: 0.0
+  yaw: 0.0
+  pitch: 0.0

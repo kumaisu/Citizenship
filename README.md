@@ -20,27 +20,6 @@ If you still don't see it, [click here](https://github.com/kumaisu/Citizenship/r
 ## Wikis  
 [Citizen Ship Wiki](https://github.com/kumaisu/Citizenship/wiki)  
   
-## Function
-1.設定されたログイン時間を経過すると、PermissionExのコマンドでグループを変更します  
-2.長期間ログインの無いプレイヤーに対してグループを変更します（降格などに利用）  
-3.一時的にプレイヤーを作業不能にするグループを使って、投獄を行えます  
-4.投獄期間を設定し、自動的に復帰できるようにします  
-  
-1. Change the group with PermissionEx command when the set login time has passed  
-2. Change the group for players who have not logged in for a long time (use for demotion etc.)  
-3. You can imprison using a group that temporarily renders players inoperable  
-4. Set the period of imprisonment and allow it to return automatically  
-  
-## Usage  
-  
-/jail [player name] [reason]    : imprison  
-/jail [player name] release     : release  
-  
-/ranks time [player name]  
-/ranks Reload  
-/ranks Status  
-/ranks Console [max/full/normal/none]  
-  
 **How to Install**  
 1.サーバーのプラグインディレクトリに Citizenship.jar を入れて起動します  
 2.一旦終了し、作成されたConfig.ymlを編集します  

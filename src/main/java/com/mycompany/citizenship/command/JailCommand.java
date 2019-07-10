@@ -46,7 +46,7 @@ public class JailCommand implements CommandExecutor {
     public boolean onCommand( CommandSender sender,Command cmd, String commandLabel, String[] args ) {
         Player player = ( sender instanceof Player ) ? ( Player ) sender : ( Player ) null;
 
-        Tools.Prt( "CitizenShip Jail Command", Tools.consoleMode.normal, programCode );
+        Tools.Prt( "CitizenShip Jail Command", Tools.consoleMode.full, programCode );
 
         Player jailPlayer = null;
         String Reson = "";

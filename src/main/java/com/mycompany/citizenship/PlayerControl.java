@@ -10,7 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.Statistic;
 import static org.bukkit.Bukkit.getWorld;
 import com.mycompany.citizenship.config.Config;
 import com.mycompany.kumaisulibraries.Tools;
@@ -18,8 +17,6 @@ import static com.mycompany.citizenship.RanksControl.setGroup;
 import static com.mycompany.citizenship.config.Config.programCode;
 import com.mycompany.citizenship.database.MySQLControl;
 import java.util.UUID;
-import static org.bukkit.Bukkit.getServer;
-import org.bukkit.OfflinePlayer;
 
 /**
  *

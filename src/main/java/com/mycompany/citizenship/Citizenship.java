@@ -57,7 +57,7 @@ public class Citizenship extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerLogin( PlayerJoinEvent event ) throws UnknownHostException {
         Player player = event.getPlayer();
-        Tools.Prt( "onPlayerLogin process", Tools.consoleMode.full, programCode );
+        Tools.Prt( "onPlayerLogin process", Tools.consoleMode.max, programCode );
         CheckRank( player );
     }
 

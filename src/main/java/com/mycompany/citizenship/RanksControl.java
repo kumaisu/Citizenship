@@ -42,7 +42,7 @@ public class RanksControl {
         try {
             String NewGroup = Config.rankName.get( Config.rankName.indexOf( baseGroup ) + 1 );
             String Cmd = "pex user " + player.getName() + " group set " + NewGroup;
-            Tools.Prt( "Command : " + Cmd, Tools.consoleMode.full, programCode );
+            Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
 
             String LevelupMessage = 
@@ -77,7 +77,7 @@ public class RanksControl {
 
         try {
             String Cmd = "pex user " + player.getName() + " group set " + Config.rankName.get( Config.rankName.indexOf( baseGroup ) -1 );
-            Tools.Prt( "Command : " + Cmd, Tools.consoleMode.full, programCode );
+            Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
             MySQLControl DBRec = new MySQLControl();
             DBRec.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
@@ -104,7 +104,7 @@ public class RanksControl {
             return "";
         }
 
-        for ( String StrItem1 : perm.getPlayerGroups( player ) ) Tools.Prt( "{" + StrItem1 + "}", Tools.consoleMode.full, programCode );
+        for ( String StrItem1 : perm.getPlayerGroups( player ) ) Tools.Prt( "{" + StrItem1 + "}", Tools.consoleMode.max, programCode );
 
         String NowGroup = perm.getPlayerGroups( player )[0];
         Tools.Prt( "NowGroup [" + NowGroup + "]", Tools.consoleMode.full, programCode );
@@ -121,8 +121,9 @@ public class RanksControl {
     public static boolean setGroup( Player player, String newGroup ) {
         try {
             String Cmd = "pex user " + player.getName() + " group set " + newGroup;
-            Tools.Prt( "Command : " + Cmd, Tools.consoleMode.full, programCode );
+            Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
+            //  現状、牢獄処理しか使っていないので、ここでオフセットをリセットしている
             MySQLControl DBRec = new MySQLControl();
             DBRec.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
             return true;

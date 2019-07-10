@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import org.bukkit.entity.Player;
+import org.bukkit.Statistic;
 import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.citizenship.config.Config;
 import static com.mycompany.citizenship.config.Config.programCode;
@@ -30,6 +31,7 @@ public class MySQLControl {
 
     public static String name = "Unknown";
     public static Date logout;
+    public static int tick = 0;
     public static int offset = 0;
     public static int jail = 0;
 
@@ -63,10 +65,11 @@ public class MySQLControl {
             //		uuid : varchar(36)	player uuid
             //		name : varchar(20)	player name
             //		logiut : DATETIME	last Logout Date
-            //		offset : int 		total Login Time
+            //          tick : int              total Tick Time
+            //		offset : int 		total Login Time offset
             //		jail : int		to jail flag
             //  存在すれば、無視される
-            String sql = "CREATE TABLE IF NOT EXISTS player( uuid varchar(36), name varchar(20), logout DATETIME, offset int, jail int )";
+            String sql = "CREATE TABLE IF NOT EXISTS player( uuid varchar(36), name varchar(20), logout DATETIME, tick int, offset int, jail int )";
             PreparedStatement preparedStatement = connection.prepareStatement( sql );
             preparedStatement.executeUpdate();
         }
@@ -81,13 +84,15 @@ public class MySQLControl {
         try {
             openConnection();
 
-            String sql = "INSERT INTO player (uuid, name, logout, offset, jail) VALUES (?, ?, ?, ?, ?);";
+            String sql = "INSERT INTO player (uuid, name, logout, tick, offset, jail) VALUES (?, ?, ?, ?, ?, ?);";
+            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
             PreparedStatement preparedStatement = connection.prepareStatement( sql );
             preparedStatement.setString( 1, player.getUniqueId().toString() );
             preparedStatement.setString( 2, player.getName() );
             preparedStatement.setString( 3, sdf.format( new Date() ) );
-            preparedStatement.setInt( 4, 0 );
+            preparedStatement.setInt( 4, player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
             preparedStatement.setInt( 5, 0 );
+            preparedStatement.setInt( 6, 0 );
 
             preparedStatement.executeUpdate();
 
@@ -112,6 +117,7 @@ public class MySQLControl {
         try {
             openConnection();
             String sql = "DELETE FROM player WHERE uuid = '" + uuid.toString() + "'";
+            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
             PreparedStatement preparedStatement = connection.prepareStatement( sql );
             preparedStatement.executeUpdate();
             Tools.Prt( "Delete Data from SQL Success.", Tools.consoleMode.full , programCode );
@@ -133,10 +139,12 @@ public class MySQLControl {
             openConnection();
             Statement stmt = connection.createStatement();
             String sql = "SELECT * FROM player WHERE uuid = '" + uuid.toString() + "';";
+            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
             ResultSet rs = stmt.executeQuery( sql );
             if ( rs.next() ) {
                 this.name   = rs.getString( "name" );
                 this.logout = rs.getDate( "logout" );
+                this.tick   = rs.getInt( "tick" );
                 this.offset = rs.getInt( "offset" );
                 this.jail   = rs.getInt( "jail" );
                 Tools.Prt( "Get Data from SQL Success.", Tools.consoleMode.full , programCode );
@@ -158,12 +166,34 @@ public class MySQLControl {
             openConnection();
 
             String sql = "UPDATE player SET logout = '" + sdf.format( new Date() ) + "' WHERE uuid = '" + uuid.toString() + "';";
-            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.full , programCode );
+            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.executeUpdate();
 
             Tools.Prt( "Set logout Date to SQL Success.", Tools.consoleMode.full , programCode );
+        } catch ( ClassNotFoundException | SQLException e ) {
+            Tools.Prt( "Error ChangeStatus", programCode );
+        }
+    }
+
+    /**
+     * UUIDからプレイヤーのTickTimeを更新する
+     *
+     * @param uuid
+     * @param tickTime
+     */
+    public void SetTickTimeToSQL( UUID uuid, int tickTime ) {
+        try {
+            openConnection();
+
+            String sql = "UPDATE player SET tick = " + tickTime + " WHERE uuid = '" + uuid.toString() + "';";
+            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.executeUpdate();
+
+            Tools.Prt( "Set TickTime to SQL Success.", Tools.consoleMode.full , programCode );
         } catch ( ClassNotFoundException | SQLException e ) {
             Tools.Prt( "Error ChangeStatus", programCode );
         }
@@ -180,7 +210,7 @@ public class MySQLControl {
             openConnection();
 
             String sql = "UPDATE player SET offset = " + offset + " WHERE uuid = '" + uuid.toString() + "';";
-            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.full , programCode );
+            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.executeUpdate();
@@ -205,7 +235,7 @@ public class MySQLControl {
             openConnection();
 
             String sql = "UPDATE player SET jail = " + jail + " WHERE uuid = '" + uuid.toString() + "';";
-            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.full , programCode );
+            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.executeUpdate();

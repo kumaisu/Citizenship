@@ -10,11 +10,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.Statistic;
 import static org.bukkit.Bukkit.getWorld;
 import com.mycompany.citizenship.config.Config;
 import com.mycompany.kumaisulibraries.Tools;
 import static com.mycompany.citizenship.RanksControl.setGroup;
 import static com.mycompany.citizenship.config.Config.programCode;
+import com.mycompany.citizenship.database.MySQLControl;
+import java.util.UUID;
+import static org.bukkit.Bukkit.getServer;
+import org.bukkit.OfflinePlayer;
 
 /**
  *
@@ -34,7 +39,7 @@ public class PlayerControl {
 
         //  降格処理
         if ( !Config.Prison.equals( "" ) ) {
-            Tools.Prt( "Demotion Citizenship", Tools.consoleMode.full, programCode );
+            Tools.Prt( "Demotion Citizenship", Tools.consoleMode.max, programCode );
             setGroup( player, Config.Prison );
             retStat = true;
         }
@@ -94,5 +99,38 @@ public class PlayerControl {
         loc.setPitch( Config.rpitch );
         loc.setYaw( Config.ryaw );
         player.teleport( loc );
+    }
+
+    /**
+     * プレイヤーの接続時間取得
+     *
+     * @param player
+     * @param name
+     * @return 
+     */
+    public static boolean getAccess( Player player, String name ) {
+        if ( name.equals( "" ) ) { return false; }
+
+        UUID lookUUID;
+        
+        Tools.Prt( "Get Access Time [" + name + "]", Tools.consoleMode.max, programCode );
+
+        if ( Bukkit.getServer().getPlayer( name ) == null ) {
+            Tools.Prt( "Get Offline Player Data : " + Bukkit.getServer().getOfflinePlayer( name ).getName(), Tools.consoleMode.full, programCode );
+            lookUUID = Bukkit.getServer().getOfflinePlayer( name ).getUniqueId();
+        } else {
+            lookUUID = Bukkit.getServer().getPlayer( name ).getUniqueId();
+        }
+
+        MySQLControl DBRec = new MySQLControl();
+        if ( DBRec.GetSQL( lookUUID ) ) {
+            Tools.Prt( player, "Total TickTime  : " + Float.toString( ( float ) MySQLControl.tick ) + " Ticks(0.05sec)", programCode );
+            Tools.Prt( player, "総接続時間      : " + Float.toString( ( float ) ( MySQLControl.tick * 0.05 / 60 / 60)) + " hour" , programCode );
+            Tools.Prt( player, "ランク判定時間  : " + Float.toString( ( float ) ( ( MySQLControl.tick - MySQLControl.offset ) * 0.05 / 60 / 60)) + " hour" , programCode );
+            return true;
+        } else {
+            Tools.Prt( player, ChatColor.RED + "Player[" + name + "]が存在しません", programCode );
+            return false;
+        }
     }
 }

@@ -7,15 +7,14 @@ package com.mycompany.citizenship.command;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Statistic;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import com.mycompany.citizenship.Citizenship;
+import static com.mycompany.citizenship.PlayerControl.getAccess;
 import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.kumaisulibraries.Utility;
-import com.mycompany.citizenship.database.MySQLControl;
 import static com.mycompany.citizenship.RanksControl.Demotion;
 import static com.mycompany.citizenship.RanksControl.Promotion;
 import static com.mycompany.citizenship.config.Config.programCode;
@@ -43,10 +42,10 @@ public class RankCommand implements CommandExecutor {
      */
     @Override
     public boolean onCommand( CommandSender sender,Command cmd, String commandLabel, String[] args ) {
-        Player player = ( sender instanceof Player ) ? ( Player )sender:( Player )null;
+        Player player = ( sender instanceof Player ) ? ( Player ) sender:( Player ) null;
 
-        String CtlCmd = "None";
-        String CmdArg = "none";
+        String CtlCmd = "";
+        String CmdArg = ( player == null ? "":player.getName() );
         Player lookPlayer = player;
 
         if ( args.length > 0 ) CtlCmd = args[0];
@@ -67,15 +66,7 @@ public class RankCommand implements CommandExecutor {
                 }
                 return true;
             case "time":
-                Tools.Prt( player, "Player Times:", programCode );
-                if ( lookPlayer != null ) {
-                    MySQLControl DBRec = new MySQLControl();
-                    DBRec.GetSQL( lookPlayer.getUniqueId() );
-                    Tools.Prt( player, "Total TickTime  : " + Float.toString( ( float ) lookPlayer.getStatistic( Statistic.PLAY_ONE_MINUTE ) ) + " Ticks(0.05sec)", programCode );
-                    Tools.Prt( player, "総接続時間      : " + Float.toString( ( float ) ( lookPlayer.getStatistic( Statistic.PLAY_ONE_MINUTE ) * 0.05 / 60 / 60)) + " hour" , programCode );
-                    Tools.Prt( player, "ランク判定時間  : " + Float.toString( ( float ) ( ( lookPlayer.getStatistic( Statistic.PLAY_ONE_MINUTE ) - MySQLControl.offset ) * 0.05 / 60 / 60)) + " hour" , programCode );
-                } else { Tools.Prt( player, ChatColor.RED + "Player が Offline か存在しません", programCode ); }
-                return true;
+                return getAccess( player, CmdArg );
             case "Reload":
                 instance.config.load();
                 Tools.Prt( player, Utility.ReplaceString( "%$aCitizenShip Config Reloaded." ), programCode );

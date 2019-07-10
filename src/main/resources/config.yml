@@ -1,7 +1,7 @@
 #Citizenship Config
 
 #   Debug ( max / full / Default:normal / none )
-Debug: full
+Debug: normal
 
 #   MySQL Settings
 mysql:

@@ -6,6 +6,7 @@
 package com.mycompany.citizenship;
 
 import java.net.UnknownHostException;
+import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -68,6 +69,8 @@ public class Citizenship extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerQuit( PlayerQuitEvent event ) {
         MySQLControl DBRec = new MySQLControl();
-        DBRec.SetLogoutToSQL( event.getPlayer().getUniqueId() );
+        Player player = event.getPlayer();
+        DBRec.SetLogoutToSQL( player.getUniqueId() );
+        DBRec.SetTickTimeToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
     }
 }

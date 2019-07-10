@@ -175,7 +175,7 @@ public class RanksControl {
         //  ペナルティユーザーに対する処理
         //
         if ( NowGroup.equals( Config.Prison ) ) {
-            if ( progress > Config.Penalty ) { return outJail( player ); }
+            if ( ( Config.Penalty > 0 ) && ( progress > Config.Penalty ) ) { return outJail( player ); }
             return false;
         }
 

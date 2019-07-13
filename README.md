@@ -15,7 +15,7 @@ Imprisonment processing for players who are not logged in
   
 ## Releases  
 Github projects have a "releases" link on their home page.  
-If you still don't see it, [click here](https://github.com/kumaisu/Citizenship/releases) for PremisesEvent releases.  
+If you still don't see it, [click here](https://github.com/kumaisu/Citizenship/releases) for CitizenShip releases.  
   
 ## Wikis  
 [Citizen Ship Wiki](https://github.com/kumaisu/Citizenship/wiki)  

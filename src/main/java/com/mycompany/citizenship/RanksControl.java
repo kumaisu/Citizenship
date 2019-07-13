@@ -38,6 +38,8 @@ public class RanksControl {
         String baseGroup = getGroup( player );
 
         if ( baseGroup.equals("") ) { return false; }
+        if ( Config.rankName.contains( baseGroup ) == false ) { return false; }
+        if ( Config.rankTime.get( baseGroup ) == 0 ) { return false; }
 
         try {
             String NewGroup = Config.rankName.get( Config.rankName.indexOf( baseGroup ) + 1 );
@@ -74,9 +76,10 @@ public class RanksControl {
         String baseGroup = getGroup( player );
 
         if ( baseGroup.equals("") ) { return false; }
+        if ( Config.rankName.contains( baseGroup ) == false ) { return false; }
 
         try {
-            String Cmd = "pex user " + player.getName() + " group set " + Config.rankName.get( Config.rankName.indexOf( baseGroup ) -1 );
+            String Cmd = "pex user " + player.getName() + " group set " + Config.rankName.get( Config.rankName.indexOf( baseGroup ) - 1 );
             Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
             MySQLControl DBRec = new MySQLControl();

@@ -46,10 +46,10 @@ public class RankCommand implements CommandExecutor {
 
         String CtlCmd = "";
         String CmdArg = ( player == null ? "":player.getName() );
-        Player lookPlayer = player;
+        Player lookPlayer = null;
 
         if ( args.length > 0 ) CtlCmd = args[0];
-        if ( args.length > 1 ) {
+        if ( ( args.length > 1 ) && ( !CmdArg.equals( args[1] ) ) ) {
             CmdArg = args[1];
             lookPlayer = Bukkit.getServer().getPlayer( CmdArg );
         }

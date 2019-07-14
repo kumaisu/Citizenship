@@ -46,6 +46,8 @@ public class RanksControl {
             String Cmd = "pex user " + player.getName() + " group set " + NewGroup;
             Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
+            MySQLControl DBRec = new MySQLControl();
+            DBRec.SetBaseDateToSQL( player.getUniqueId() );
 
             String LevelupMessage = 
                 ChatColor.YELLOW + player.getName() + " さんが " +
@@ -161,11 +163,6 @@ public class RanksControl {
             DBRec.AddSQL( player );
         }
 
-        int progress = Utility.dateDiff( MySQLControl.logout, new Date() );
-        int checkHour = ( int ) Math.round( ( player.getStatistic( Statistic.PLAY_ONE_MINUTE ) - MySQLControl.offset ) * 0.05 / 60 / 60 );
-
-        String NowGroup = getGroup( player );
-
         //
         //  不在投獄時処理
         //
@@ -174,6 +171,11 @@ public class RanksControl {
             DBRec.SetJailToSQL( player.getUniqueId(), 0 );
             return true;
         }
+
+        int progress = Utility.dateDiff( MySQLControl.logout, new Date() );
+        int checkHour = ( int ) Math.round( ( player.getStatistic( Statistic.PLAY_ONE_MINUTE ) - MySQLControl.offset ) * 0.05 / 60 / 60 );
+
+        String NowGroup = getGroup( player );
 
         //
         //  ペナルティユーザーに対する処理

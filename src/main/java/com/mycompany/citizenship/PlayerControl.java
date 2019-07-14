@@ -16,6 +16,8 @@ import com.mycompany.kumaisulibraries.Tools;
 import static com.mycompany.citizenship.RanksControl.setGroup;
 import static com.mycompany.citizenship.config.Config.programCode;
 import com.mycompany.citizenship.database.MySQLControl;
+import com.mycompany.kumaisulibraries.Utility;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -124,6 +126,7 @@ public class PlayerControl {
             Tools.Prt( player, "Total TickTime  : " + Float.toString( ( float ) MySQLControl.tick ) + " Ticks(0.05sec)", programCode );
             Tools.Prt( player, "総接続時間      : " + Float.toString( ( float ) ( MySQLControl.tick * 0.05 / 60 / 60)) + " hour" , programCode );
             Tools.Prt( player, "ランク判定時間  : " + Float.toString( ( float ) ( ( MySQLControl.tick - MySQLControl.offset ) * 0.05 / 60 / 60)) + " hour" , programCode );
+            Tools.Prt( player, "ログアウト経過  : " + Utility.dateDiff( MySQLControl.logout, new Date() ) + " 日", Tools.consoleMode.full, programCode );
             return true;
         } else {
             Tools.Prt( player, ChatColor.RED + "Player[" + name + "]が存在しません", programCode );

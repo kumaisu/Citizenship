@@ -13,13 +13,13 @@ mysql:
 
 #   Citizenship Rank
 #   WorldGuard に設定されているグループ名を正しく指定する事
-#   グループ名、昇格に必要な時間（ｈ）
+#   グループ名、昇格に必要な時間（ｈ）または日数（ｄ）
 Rank:
-  - NewFace,24
-  - Civilian,100
-  - Citizen,200
-  - Nation,500
-  - Uiverse,0
+  - NewFace,24,H
+  - Civilian,100,h
+  - Citizen,200,D
+  - Nation,500,d
+  - Uiverse,0,E
 
 #   降格判定　日数、ゼロならば降格無し
 Demotion: 10

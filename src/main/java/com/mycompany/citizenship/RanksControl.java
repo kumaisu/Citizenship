@@ -38,16 +38,20 @@ public class RanksControl {
         String baseGroup = getGroup( player );
 
         if ( baseGroup.equals("") ) { return false; }
-        if ( Config.rankName.contains( baseGroup ) == false ) { return false; }
-        if ( Config.rankTime.get( baseGroup ) == 0 ) { return false; }
+        if ( Config.rankName.contains( baseGroup ) == false ) {
+            Tools.Prt( player, "ランク制御対象外グループです", Tools.consoleMode.full, programCode );
+            return false;
+        }
+        if ( Config.rankTime.get( baseGroup ).get( "E" ) != null ) {
+            Tools.Prt( player, "これ以上、昇格はできません", Tools.consoleMode.full, programCode );
+            return false;
+        }
 
         try {
             String NewGroup = Config.rankName.get( Config.rankName.indexOf( baseGroup ) + 1 );
             String Cmd = "pex user " + player.getName() + " group set " + NewGroup;
             Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
-            MySQLControl DBRec = new MySQLControl();
-            DBRec.SetBaseDateToSQL( player.getUniqueId() );
 
             String LevelupMessage = 
                 ChatColor.YELLOW + player.getName() + " さんが " +
@@ -78,7 +82,14 @@ public class RanksControl {
         String baseGroup = getGroup( player );
 
         if ( baseGroup.equals("") ) { return false; }
-        if ( Config.rankName.contains( baseGroup ) == false ) { return false; }
+        if ( Config.rankName.contains( baseGroup ) == false ) {
+            Tools.Prt( player, "ランク制御対象外グループです", Tools.consoleMode.full, programCode );
+            return false;
+        }
+        if ( Config.rankName.indexOf( baseGroup ) == 0 ) {
+            Tools.Prt( player, "これ以上、降格はできません", Tools.consoleMode.full, programCode );
+            return false;
+        }
 
         try {
             String Cmd = "pex user " + player.getName() + " group set " + Config.rankName.get( Config.rankName.indexOf( baseGroup ) - 1 );
@@ -86,6 +97,7 @@ public class RanksControl {
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
             MySQLControl DBRec = new MySQLControl();
             DBRec.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
+            DBRec.SetBaseDateToSQL( player.getUniqueId() );
             return true;
         } catch ( ArrayIndexOutOfBoundsException e ) {
             return false;
@@ -129,8 +141,10 @@ public class RanksControl {
             Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
             //  現状、牢獄処理しか使っていないので、ここでオフセットをリセットしている
+            //  本来は設定したランクに応じて再計算が必要になる
             MySQLControl DBRec = new MySQLControl();
             DBRec.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
+            DBRec.SetBaseDateToSQL( player.getUniqueId() );
             return true;
         } catch( ArrayIndexOutOfBoundsException e ) {
             return false;
@@ -200,12 +214,24 @@ public class RanksControl {
         //
         //  経過時間によるユーザーの昇格処理
         //
-        Tools.Prt( "Check Time " + Config.rankTime.get( NowGroup ) + " : " + checkHour, Tools.consoleMode.full, programCode );
         if ( Config.rankTime.get( NowGroup ) == null ) { return false; }
-        if ( ( Config.rankTime.get( NowGroup ) > 0 ) && ( Config.rankTime.get( NowGroup ) < checkHour ) ) {
-            Promotion( player );
-            return true;
-        }
+        if ( Config.rankTime.get( NowGroup ).get( "E" ) == null ) {
+            boolean UpCheck = false;
+            if ( Config.rankTime.get( NowGroup ).get( "H" ) != null ) {
+                Tools.Prt( "Check Time " + Config.rankTime.get( NowGroup ).get( "H" ) + " : " + checkHour + " 時間", Tools.consoleMode.full, programCode );
+                UpCheck = ( Config.rankTime.get( NowGroup ).get( "H" ) <= checkHour );
+            }
+            if ( Config.rankTime.get( NowGroup ).get( "D" ) != null ) {
+                int checkDate = Utility.dateDiff( MySQLControl.basedate, new Date() );
+                Tools.Prt( "Check Time " + Config.rankTime.get( NowGroup ).get( "D" ) + " : " + checkDate + " 日", Tools.consoleMode.full, programCode );
+                UpCheck = ( Config.rankTime.get( NowGroup ).get( "D" ) <= checkDate );
+            }
+            if ( UpCheck ) {
+                Tools.Prt( ChatColor.YELLOW + "Player promotion!!", Tools.consoleMode.full, programCode);
+                Promotion( player );
+                return true;
+            }
+        } else Tools.Prt( "This player is Last Group", Tools.consoleMode.full, programCode );
 
         return false;
     }

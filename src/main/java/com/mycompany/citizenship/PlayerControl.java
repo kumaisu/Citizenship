@@ -123,10 +123,13 @@ public class PlayerControl {
 
         MySQLControl DBRec = new MySQLControl();
         if ( DBRec.GetSQL( lookUUID ) ) {
-            Tools.Prt( player, "Total TickTime  : " + Float.toString( ( float ) MySQLControl.tick ) + " Ticks(0.05sec)", programCode );
-            Tools.Prt( player, "総接続時間      : " + Float.toString( ( float ) ( MySQLControl.tick * 0.05 / 60 / 60)) + " hour" , programCode );
-            Tools.Prt( player, "ランク判定時間  : " + Float.toString( ( float ) ( ( MySQLControl.tick - MySQLControl.offset ) * 0.05 / 60 / 60)) + " hour" , programCode );
-            Tools.Prt( player, "ログアウト経過  : " + Utility.dateDiff( MySQLControl.logout, new Date() ) + " 日", Tools.consoleMode.full, programCode );
+            Tools.Prt( player, "Total TickTime : " + Float.toString( ( float ) MySQLControl.tick ) + " Ticks(0.05sec)", programCode );
+            Tools.Prt( player, "総接続時間     : " + Float.toString( ( float ) ( MySQLControl.tick * 0.05 / 60 / 60)) + " hour" , programCode );
+            Tools.Prt( player, "ランク判定時間 : " + Float.toString( ( float ) ( ( MySQLControl.tick - MySQLControl.offset ) * 0.05 / 60 / 60)) + " hour" , programCode );
+            Tools.Prt( player, "昇格日         : " + MySQLControl.basedate.toString(), programCode );
+            Tools.Prt( player, "昇格日数       : " + Utility.dateDiff( MySQLControl.basedate, new Date() ) + " 日", programCode );
+            Tools.Prt( player, "ログアウト日   : " + MySQLControl.logout.toString(), programCode );
+            Tools.Prt( player, "ログアウト経過 : " + Utility.dateDiff( MySQLControl.logout, new Date() ) + " 日", programCode );
             return true;
         } else {
             Tools.Prt( player, ChatColor.RED + "Player[" + name + "]が存在しません", programCode );

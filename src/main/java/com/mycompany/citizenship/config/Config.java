@@ -23,7 +23,7 @@ public class Config {
     public static String username = "root";
     public static String password = "";
 
-    public static Map< String, Integer > rankTime = new HashMap<>();
+    public static Map< String, Map< String, Integer > > rankTime = new HashMap<>();
     public static List< String > rankName;
     public static int demotion = 0;
 

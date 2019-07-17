@@ -7,12 +7,14 @@ package com.mycompany.citizenship.config;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import com.mycompany.kumaisulibraries.Tools;
 import static com.mycompany.citizenship.config.Config.programCode;
+import java.util.Map;
 
 /**
  *
@@ -52,7 +54,9 @@ public class ConfigManager {
         List< String > getstr = ( List< String > ) config.getList( "Rank" );
         for( int i = 0; i<getstr.size(); i++ ) {
             String[] param = getstr.get( i ).split(",");
-            Config.rankTime.put( param[0], Integer.valueOf( param[1] ) );
+            Map< String, Integer > TimeData = new HashMap<>();
+            TimeData.put( param[2].toUpperCase(), Integer.valueOf( param[1] ) );
+            Config.rankTime.put( param[0], TimeData );
             Config.rankName.add( param[0] );
         }
 
@@ -115,7 +119,21 @@ public class ConfigManager {
             Tools.Prt( p, ChatColor.WHITE + "  pitch: " + ChatColor.YELLOW + String.valueOf( Config.rpitch ), programCode );
         }
         Tools.Prt( p, ChatColor.WHITE + "CitizenShip List : 昇格時間",programCode );
-        for( String gn : Config.rankName ) { Tools.Prt( p,ChatColor.WHITE + gn + " : " + ChatColor.YELLOW + Config.rankTime.get( gn ) + " 時間", programCode ); }
+        for( String gn : Config.rankName ) {
+            String msg = ChatColor.WHITE + String.format( "%-10s", gn ) + " : " + ChatColor.YELLOW;
+            
+            if ( Config.rankTime.get( gn ).get( "H" ) != null ) {
+                msg = msg + Config.rankTime.get( gn ).get( "H" ) + " 時間";
+            }
+            if ( Config.rankTime.get( gn ).get( "D" ) != null ) {
+                msg = msg + Config.rankTime.get( gn ).get( "D" ) + " 日";
+            }
+            if ( Config.rankTime.get( gn ).get( "E" ) != null ) {
+                msg = msg + "最終ランク";
+            }
+            
+            Tools.Prt( p, msg, programCode );
+        }
         Tools.Prt( p, ChatColor.GREEN + "==========================", programCode );
     }
 }

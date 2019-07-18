@@ -13,17 +13,14 @@ commands:
         usage: /<command> <player>
     ranks:
         description: Citizenship Control Admin Commands
-        permission: Citizenship.admin
-        default: op
-        permission-message: You do not have permission.
-        usage: |
-            /<command> promotion <player>
-            /<command> demotion <player>
-            /<command> time <player>
-            /<command> Reload
-            /<command> Status
-            /<command> Console [full/normal/none]
+        usage: /<command> <param>
 permissions:
     citizenship.admin:
-        description: Command Permission
+        description: Broadcast announce
+        permission-message: You do not have permission.
         default: op
+    citizenship.initialize:
+        description: Broadcast announce
+        permission-message: You do not have permission.
+        default: false
+        

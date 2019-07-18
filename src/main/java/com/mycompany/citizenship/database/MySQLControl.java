@@ -101,6 +101,7 @@ public class MySQLControl {
 
             this.name = player.getName();
             this.logout = new Date();
+            this.basedate = new Date();
             this.offset = 0;
 
             Tools.Prt( "Add Data to SQL Success.", Tools.consoleMode.full , programCode );

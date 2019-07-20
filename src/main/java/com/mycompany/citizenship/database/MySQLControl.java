@@ -147,8 +147,8 @@ public class MySQLControl {
             ResultSet rs = stmt.executeQuery( sql );
             if ( rs.next() ) {
                 this.name       = rs.getString( "name" );
-                this.logout     = rs.getDate( "logout" );
-                this.basedate   = rs.getDate( "basedate" );
+                this.logout     = rs.getTimestamp( "logout" );
+                this.basedate   = rs.getTimestamp( "basedate" );
                 this.tick       = rs.getInt( "tick" );
                 this.offset     = rs.getInt( "offset" );
                 this.jail       = rs.getInt( "jail" );

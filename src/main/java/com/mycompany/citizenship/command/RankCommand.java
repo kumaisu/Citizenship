@@ -59,9 +59,9 @@ public class RankCommand implements CommandExecutor {
         if ( ( ( player == null ) || player.hasPermission( "citizenship.initialize" ) ) && CtlCmd.equals( "initialize" ) ) {
             setGroup( ( lookPlayer == null ? player:lookPlayer ), Config.rankName.get( 0 ) );
             return true;
-        } else Tools.Prt( player, "ranks initialize <player>", programCode );
+        }
 
-        if ( ( player == null ) || ( player.hasPermission( "citizenship.console" ) ) ) {
+        if ( ( player == null ) || player.hasPermission( "citizenship.console" ) ) {
             switch ( CtlCmd ) {
                 case "Reload":
                     instance.config.load();
@@ -77,12 +77,10 @@ public class RankCommand implements CommandExecutor {
                     );
                     return true;
                 default:
-                    Tools.Prt( player, "ranks Reload", programCode );
-                    Tools.Prt( player, "ranks Console [max,full,normal,none]", programCode );
             }
         }
 
-        if ( ( player == null ) || ( player.hasPermission( "citizenship.admin" ) ) ) {
+        if ( ( player == null ) || player.hasPermission( "citizenship.admin" ) ) {
             switch ( CtlCmd ) {
                 case "promotion":
                     if ( lookPlayer != null ) {
@@ -102,11 +100,22 @@ public class RankCommand implements CommandExecutor {
                     instance.config.Status( player );
                     return true;
                 default:
-                    Tools.Prt( player, "ranks promotion <player>", programCode );
-                    Tools.Prt( player, "ranks demotion <player>", programCode );
-                    Tools.Prt( player, "ranks time <player>", programCode );
-                    Tools.Prt( player, "ranks Status", programCode );
             }
+        }
+
+        if ( ( player == null ) || player.hasPermission( "citizenship.initialize" ) ) {
+            Tools.Prt( player, "ranks initialize <player>", programCode );
+        }
+        if ( ( player == null ) || player.hasPermission( "citizenship.console" ) ) {
+            Tools.Prt( player, "ranks Reload", programCode );
+            Tools.Prt( player, "ranks Console [max,full,normal,none]", programCode );
+        }
+
+        if ( ( player == null ) || player.hasPermission( "citizenship.admin" ) ) {
+            Tools.Prt( player, "ranks promotion <player>", programCode );
+            Tools.Prt( player, "ranks demotion <player>", programCode );
+            Tools.Prt( player, "ranks time <player>", programCode );
+            Tools.Prt( player, "ranks Status", programCode );
         }
 
         return false;

@@ -56,43 +56,18 @@ public class RankCommand implements CommandExecutor {
             lookPlayer = Bukkit.getServer().getPlayer( CmdArg );
         }
 
-        switch ( CtlCmd ) {
-            case "initialize":
-                if ( player.hasPermission( "citizenship.initialize" ) ) {
-                    setGroup( ( lookPlayer == null ? player:lookPlayer ), Config.rankName.get( 0 ) );
-                    return true;
-                }
-                break;
-            case "promotion":
-                if ( player.hasPermission( "citizenship.admin" ) && ( lookPlayer != null ) ) {
-                    Promotion( lookPlayer );
-                    return true;
-                }
-                break;
-            case "demotion":
-                if ( player.hasPermission( "citizenship.admin" ) && ( lookPlayer != null ) ) {
-                    Demotion( lookPlayer );
-                    return true;
-                }
-                break;
-            case "time":
-                if ( player.hasPermission( "citizenship.admin" ) ) { return getAccess( player, CmdArg ); }
-                break;
-            case "Reload":
-                if ( player.hasPermission( "citizenship.admin" ) ) {
+        if ( ( ( player == null ) || player.hasPermission( "citizenship.initialize" ) ) && CtlCmd.equals( "initialize" ) ) {
+            setGroup( ( lookPlayer == null ? player:lookPlayer ), Config.rankName.get( 0 ) );
+            return true;
+        } else Tools.Prt( player, "ranks initialize <player>", programCode );
+
+        if ( ( player == null ) || ( player.hasPermission( "citizenship.console" ) ) ) {
+            switch ( CtlCmd ) {
+                case "Reload":
                     instance.config.load();
                     Tools.Prt( player, Utility.ReplaceString( "%$aCitizenShip Config Reloaded." ), programCode );
                     return true;
-                }
-                break;
-            case "Status":
-                if ( player.hasPermission( "citizenship.admin" ) ) {
-                    instance.config.Status( player );
-                    return true;
-                }
-                break;
-            case "Console":
-                if ( player.hasPermission( "citizenship.admin" ) ) {
+                case "Console":
                     Tools.setDebug( CmdArg, programCode );
                     Tools.Prt( player,
                         ChatColor.GREEN + "System Debug Mode is [ " +
@@ -101,22 +76,39 @@ public class RankCommand implements CommandExecutor {
                         programCode
                     );
                     return true;
-                }
-                break;
-            default:
-                if ( player.hasPermission( "citizenship.initialize" ) ) {
-                    Tools.Prt( player, "ranks initialize <player>", programCode );
-                }
-                if ( player.hasPermission( "citizenship.admin" ) ) {
+                default:
+                    Tools.Prt( player, "ranks Reload", programCode );
+                    Tools.Prt( player, "ranks Console [max,full,normal,none]", programCode );
+            }
+        }
+
+        if ( ( player == null ) || ( player.hasPermission( "citizenship.admin" ) ) ) {
+            switch ( CtlCmd ) {
+                case "promotion":
+                    if ( lookPlayer != null ) {
+                        Promotion( lookPlayer );
+                        return true;
+                    }
+                    break;
+                case "demotion":
+                    if ( lookPlayer != null ) {
+                        Demotion( lookPlayer );
+                        return true;
+                    }
+                    break;
+                case "time":
+                    return getAccess( player, CmdArg );
+                case "Status":
+                    instance.config.Status( player );
+                    return true;
+                default:
                     Tools.Prt( player, "ranks promotion <player>", programCode );
                     Tools.Prt( player, "ranks demotion <player>", programCode );
                     Tools.Prt( player, "ranks time <player>", programCode );
-                    Tools.Prt( player, "ranks Reload", programCode );
                     Tools.Prt( player, "ranks Status", programCode );
-                    Tools.Prt( player, "ranks Console [max,full,normal,none]", programCode );
-                }
-                return false;
+            }
         }
+
         return false;
     }
 }

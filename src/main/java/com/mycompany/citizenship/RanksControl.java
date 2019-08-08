@@ -37,13 +37,13 @@ public class RanksControl {
         Tools.Prt( "Promotion Process", Tools.consoleMode.full, programCode );
         String baseGroup = getGroup( player );
 
-        if ( baseGroup.equals("") ) { return false; }
+        if ( baseGroup.equals( "" ) ) { return false; }
         if ( Config.rankName.contains( baseGroup ) == false ) {
-            Tools.Prt( player, "ランク制御対象外グループです", Tools.consoleMode.full, programCode );
+            Tools.Prt( player, ChatColor.BLUE + "ランク制御対象外グループです", Tools.consoleMode.full, programCode );
             return false;
         }
         if ( Config.rankTime.get( baseGroup ).get( "E" ) != null ) {
-            Tools.Prt( player, "これ以上、昇格はできません", Tools.consoleMode.full, programCode );
+            Tools.Prt( ChatColor.LIGHT_PURPLE + "これ以上、昇格はできません", Tools.consoleMode.full, programCode );
             return false;
         }
 

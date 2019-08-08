@@ -1,6 +1,6 @@
 main: com.mycompany.citizenship.Citizenship
 name: Citizenship
-version: 0.3
+version: 0.4
 description: Citizenship Control Manager plugins
 author: Kumaisu
 database: true

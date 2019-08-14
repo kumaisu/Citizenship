@@ -130,9 +130,11 @@ public class PlayerControl {
             Tools.Prt( player, "昇格日数       : " + Utility.dateDiff( MySQLControl.basedate, new Date() ) + " 日", programCode );
             Tools.Prt( player, "ログアウト日   : " + MySQLControl.logout.toString(), programCode );
             Tools.Prt( player, "ログアウト経過 : " + Utility.dateDiff( MySQLControl.logout, new Date() ) + " 日", programCode );
+            DBRec.close();
             return true;
         } else {
             Tools.Prt( player, ChatColor.RED + "Player[" + name + "]が存在しません", programCode );
+            DBRec.close();
             return false;
         }
     }

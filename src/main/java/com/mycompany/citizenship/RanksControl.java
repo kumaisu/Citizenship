@@ -43,7 +43,7 @@ public class RanksControl {
             return false;
         }
         if ( Config.rankTime.get( baseGroup ).get( "E" ) != null ) {
-            Tools.Prt( ChatColor.LIGHT_PURPLE + "これ以上、昇格はできません", Tools.consoleMode.full, programCode );
+            Tools.Prt( player, ChatColor.LIGHT_PURPLE + "これ以上、昇格はできません", Tools.consoleMode.full, programCode );
             return false;
         }
 
@@ -98,6 +98,7 @@ public class RanksControl {
             MySQLControl DBRec = new MySQLControl();
             DBRec.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
             DBRec.SetBaseDateToSQL( player.getUniqueId() );
+            DBRec.close();
             return true;
         } catch ( ArrayIndexOutOfBoundsException e ) {
             return false;
@@ -145,6 +146,7 @@ public class RanksControl {
             MySQLControl DBRec = new MySQLControl();
             DBRec.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
             DBRec.SetBaseDateToSQL( player.getUniqueId() );
+            DBRec.close();
             return true;
         } catch( ArrayIndexOutOfBoundsException e ) {
             return false;
@@ -183,6 +185,7 @@ public class RanksControl {
         if ( MySQLControl.jail == 1 ) {
             toJail( player, "不在時処理されました" );
             DBRec.SetJailToSQL( player.getUniqueId(), 0 );
+            DBRec.close();
             return true;
         }
 
@@ -196,6 +199,7 @@ public class RanksControl {
         //
         if ( NowGroup.equals( Config.Prison ) ) {
             if ( ( Config.Penalty > 0 ) && ( progress > Config.Penalty ) ) { return outJail( player ); }
+            DBRec.close();
             return false;
         }
 
@@ -207,6 +211,7 @@ public class RanksControl {
             Tools.Prt( "Diff Date : " + progress + " 日", Tools.consoleMode.full, programCode );
             if ( progress > Config.demotion ) {
                 Demotion( player );
+                DBRec.close();
                 return true;
             }
         }
@@ -214,7 +219,11 @@ public class RanksControl {
         //
         //  経過時間によるユーザーの昇格処理
         //
-        if ( Config.rankTime.get( NowGroup ) == null ) { return false; }
+        if ( Config.rankTime.get( NowGroup ) == null ) {
+            DBRec.close();
+            return false;
+        }
+
         if ( Config.rankTime.get( NowGroup ).get( "E" ) == null ) {
             boolean UpCheck = false;
             if ( Config.rankTime.get( NowGroup ).get( "H" ) != null ) {
@@ -229,10 +238,12 @@ public class RanksControl {
             if ( UpCheck ) {
                 Tools.Prt( ChatColor.YELLOW + "Player promotion!!", Tools.consoleMode.full, programCode);
                 Promotion( player );
+                DBRec.close();
                 return true;
             }
         } else Tools.Prt( "This player is Last Group", Tools.consoleMode.full, programCode );
 
+        DBRec.close();
         return false;
     }
 }

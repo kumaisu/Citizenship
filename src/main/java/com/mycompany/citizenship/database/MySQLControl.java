@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import org.bukkit.entity.Player;
 import org.bukkit.Statistic;
+import org.bukkit.ChatColor;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.mycompany.kumaisulibraries.Tools;
@@ -28,7 +29,8 @@ import static com.mycompany.citizenship.config.Config.programCode;
 public class MySQLControl {
 
     SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
-    private Connection connection;
+    private Connection connection = null;
+    private HikariDataSource dataSource = null;
 
     public static String name = "Unknown";
     public static Date logout;
@@ -42,7 +44,21 @@ public class MySQLControl {
      *
      */
     public MySQLControl() {
-        HikariDataSource dataSource;
+        open();
+    }
+    
+    /**
+     * Database Open(接続) 処理
+     */
+    public void open() {
+        if ( dataSource != null ) {
+            if ( dataSource.isClosed() ) {
+                Tools.Prt( ChatColor.RED + "database closed.", Tools.consoleMode.full, programCode );
+            } else {
+                Tools.Prt( ChatColor.AQUA + "dataSource is not null", Tools.consoleMode.max, programCode );
+                return;
+            }
+        }
 
         // HikariCPの初期化
         HikariConfig config = new HikariConfig();
@@ -71,16 +87,25 @@ public class MySQLControl {
         // 接続をテストするためのクエリ
         config.setConnectionInitSql( "SELECT 1" );
 
-        // 接続
-        dataSource = new HikariDataSource( config );
-
         try {
+            // 接続
+            dataSource = new HikariDataSource( config );
             connection = dataSource.getConnection();
         } catch( SQLException e ) {
             Tools.Prt( "Connection Error : " + e.getMessage(), programCode);
         }
 
         updateTables();
+        Tools.Prt( ChatColor.AQUA + "dataSource Open Success.", Tools.consoleMode.max, programCode );
+    }
+
+    /**
+     * Database Close 処理
+     */
+    public void close() {
+        if ( dataSource != null ) {
+            dataSource.close();
+        }
     }
 
     /**
@@ -115,6 +140,7 @@ public class MySQLControl {
      */
     public void AddSQL( Player player ) {
         try {
+            open();
             String sql = "INSERT INTO player (uuid, name, logout, basedate, tick, offset, jail) VALUES (?, ?, ?, ?, ?, ?, ?);";
             Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
             PreparedStatement preparedStatement = connection.prepareStatement( sql );
@@ -148,6 +174,7 @@ public class MySQLControl {
      */
     public boolean DelSQL( UUID uuid ) {
         try {
+            open();
             String sql = "DELETE FROM player WHERE uuid = '" + uuid.toString() + "'";
             Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
             PreparedStatement preparedStatement = connection.prepareStatement( sql );
@@ -168,6 +195,7 @@ public class MySQLControl {
      */
     public boolean GetSQL( UUID uuid ) {
         try {
+            open();
             Statement stmt = connection.createStatement();
             String sql = "SELECT * FROM player WHERE uuid = '" + uuid.toString() + "';";
             Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
@@ -195,6 +223,7 @@ public class MySQLControl {
      */
     public void SetLogoutToSQL( UUID uuid ) {
         try {
+            open();
             String sql = "UPDATE player SET logout = '" + sdf.format( new Date() ) + "' WHERE uuid = '" + uuid.toString() + "';";
             Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
 
@@ -214,6 +243,7 @@ public class MySQLControl {
      */
     public void SetBaseDateToSQL( UUID uuid ) {
         try {
+            open();
             String sql = "UPDATE player SET basedate = '" + sdf.format( new Date() ) + "' WHERE uuid = '" + uuid.toString() + "';";
             Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
 
@@ -234,6 +264,7 @@ public class MySQLControl {
      */
     public void SetTickTimeToSQL( UUID uuid, int tickTime ) {
         try {
+            open();
             String sql = "UPDATE player SET tick = " + tickTime + " WHERE uuid = '" + uuid.toString() + "';";
             Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
 
@@ -254,6 +285,7 @@ public class MySQLControl {
      */
     public void SetOffsetToSQL( UUID uuid, int offset ) {
         try {
+            open();
             String sql = "UPDATE player SET offset = " + offset + " WHERE uuid = '" + uuid.toString() + "';";
             Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
 
@@ -277,6 +309,7 @@ public class MySQLControl {
      */
     public void SetJailToSQL( UUID uuid, int jail ) {
         try {
+            open();
             String sql = "UPDATE player SET jail = " + jail + " WHERE uuid = '" + uuid.toString() + "';";
             Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
 

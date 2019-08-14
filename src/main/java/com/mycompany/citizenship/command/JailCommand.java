@@ -65,6 +65,7 @@ public class JailCommand implements CommandExecutor {
             } else {
                 MySQLControl DBRec = new MySQLControl();
                 DBRec.SetJailToSQL( offlineJailPlayer.getUniqueId(), 1 );
+                DBRec.close();
                 return true;
             }
         }

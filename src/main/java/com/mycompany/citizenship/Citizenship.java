@@ -73,5 +73,6 @@ public class Citizenship extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
         DBRec.SetLogoutToSQL( player.getUniqueId() );
         DBRec.SetTickTimeToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
+        DBRec.close();
     }
 }

@@ -7,6 +7,8 @@ package com.mycompany.citizenship.database;
 
 import java.util.Date;
 import java.util.UUID;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.text.SimpleDateFormat;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,7 +31,6 @@ import static com.mycompany.citizenship.config.Config.programCode;
 public class MySQLControl {
 
     SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
-    private Connection connection = null;
     private HikariDataSource dataSource = null;
 
     public static String name = "Unknown";
@@ -38,22 +39,25 @@ public class MySQLControl {
     public static int tick = 0;
     public static int offset = 0;
     public static int jail = 0;
+    public static int imprisonment = 0;
 
     /**
      * ライブラリー読込時の初期設定
      *
      */
     public MySQLControl() {
-        open();
+        connect();
+        TableUpdate();
     }
     
     /**
      * Database Open(接続) 処理
      */
-    public void open() {
+    public void connect() {
         if ( dataSource != null ) {
             if ( dataSource.isClosed() ) {
                 Tools.Prt( ChatColor.RED + "database closed.", Tools.consoleMode.full, programCode );
+                disconnect();
             } else {
                 Tools.Prt( ChatColor.AQUA + "dataSource is not null", Tools.consoleMode.max, programCode );
                 return;
@@ -63,59 +67,53 @@ public class MySQLControl {
         // HikariCPの初期化
         HikariConfig config = new HikariConfig();
 
-        // MySQL用ドライバを設定
-        config.setDriverClassName( "com.mysql.jdbc.Driver" );
-
-        // 「jdbc:mysql://ホスト:ポート/DB名」の様なURLで指定
         config.setJdbcUrl( "jdbc:mysql://" + Config.host + ":" + Config.port + "/" + Config.database );
+        config.setPoolName( Config.database );
+        config.setAutoCommit( true );
+        config.setConnectionInitSql( "SET SESSION query_cache_type=0" );
+        config.setMaximumPoolSize( 2 );
+        config.setMinimumIdle( 2 );
+        config.setMaxLifetime( TimeUnit.MINUTES.toMillis( 15 ) );
+        //  config.setConnectionTimeout(0);
+        //  config.setIdleTimeout(0);
+        config.setUsername( Config.username );
+        config.setPassword( Config.password );
 
-        // ユーザ名、パスワード指定
-        config.addDataSourceProperty( "user", Config.username );
-        config.addDataSourceProperty( "password", Config.password );
+        Properties properties = new Properties();
+        properties.put( "useSSL", "false" );
+        properties.put( "autoReconnect", "true" );
+        properties.put( "maintainTimeStats", "false" );
+        properties.put( "elideSetAutoCommits", "true" );
+        properties.put( "useLocalSessionState", "true" );
+        properties.put( "alwaysSendSetIsolation", "false" );
+        properties.put( "cacheServerConfiguration", "true" );
+        properties.put( "cachePrepStmts", "true" );
+        properties.put( "prepStmtCacheSize", "250" );
+        properties.put( "prepStmtCacheSqlLimit", "2048" );
+        properties.put( "useUnicode", "true" );
+        properties.put( "characterEncoding", "UTF-8" );
+        properties.put( "characterSetResults", "UTF-8" );
+        properties.put( "useServerPrepStmts", "true" );
 
-        // キャッシュ系の設定(任意)
-        config.addDataSourceProperty( "cachePrepStmts", "true" );
-        config.addDataSourceProperty( "prepStmtCacheSize", "250" );
-        config.addDataSourceProperty( "prepStmtCacheSqlLimit", "2048" );
-        // サーバサイドプリペアードステートメントを使用する(任意)
-        config.addDataSourceProperty( "useServerPrepStmts", "true" );
-        // エンコーディング
-        config.addDataSourceProperty( "characterEncoding", "utf8" );
+        config.setDataSourceProperties( properties );
 
-        // 最小接続数まで接続を確保できない時に例外を投げる
-        config.setInitializationFailFast( true );
-        // 接続をテストするためのクエリ
-        config.setConnectionInitSql( "SELECT 1" );
-
-        try {
-            // 接続
-            dataSource = new HikariDataSource( config );
-            connection = dataSource.getConnection();
-        } catch( SQLException e ) {
-            Tools.Prt( "Connection Error : " + e.getMessage(), programCode);
-        }
-
-        updateTables();
-        Tools.Prt( ChatColor.AQUA + "dataSource Open Success.", Tools.consoleMode.max, programCode );
+        dataSource = new HikariDataSource( config );
     }
 
     /**
      * Database Close 処理
      */
-    public void close() {
+    public void disconnect() {
         if ( dataSource != null ) {
             dataSource.close();
         }
     }
 
     /**
-     * MySQLへのコネクション処理
-     *
-     * @throws SQLException
-     * @throws ClassNotFoundException
+     * Database Table Initialize
      */
-    private void updateTables() {
-        try {
+    public void TableUpdate() {
+        try ( Connection con = dataSource.getConnection() ) {
             //  テーブルの作成
             //		uuid : varchar(36)	player uuid
             //		name : varchar(20)	player name
@@ -124,12 +122,17 @@ public class MySQLControl {
             //          tick : int              total Tick Time
             //		offset : int 		total Login Time offset
             //		jail : int		to jail flag
+            //          Imprisonment : int      Imprisonment Count
             //  存在すれば、無視される
-            String sql = "CREATE TABLE IF NOT EXISTS player( uuid varchar(36), name varchar(20), logout DATETIME, basedate DATETIME, tick int, offset int, jail int )";
-            PreparedStatement preparedStatement = connection.prepareStatement( sql );
+            String sql = "CREATE TABLE IF NOT EXISTS player( uuid varchar(36), name varchar(20), logout DATETIME, basedate DATETIME, tick int, offset int, jail int, imprisonment int )";
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.executeUpdate();
-        } catch ( SQLException e ) {
-            Tools.Prt( "Error SQL update tables : " + e.getMessage(), programCode );
+
+            Tools.Prt( ChatColor.AQUA + "dataSource Open Success.", Tools.consoleMode.max, programCode );
+            con.close();
+        } catch( SQLException e ) {
+            Tools.Prt( ChatColor.RED + "Connection Error : " + e.getMessage(), programCode);
         }
     }
 
@@ -139,11 +142,10 @@ public class MySQLControl {
      * @param player
      */
     public void AddSQL( Player player ) {
-        try {
-            open();
-            String sql = "INSERT INTO player (uuid, name, logout, basedate, tick, offset, jail) VALUES (?, ?, ?, ?, ?, ?, ?);";
-            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
-            PreparedStatement preparedStatement = connection.prepareStatement( sql );
+        try ( Connection con = dataSource.getConnection() ) {
+            String sql = "INSERT INTO player (uuid, name, logout, basedate, tick, offset, jail, imprisonment ) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.setString( 1, player.getUniqueId().toString() );
             preparedStatement.setString( 2, player.getName() );
             preparedStatement.setString( 3, sdf.format( new Date() ) );
@@ -151,18 +153,20 @@ public class MySQLControl {
             preparedStatement.setInt( 5, player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
             preparedStatement.setInt( 6, 0 );
             preparedStatement.setInt( 7, 0 );
+            preparedStatement.setInt( 8, 0 );
 
             preparedStatement.executeUpdate();
+            con.close();
 
             this.name = player.getName();
             this.logout = new Date();
             this.basedate = new Date();
             this.offset = 0;
+            this.imprisonment = 0;
 
             Tools.Prt( "Add Data to SQL Success.", Tools.consoleMode.full , programCode );
-
         } catch ( SQLException e ) {
-            Tools.Prt( "Error AddToSQL", programCode );
+            Tools.Prt( ChatColor.RED + "Error AddToSQL", programCode );
         }
     }
 
@@ -173,16 +177,16 @@ public class MySQLControl {
      * @return
      */
     public boolean DelSQL( UUID uuid ) {
-        try {
-            open();
+        try ( Connection con = dataSource.getConnection() ) {
             String sql = "DELETE FROM player WHERE uuid = '" + uuid.toString() + "'";
-            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
-            PreparedStatement preparedStatement = connection.prepareStatement( sql );
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.executeUpdate();
             Tools.Prt( "Delete Data from SQL Success.", Tools.consoleMode.full , programCode );
+            con.close();
             return true;
         } catch ( SQLException e ) {
-            Tools.Prt( "Error DelFromSQL", programCode );
+            Tools.Prt( ChatColor.RED + "Error DelFromSQL", programCode );
             return false;
         }
     }
@@ -194,26 +198,29 @@ public class MySQLControl {
      * @return
      */
     public boolean GetSQL( UUID uuid ) {
-        try {
-            open();
-            Statement stmt = connection.createStatement();
+        try ( Connection con = dataSource.getConnection() ) {
+            boolean retStat = false;
+            Statement stmt = con.createStatement();
             String sql = "SELECT * FROM player WHERE uuid = '" + uuid.toString() + "';";
-            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
             ResultSet rs = stmt.executeQuery( sql );
             if ( rs.next() ) {
-                this.name       = rs.getString( "name" );
-                this.logout     = rs.getTimestamp( "logout" );
-                this.basedate   = rs.getTimestamp( "basedate" );
-                this.tick       = rs.getInt( "tick" );
-                this.offset     = rs.getInt( "offset" );
-                this.jail       = rs.getInt( "jail" );
+                this.name           = rs.getString( "name" );
+                this.logout         = rs.getTimestamp( "logout" );
+                this.basedate       = rs.getTimestamp( "basedate" );
+                this.tick           = rs.getInt( "tick" );
+                this.offset         = rs.getInt( "offset" );
+                this.jail           = rs.getInt( "jail" );
+                this.imprisonment   = rs.getInt( "imprisonment" );
                 Tools.Prt( "Get Data from SQL Success.", Tools.consoleMode.full , programCode );
-                return true;
+                retStat = true;
             }
+            con.close();
+            return retStat;
         } catch ( SQLException e ) {
-            Tools.Prt( "Error GetPlayer", programCode );
+            Tools.Prt( ChatColor.RED + "Error GetPlayer", programCode );
+            return false;
         }
-        return false;
     }
 
     /**
@@ -222,17 +229,15 @@ public class MySQLControl {
      * @param uuid
      */
     public void SetLogoutToSQL( UUID uuid ) {
-        try {
-            open();
+        try ( Connection con = dataSource.getConnection() ) {
             String sql = "UPDATE player SET logout = '" + sdf.format( new Date() ) + "' WHERE uuid = '" + uuid.toString() + "';";
-            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
-
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.executeUpdate();
-
+            con.close();
             Tools.Prt( "Set logout Date to SQL Success.", Tools.consoleMode.full , programCode );
         } catch ( SQLException e ) {
-            Tools.Prt( "Error ChangeStatus", programCode );
+            Tools.Prt( ChatColor.RED + "Error ChangeStatus", programCode );
         }
     }
 
@@ -242,17 +247,15 @@ public class MySQLControl {
      * @param uuid
      */
     public void SetBaseDateToSQL( UUID uuid ) {
-        try {
-            open();
+        try ( Connection con = dataSource.getConnection() ) {
             String sql = "UPDATE player SET basedate = '" + sdf.format( new Date() ) + "' WHERE uuid = '" + uuid.toString() + "';";
-            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
-
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.executeUpdate();
-
+            con.close();
             Tools.Prt( "Set logout Date to SQL Success.", Tools.consoleMode.full , programCode );
         } catch ( SQLException e ) {
-            Tools.Prt( "Error ChangeStatus", programCode );
+            Tools.Prt( ChatColor.RED + "Error ChangeStatus", programCode );
         }
     }
 
@@ -263,17 +266,15 @@ public class MySQLControl {
      * @param tickTime
      */
     public void SetTickTimeToSQL( UUID uuid, int tickTime ) {
-        try {
-            open();
+        try ( Connection con = dataSource.getConnection() ) {
             String sql = "UPDATE player SET tick = " + tickTime + " WHERE uuid = '" + uuid.toString() + "';";
-            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
-
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.executeUpdate();
-
+            con.close();
             Tools.Prt( "Set TickTime to SQL Success.", Tools.consoleMode.full , programCode );
         } catch ( SQLException e ) {
-            Tools.Prt( "Error ChangeStatus", programCode );
+            Tools.Prt( ChatColor.RED + "Error ChangeStatus", programCode );
         }
     }
 
@@ -284,17 +285,15 @@ public class MySQLControl {
      * @param offset
      */
     public void SetOffsetToSQL( UUID uuid, int offset ) {
-        try {
-            open();
+        try ( Connection con = dataSource.getConnection() ) {
             String sql = "UPDATE player SET offset = " + offset + " WHERE uuid = '" + uuid.toString() + "';";
-            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
-
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.executeUpdate();
-
+            con.close();
             Tools.Prt( "Set Offset Data to SQL Success.", Tools.consoleMode.full , programCode );
         } catch ( SQLException e ) {
-            Tools.Prt( "Error ChangeStatus", programCode );
+            Tools.Prt( ChatColor.RED + "Error ChangeStatus", programCode );
         }
     }
 
@@ -308,17 +307,33 @@ public class MySQLControl {
      * @param jail
      */
     public void SetJailToSQL( UUID uuid, int jail ) {
-        try {
-            open();
+        try ( Connection con = dataSource.getConnection() ) {
             String sql = "UPDATE player SET jail = " + jail + " WHERE uuid = '" + uuid.toString() + "';";
-            Tools.Prt( "SQL Command : " + sql, Tools.consoleMode.max , programCode );
-
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.executeUpdate();
-
+            con.close();
             Tools.Prt( "Set Jail Data to SQL Success.", Tools.consoleMode.full , programCode );
         } catch ( SQLException e ) {
-            Tools.Prt( "Error ChangeStatus", programCode );
+            Tools.Prt( ChatColor.RED + "Error ChangeStatus", programCode );
+        }
+    }
+
+    /**
+     * CountUP imprsioment 投獄回数カウントアップ
+     *
+     * @param uuid
+     */
+    public void addImprisonment( UUID uuid ) {
+        try ( Connection con = dataSource.getConnection() ) {
+            String sql = "UPDATE player SET imprisonment = imprisonment + 1 WHERE uuid = '" + uuid.toString() + "'";
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.executeUpdate();
+            con.close();
+            Tools.Prt( "Added Imprisonment Count Success.", Tools.consoleMode.full , programCode );
+        } catch ( SQLException e ) {
+            Tools.Prt( ChatColor.RED + "Error Add Imprisonment : " + e.getMessage(), programCode );
         }
     }
 }

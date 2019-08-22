@@ -28,9 +28,11 @@ import static com.mycompany.citizenship.config.Config.programCode;
 public class JailCommand implements CommandExecutor {
 
     private final Citizenship instance;
+    private final MySQLControl DBA;
 
     public JailCommand( Citizenship instance ) {
         this.instance = instance;
+        this.DBA = instance.DBA;
     }
 
     /**
@@ -63,9 +65,7 @@ public class JailCommand implements CommandExecutor {
                 Tools.Prt( player, ChatColor.RED + "対象プレイヤーが居ません", programCode );
                 return false;
             } else {
-                MySQLControl DBRec = new MySQLControl();
-                DBRec.SetJailToSQL( offlineJailPlayer.getUniqueId(), 1 );
-                DBRec.close();
+                DBA.SetJailToSQL( offlineJailPlayer.getUniqueId(), 1 );
                 return true;
             }
         }
@@ -75,10 +75,10 @@ public class JailCommand implements CommandExecutor {
 
         //  釈放処理
         if ( Reson.equalsIgnoreCase( "release" ) ) {
-            if ( getGroup( jailPlayer ).equals( Config.Prison ) ) { outJail( jailPlayer ); }
+            if ( getGroup( jailPlayer ).equals( Config.Prison ) ) { outJail( jailPlayer, DBA ); }
             return true;
         }
 
-        return toJail( jailPlayer, Reson );
+        return toJail( jailPlayer, Reson, DBA );
     }
 }

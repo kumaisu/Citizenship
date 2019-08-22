@@ -15,6 +15,7 @@ import com.mycompany.citizenship.Citizenship;
 import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.kumaisulibraries.Utility;
 import com.mycompany.citizenship.config.Config;
+import com.mycompany.citizenship.database.MySQLControl;
 import static com.mycompany.citizenship.RanksControl.Demotion;
 import static com.mycompany.citizenship.RanksControl.Promotion;
 import static com.mycompany.citizenship.RanksControl.setGroup;
@@ -28,9 +29,11 @@ import static com.mycompany.citizenship.config.Config.programCode;
 public class RankCommand implements CommandExecutor {
 
     private final Citizenship instance;
+    private final MySQLControl DBA;
 
     public RankCommand( Citizenship instance ) {
         this.instance = instance;
+        this.DBA = instance.DBA;
     }
 
     /**
@@ -57,7 +60,7 @@ public class RankCommand implements CommandExecutor {
         }
 
         if ( ( ( player == null ) || player.hasPermission( "citizenship.initialize" ) ) && CtlCmd.equals( "initialize" ) ) {
-            setGroup( ( lookPlayer == null ? player:lookPlayer ), Config.rankName.get( 0 ) );
+            setGroup( ( lookPlayer == null ? player:lookPlayer ), Config.rankName.get( 0 ), DBA );
             return true;
         }
 
@@ -90,12 +93,12 @@ public class RankCommand implements CommandExecutor {
                     break;
                 case "demotion":
                     if ( lookPlayer != null ) {
-                        Demotion( lookPlayer );
+                        Demotion( lookPlayer, DBA );
                         return true;
                     }
                     break;
                 case "time":
-                    return getAccess( player, CmdArg );
+                    return getAccess( player, CmdArg, DBA );
                 case "Status":
                     instance.config.Status( player );
                     return true;

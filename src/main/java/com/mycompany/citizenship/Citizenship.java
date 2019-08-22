@@ -29,11 +29,13 @@ import static com.mycompany.citizenship.config.Config.programCode;
 public class Citizenship extends JavaPlugin implements Listener {
 
     public ConfigManager config;
+    public MySQLControl DBA;
 
     @Override
     public void onEnable() {
         this.getServer().getPluginManager().registerEvents( this, this );
         config = new ConfigManager( this );
+        DBA = new MySQLControl();
         getCommand( "ranks" ).setExecutor( new RankCommand( this ) );
         getCommand( "jail" ).setExecutor( new JailCommand( this ) );
     }
@@ -41,6 +43,7 @@ public class Citizenship extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         super.onDisable(); //To change body of generated methods, choose Tools | Templates.
+        DBA.disconnect();
     }
 
     @Override
@@ -59,7 +62,7 @@ public class Citizenship extends JavaPlugin implements Listener {
     public void onPlayerLogin( PlayerJoinEvent event ) throws UnknownHostException {
         Player player = event.getPlayer();
         Tools.Prt( "onPlayerLogin process", Tools.consoleMode.max, programCode );
-        CheckRank( player );
+        CheckRank( player, DBA );
     }
 
     /**
@@ -69,10 +72,8 @@ public class Citizenship extends JavaPlugin implements Listener {
      */
     @EventHandler
     public void onPlayerQuit( PlayerQuitEvent event ) {
-        MySQLControl DBRec = new MySQLControl();
         Player player = event.getPlayer();
-        DBRec.SetLogoutToSQL( player.getUniqueId() );
-        DBRec.SetTickTimeToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
-        DBRec.close();
+        DBA.SetLogoutToSQL( player.getUniqueId() );
+        DBA.SetTickTimeToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
     }
 }

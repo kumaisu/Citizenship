@@ -75,9 +75,10 @@ public class RanksControl {
      * 降格
      *
      * @param player
+     * @param DBA
      * @return 
      */
-    public static boolean Demotion( Player player ){
+    public static boolean Demotion( Player player, MySQLControl DBA ){
         Tools.Prt( "Demotion Process", Tools.consoleMode.full, programCode );
         String baseGroup = getGroup( player );
 
@@ -95,10 +96,8 @@ public class RanksControl {
             String Cmd = "pex user " + player.getName() + " group set " + Config.rankName.get( Config.rankName.indexOf( baseGroup ) - 1 );
             Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
-            MySQLControl DBRec = new MySQLControl();
-            DBRec.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
-            DBRec.SetBaseDateToSQL( player.getUniqueId() );
-            DBRec.close();
+            DBA.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
+            DBA.SetBaseDateToSQL( player.getUniqueId() );
             return true;
         } catch ( ArrayIndexOutOfBoundsException e ) {
             return false;
@@ -134,9 +133,10 @@ public class RanksControl {
      *
      * @param player
      * @param newGroup
+     * @param DBA
      * @return 
      */
-    public static boolean setGroup( Player player, String newGroup ) {
+    public static boolean setGroup( Player player, String newGroup, MySQLControl DBA ) {
         try {
             String Cmd = "pex user " + player.getName() + " group set " + newGroup;
             Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
@@ -144,9 +144,8 @@ public class RanksControl {
             //  現状、牢獄処理しか使っていないので、ここでオフセットをリセットしている
             //  本来は設定したランクに応じて再計算が必要になる
             MySQLControl DBRec = new MySQLControl();
-            DBRec.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
-            DBRec.SetBaseDateToSQL( player.getUniqueId() );
-            DBRec.close();
+            DBA.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
+            DBA.SetBaseDateToSQL( player.getUniqueId() );
             return true;
         } catch( ArrayIndexOutOfBoundsException e ) {
             return false;
@@ -157,9 +156,10 @@ public class RanksControl {
      * 具体的に、昇格・降格を判断処理するメソッド
      *
      * @param player
+     * @param DBA
      * @return 
      */
-    public static boolean CheckRank( Player player ) {
+    public static boolean CheckRank( Player player, MySQLControl DBA ) {
         int allTime = ( int ) Math.round( player.getStatistic( Statistic.PLAY_ONE_MINUTE ) * 0.05 / 60 /60 );
         Tools.Prt( "PlayTime = " + Float.toString( ( float ) player.getStatistic( Statistic.PLAY_ONE_MINUTE ) ), Tools.consoleMode.full, programCode );
         Tools.Prt( player,
@@ -173,19 +173,17 @@ public class RanksControl {
         //
         //  DBからデータ取得、無ければ初期化および新規登録
         //
-        MySQLControl DBRec = new MySQLControl();
-        if ( !DBRec.GetSQL( player.getUniqueId() ) ) {
+        if ( !DBA.GetSQL( player.getUniqueId() ) ) {
             Tools.Prt( "New Database Entry", Tools.consoleMode.full, programCode );
-            DBRec.AddSQL( player );
+            DBA.AddSQL( player );
         }
 
         //
         //  不在投獄時処理
         //
         if ( MySQLControl.jail == 1 ) {
-            toJail( player, "不在時処理されました" );
-            DBRec.SetJailToSQL( player.getUniqueId(), 0 );
-            DBRec.close();
+            toJail( player, "不在時処理されました", DBA );
+            DBA.SetJailToSQL( player.getUniqueId(), 0 );
             return true;
         }
 
@@ -198,8 +196,7 @@ public class RanksControl {
         //  ペナルティユーザーに対する処理
         //
         if ( NowGroup.equals( Config.Prison ) ) {
-            if ( ( Config.Penalty > 0 ) && ( progress > Config.Penalty ) ) { return outJail( player ); }
-            DBRec.close();
+            if ( ( Config.Penalty > 0 ) && ( progress > Config.Penalty ) ) { return outJail( player, DBA ); }
             return false;
         }
 
@@ -210,8 +207,7 @@ public class RanksControl {
             Tools.Prt( "Logout date = " + MySQLControl.logout.toString(), Tools.consoleMode.full, programCode);
             Tools.Prt( "Diff Date : " + progress + " 日", Tools.consoleMode.full, programCode );
             if ( progress > Config.demotion ) {
-                Demotion( player );
-                DBRec.close();
+                Demotion( player, DBA );
                 return true;
             }
         }
@@ -219,10 +215,7 @@ public class RanksControl {
         //
         //  経過時間によるユーザーの昇格処理
         //
-        if ( Config.rankTime.get( NowGroup ) == null ) {
-            DBRec.close();
-            return false;
-        }
+        if ( Config.rankTime.get( NowGroup ) == null ) { return false; }
 
         if ( Config.rankTime.get( NowGroup ).get( "E" ) == null ) {
             boolean UpCheck = false;
@@ -238,12 +231,10 @@ public class RanksControl {
             if ( UpCheck ) {
                 Tools.Prt( ChatColor.YELLOW + "Player promotion!!", Tools.consoleMode.full, programCode);
                 Promotion( player );
-                DBRec.close();
                 return true;
             }
         } else Tools.Prt( "This player is Last Group", Tools.consoleMode.full, programCode );
 
-        DBRec.close();
         return false;
     }
 }

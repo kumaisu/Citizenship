@@ -5,6 +5,8 @@
  */
 package com.mycompany.citizenship;
 
+import java.util.Date;
+import java.util.UUID;
 import org.bukkit.World;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -12,13 +14,11 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import static org.bukkit.Bukkit.getWorld;
 import com.mycompany.citizenship.config.Config;
-import com.mycompany.kumaisulibraries.Tools;
-import static com.mycompany.citizenship.RanksControl.setGroup;
-import static com.mycompany.citizenship.config.Config.programCode;
+import com.mycompany.citizenship.database.Database;
 import com.mycompany.citizenship.database.MySQLControl;
+import com.mycompany.kumaisulibraries.Tools;
+import static com.mycompany.citizenship.config.Config.programCode;
 import com.mycompany.kumaisulibraries.Utility;
-import java.util.Date;
-import java.util.UUID;
 
 /**
  *
@@ -31,16 +31,15 @@ public class PlayerControl {
      *
      * @param player
      * @param Reason
-     * @param DBA
      * @return 
      */
-    public static boolean toJail( Player player, String Reason, MySQLControl DBA ) {
+    public static boolean toJail( Player player, String Reason ) {
         boolean retStat = false;
 
         //  降格処理
         if ( !Config.Prison.equals( "" ) ) {
             Tools.Prt( "Demotion Citizenship", Tools.consoleMode.max, programCode );
-            setGroup( player, Config.Prison, DBA );
+            RanksControl.setGroup( player, Config.Prison );
             retStat = true;
         }
 
@@ -54,7 +53,7 @@ public class PlayerControl {
             Bukkit.broadcastMessage( ChatColor.RED + player.getDisplayName() + " さんは、投獄されました" );
             retStat = true;
         }
-        DBA.addImprisonment( player.getUniqueId() );
+        MySQLControl.addImprisonment( player.getUniqueId() );
         return retStat;
     }
 
@@ -62,13 +61,12 @@ public class PlayerControl {
      * 釈放処理
      *
      * @param player
-     * @param DBA
      * @return 
      */
-    public static boolean outJail( Player player, MySQLControl DBA ) {
+    public static boolean outJail( Player player ) {
         boolean retStat = false;
 
-        setGroup( player, Config.rankName.get( 0 ), DBA );
+        RanksControl.setGroup( player, Config.rankName.get( 0 ) );
         ReleaseTeleport( player );
 
         return retStat;
@@ -107,10 +105,9 @@ public class PlayerControl {
      *
      * @param player
      * @param name
-     * @param DBA
      * @return 
      */
-    public static boolean getAccess( Player player, String name, MySQLControl DBA ) {
+    public static boolean getAccess( Player player, String name ) {
         if ( name.equals( "" ) ) { return false; }
 
         UUID lookUUID;
@@ -124,15 +121,16 @@ public class PlayerControl {
             lookUUID = Bukkit.getServer().getPlayer( name ).getUniqueId();
         }
 
-        if ( DBA.GetSQL( lookUUID ) ) {
-            Tools.Prt( player, "Total TickTime : " + Float.toString( ( float ) MySQLControl.tick ) + " Ticks(0.05sec)", programCode );
-            Tools.Prt( player, "総接続時間     : " + Float.toString( ( float ) ( MySQLControl.tick * 0.05 / 60 / 60)) + " hour" , programCode );
-            Tools.Prt( player, "ランク判定時間 : " + Float.toString( ( float ) ( ( MySQLControl.tick - MySQLControl.offset ) * 0.05 / 60 / 60)) + " hour" , programCode );
-            Tools.Prt( player, "起算日         : " + MySQLControl.basedate.toString(), programCode );
-            Tools.Prt( player, "経過日数       : " + Utility.dateDiff( MySQLControl.basedate, new Date() ) + " 日", programCode );
-            Tools.Prt( player, "Logout日       : " + MySQLControl.logout.toString(), programCode );
-            Tools.Prt( player, "Logout経過日数 : " + Utility.dateDiff( MySQLControl.logout, new Date() ) + " 日", programCode );
-            Tools.Prt( player, "投獄回数       : 前科" + ( MySQLControl.imprisonment == 0 ? "無し":" " + MySQLControl.imprisonment + " 犯"), programCode );
+        if ( MySQLControl.GetSQL( lookUUID ) ) {
+            Tools.Prt( player, "Player Name    : " + player.getDisplayName(), programCode );
+            Tools.Prt( player, "Total TickTime : " + Float.toString( ( float ) Database.tick ) + " Ticks(0.05sec)", programCode );
+            Tools.Prt( player, "総接続時間     : " + Float.toString( ( float ) ( Database.tick * 0.05 / 60 / 60)) + " hour" , programCode );
+            Tools.Prt( player, "ランク判定時間 : " + Float.toString( ( float ) ( ( Database.tick - Database.offset ) * 0.05 / 60 / 60)) + " hour" , programCode );
+            Tools.Prt( player, "起算日         : " + Database.basedate.toString(), programCode );
+            Tools.Prt( player, "経過日数       : " + Utility.dateDiff( Database.basedate, new Date() ) + " 日", programCode );
+            Tools.Prt( player, "Logout日       : " + Database.logout.toString(), programCode );
+            Tools.Prt( player, "Logout経過日数 : " + Utility.dateDiff( Database.logout, new Date() ) + " 日", programCode );
+            Tools.Prt( player, "投獄回数       : 前科" + ( Database.imprisonment == 0 ? "無し":" " + Database.imprisonment + " 犯"), programCode );
             return true;
         } else {
             Tools.Prt( player, ChatColor.RED + "Player[" + name + "]が存在しません", programCode );

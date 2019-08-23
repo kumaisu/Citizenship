@@ -22,8 +22,8 @@ import java.util.Map;
  */
 public class ConfigManager {
 
-    private final Plugin plugin;
-    private FileConfiguration config = null;
+    private static Plugin plugin;
+    private static FileConfiguration config = null;
 
     public ConfigManager(Plugin plugin) {
         this.plugin = plugin;
@@ -35,7 +35,7 @@ public class ConfigManager {
     /*
      * 設定をロードします
      */
-    public void load() {
+    public static void load() {
         // 設定ファイルを保存
         plugin.saveDefaultConfig();
         if ( config != null ) { // configが非null == リロードで呼び出された
@@ -90,7 +90,7 @@ public class ConfigManager {
         Tools.entryDebugFlag( programCode, DebugFlag );
     }
 
-    public void Status( Player p ) {
+    public static void Status( Player p ) {
         Tools.Prt( p, ChatColor.GREEN + "=== Citizenship Status ===", programCode );
         Tools.Prt( p, ChatColor.WHITE + "Degub Mode   : " + ChatColor.YELLOW + Tools.consoleFlag.get( programCode ).toString(), programCode );
         Tools.Prt( p, ChatColor.WHITE + "Mysql        : " + ChatColor.YELLOW + Config.host + ":" + Config.port, programCode );

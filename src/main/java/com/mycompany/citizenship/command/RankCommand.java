@@ -12,14 +12,12 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import com.mycompany.citizenship.Citizenship;
+import com.mycompany.citizenship.PlayerControl;
+import com.mycompany.citizenship.RanksControl;
+import com.mycompany.citizenship.config.Config;
+import com.mycompany.citizenship.config.ConfigManager;
 import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.kumaisulibraries.Utility;
-import com.mycompany.citizenship.config.Config;
-import com.mycompany.citizenship.database.MySQLControl;
-import static com.mycompany.citizenship.RanksControl.Demotion;
-import static com.mycompany.citizenship.RanksControl.Promotion;
-import static com.mycompany.citizenship.RanksControl.setGroup;
-import static com.mycompany.citizenship.PlayerControl.getAccess;
 import static com.mycompany.citizenship.config.Config.programCode;
 
 /**
@@ -29,11 +27,9 @@ import static com.mycompany.citizenship.config.Config.programCode;
 public class RankCommand implements CommandExecutor {
 
     private final Citizenship instance;
-    private final MySQLControl DBA;
 
     public RankCommand( Citizenship instance ) {
         this.instance = instance;
-        this.DBA = instance.DBA;
     }
 
     /**
@@ -60,14 +56,14 @@ public class RankCommand implements CommandExecutor {
         }
 
         if ( ( ( player == null ) || player.hasPermission( "citizenship.initialize" ) ) && CtlCmd.equals( "initialize" ) ) {
-            setGroup( ( lookPlayer == null ? player:lookPlayer ), Config.rankName.get( 0 ), DBA );
+            RanksControl.setGroup( ( lookPlayer == null ? player:lookPlayer ), Config.rankName.get( 0 ) );
             return true;
         }
 
         if ( ( player == null ) || player.hasPermission( "citizenship.console" ) ) {
             switch ( CtlCmd ) {
                 case "Reload":
-                    instance.config.load();
+                    ConfigManager.load();
                     Tools.Prt( player, Utility.ReplaceString( "%$aCitizenShip Config Reloaded." ), programCode );
                     return true;
                 case "Console":
@@ -87,20 +83,20 @@ public class RankCommand implements CommandExecutor {
             switch ( CtlCmd ) {
                 case "promotion":
                     if ( lookPlayer != null ) {
-                        Promotion( lookPlayer );
+                        RanksControl.Promotion( lookPlayer );
                         return true;
                     }
                     break;
                 case "demotion":
                     if ( lookPlayer != null ) {
-                        Demotion( lookPlayer, DBA );
+                        RanksControl.Demotion( lookPlayer );
                         return true;
                     }
                     break;
                 case "time":
-                    return getAccess( player, CmdArg, DBA );
+                    return PlayerControl.getAccess( player, CmdArg );
                 case "Status":
-                    instance.config.Status( player );
+                    ConfigManager.Status( player );
                     return true;
                 default:
             }

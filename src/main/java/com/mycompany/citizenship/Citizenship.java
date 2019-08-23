@@ -19,7 +19,6 @@ import com.mycompany.citizenship.config.ConfigManager;
 import com.mycompany.citizenship.command.RankCommand;
 import com.mycompany.citizenship.command.JailCommand;
 import com.mycompany.citizenship.database.MySQLControl;
-import static com.mycompany.citizenship.RanksControl.CheckRank;
 import static com.mycompany.citizenship.config.Config.programCode;
 
 /**
@@ -28,14 +27,12 @@ import static com.mycompany.citizenship.config.Config.programCode;
  */
 public class Citizenship extends JavaPlugin implements Listener {
 
-    public ConfigManager config;
-    public MySQLControl DBA;
-
     @Override
     public void onEnable() {
         this.getServer().getPluginManager().registerEvents( this, this );
-        config = new ConfigManager( this );
-        DBA = new MySQLControl();
+        ConfigManager config = new ConfigManager( this );
+        MySQLControl.connect();
+        MySQLControl.TableUpdate();
         getCommand( "ranks" ).setExecutor( new RankCommand( this ) );
         getCommand( "jail" ).setExecutor( new JailCommand( this ) );
     }
@@ -43,7 +40,7 @@ public class Citizenship extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         super.onDisable(); //To change body of generated methods, choose Tools | Templates.
-        DBA.disconnect();
+        MySQLControl.disconnect();
     }
 
     @Override
@@ -62,7 +59,7 @@ public class Citizenship extends JavaPlugin implements Listener {
     public void onPlayerLogin( PlayerJoinEvent event ) throws UnknownHostException {
         Player player = event.getPlayer();
         Tools.Prt( "onPlayerLogin process", Tools.consoleMode.max, programCode );
-        CheckRank( player, DBA );
+        RanksControl.CheckRank( player );
     }
 
     /**
@@ -73,7 +70,7 @@ public class Citizenship extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerQuit( PlayerQuitEvent event ) {
         Player player = event.getPlayer();
-        DBA.SetLogoutToSQL( player.getUniqueId() );
-        DBA.SetTickTimeToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
+        MySQLControl.SetLogoutToSQL( player.getUniqueId() );
+        MySQLControl.SetTickTimeToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
     }
 }

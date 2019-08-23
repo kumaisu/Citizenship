@@ -13,12 +13,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import com.mycompany.citizenship.Citizenship;
+import com.mycompany.citizenship.PlayerControl;
+import com.mycompany.citizenship.RanksControl;
 import com.mycompany.citizenship.config.Config;
-import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.citizenship.database.MySQLControl;
-import static com.mycompany.citizenship.PlayerControl.toJail;
-import static com.mycompany.citizenship.PlayerControl.outJail;
-import static com.mycompany.citizenship.RanksControl.getGroup;
+import com.mycompany.kumaisulibraries.Tools;
 import static com.mycompany.citizenship.config.Config.programCode;
 
 /**
@@ -28,11 +27,9 @@ import static com.mycompany.citizenship.config.Config.programCode;
 public class JailCommand implements CommandExecutor {
 
     private final Citizenship instance;
-    private final MySQLControl DBA;
 
     public JailCommand( Citizenship instance ) {
         this.instance = instance;
-        this.DBA = instance.DBA;
     }
 
     /**
@@ -65,7 +62,8 @@ public class JailCommand implements CommandExecutor {
                 Tools.Prt( player, ChatColor.RED + "対象プレイヤーが居ません", programCode );
                 return false;
             } else {
-                DBA.SetJailToSQL( offlineJailPlayer.getUniqueId(), 1 );
+                //  未ログイン者に対する、投獄予約処理
+                MySQLControl.SetJailToSQL( offlineJailPlayer.getUniqueId(), 1 );
                 return true;
             }
         }
@@ -75,10 +73,10 @@ public class JailCommand implements CommandExecutor {
 
         //  釈放処理
         if ( Reson.equalsIgnoreCase( "release" ) ) {
-            if ( getGroup( jailPlayer ).equals( Config.Prison ) ) { outJail( jailPlayer, DBA ); }
+            if ( RanksControl.getGroup( jailPlayer ).equals( Config.Prison ) ) { PlayerControl.outJail( jailPlayer ); }
             return true;
         }
 
-        return toJail( jailPlayer, Reson, DBA );
+        return PlayerControl.toJail( jailPlayer, Reson );
     }
 }

@@ -15,10 +15,11 @@ import org.bukkit.entity.Player;
 import static org.bukkit.Bukkit.getWorld;
 import com.mycompany.citizenship.config.Config;
 import com.mycompany.citizenship.database.Database;
-import com.mycompany.citizenship.database.MySQLControl;
+import com.mycompany.citizenship.database.PlayerData;
+import com.mycompany.citizenship.database.ReasonData;
 import com.mycompany.kumaisulibraries.Tools;
-import static com.mycompany.citizenship.config.Config.programCode;
 import com.mycompany.kumaisulibraries.Utility;
+import static com.mycompany.citizenship.config.Config.programCode;
 
 /**
  *
@@ -30,10 +31,9 @@ public class PlayerControl {
      * 投獄処理
      *
      * @param player
-     * @param Reason
      * @return 
      */
-    public static boolean toJail( Player player, String Reason ) {
+    public static boolean toJail( Player player ) {
         boolean retStat = false;
 
         //  降格処理
@@ -46,14 +46,17 @@ public class PlayerControl {
         //  投獄処理
         if ( Config.Imprisonment ) {
             JailTeleport( player );
+            String Reason = ReasonData.GetReason( player.getUniqueId() );
             player.sendTitle(
                 ChatColor.RED + "投獄されました",
                 ChatColor.YELLOW + Reason,
                 0, 100, 0 );
-            Bukkit.broadcastMessage( ChatColor.RED + player.getDisplayName() + " さんは、投獄されました" );
+            Bukkit.broadcastMessage( ChatColor.RED + player.getDisplayName() + " さんは投獄されました" );
+            Tools.Prt( ChatColor.RED + "Reason:" + Reason, programCode );
             retStat = true;
         }
-        MySQLControl.addImprisonment( player.getUniqueId() );
+
+        PlayerData.addImprisonment( player.getUniqueId() );
         return retStat;
     }
 
@@ -66,8 +69,16 @@ public class PlayerControl {
     public static boolean outJail( Player player ) {
         boolean retStat = false;
 
-        RanksControl.setGroup( player, Config.rankName.get( 0 ) );
-        ReleaseTeleport( player );
+        //  投獄処理で降格された場合のみ一般への変更処理
+        if ( !Config.Prison.equals( RanksControl.getGroup( player ) ) ) {
+            RanksControl.setGroup( player, Config.rankName.get( 0 ) );
+        }
+        
+        //  初期値への強制転送
+        if ( Config.Outprisonment ) {
+            ReleaseTeleport( player );
+            Bukkit.broadcastMessage( ChatColor.RED + player.getDisplayName() + " さんは釈放されました" );
+        }
 
         return retStat;
     }
@@ -115,14 +126,14 @@ public class PlayerControl {
         Tools.Prt( "Get Access Time [" + name + "]", Tools.consoleMode.max, programCode );
 
         if ( Bukkit.getServer().getPlayer( name ) == null ) {
-            Tools.Prt( "Get Offline Player Data : " + Bukkit.getServer().getOfflinePlayer( name ).getName(), Tools.consoleMode.full, programCode );
+            Tools.Prt( player, "Get Offline Player Data : " + Bukkit.getServer().getOfflinePlayer( name ).getName(), Tools.consoleMode.full, programCode );
             lookUUID = Bukkit.getServer().getOfflinePlayer( name ).getUniqueId();
         } else {
             lookUUID = Bukkit.getServer().getPlayer( name ).getUniqueId();
         }
 
-        if ( MySQLControl.GetSQL( lookUUID ) ) {
-            Tools.Prt( player, "Player Name    : " + player.getDisplayName(), programCode );
+        if ( PlayerData.GetSQL( lookUUID ) ) {
+            Tools.Prt( player, "Player Name    : " + name, programCode );
             Tools.Prt( player, "Total TickTime : " + Float.toString( ( float ) Database.tick ) + " Ticks(0.05sec)", programCode );
             Tools.Prt( player, "総接続時間     : " + Float.toString( ( float ) ( Database.tick * 0.05 / 60 / 60)) + " hour" , programCode );
             Tools.Prt( player, "ランク判定時間 : " + Float.toString( ( float ) ( ( Database.tick - Database.offset ) * 0.05 / 60 / 60)) + " hour" , programCode );

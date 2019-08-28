@@ -14,10 +14,11 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import static org.bukkit.Bukkit.getServer;
 import com.mycompany.citizenship.config.Config;
 import com.mycompany.citizenship.database.Database;
-import com.mycompany.citizenship.database.MySQLControl;
+import com.mycompany.citizenship.database.PlayerData;
 import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.kumaisulibraries.Utility;
 import static com.mycompany.citizenship.config.Config.programCode;
+import com.mycompany.citizenship.database.ReasonData;
 import net.milkbowl.vault.permission.Permission;
 
 /**
@@ -95,8 +96,8 @@ public class RanksControl {
             String Cmd = "pex user " + player.getName() + " group set " + Config.rankName.get( Config.rankName.indexOf( baseGroup ) - 1 );
             Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
-            MySQLControl.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
-            MySQLControl.SetBaseDateToSQL( player.getUniqueId() );
+            PlayerData.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
+            PlayerData.SetBaseDateToSQL( player.getUniqueId() );
             return true;
         } catch ( ArrayIndexOutOfBoundsException e ) {
             return false;
@@ -141,8 +142,8 @@ public class RanksControl {
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
             //  現状、牢獄処理しか使っていないので、ここでオフセットをリセットしている
             //  本来は設定したランクに応じて再計算が必要になる
-            MySQLControl.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
-            MySQLControl.SetBaseDateToSQL( player.getUniqueId() );
+            PlayerData.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
+            PlayerData.SetBaseDateToSQL( player.getUniqueId() );
             return true;
         } catch( ArrayIndexOutOfBoundsException e ) {
             return false;
@@ -169,17 +170,17 @@ public class RanksControl {
         //
         //  DBからデータ取得、無ければ初期化および新規登録
         //
-        if ( !MySQLControl.GetSQL( player.getUniqueId() ) ) {
+        if ( !PlayerData.GetSQL( player.getUniqueId() ) ) {
             Tools.Prt( "New Database Entry", Tools.consoleMode.full, programCode );
-            MySQLControl.AddSQL( player );
+            PlayerData.AddSQL( player );
         }
 
         //
         //  不在投獄時処理
         //
         if ( Database.jail == 1 ) {
-            PlayerControl.toJail( player, "不在時処理されました" );
-            MySQLControl.SetJailToSQL( player.getUniqueId(), 0 );
+            PlayerControl.toJail( player );
+            PlayerData.SetJailToSQL( player.getUniqueId(), 0 );
             return true;
         }
 
@@ -192,8 +193,12 @@ public class RanksControl {
         //  ペナルティユーザーに対する処理
         //
         if ( NowGroup.equals( Config.Prison ) ) {
-            if ( ( Config.Penalty > 0 ) && ( progress > Config.Penalty ) ) { return PlayerControl.outJail( player ); }
-            return false;
+            if ( ( Config.Penalty > 0 ) && ( progress > Config.Penalty ) ) {
+                return PlayerControl.outJail( player );
+            } else {
+                Tools.Prt( player, ChatColor.RED + "投獄理由 : " + ReasonData.GetReason( player.getUniqueId() ), Tools.consoleMode.normal, programCode );
+                return false;
+            }
         }
 
         //

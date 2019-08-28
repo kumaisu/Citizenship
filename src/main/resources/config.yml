@@ -32,10 +32,9 @@ PlayerBroadcast: false
 PrisonGroup: Prisoner
 #   剥奪解除に必要な時間（日数）
 PenaltyTime: 1
-#   剥奪時、牢獄エリアにジャンプさせるか？
-Imprisonment: false
 #   牢獄エリアの座標
 Prison:
+  enable: true
   world: world
   x: 0.0
   y: 0.0
@@ -44,6 +43,7 @@ Prison:
   pitch: 0.0
 #   釈放時の転送座標
 Release:
+  enable: true
   world: world
   x: 0.0
   y: 0.0

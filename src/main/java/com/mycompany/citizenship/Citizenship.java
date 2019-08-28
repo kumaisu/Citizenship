@@ -19,6 +19,7 @@ import com.mycompany.citizenship.config.ConfigManager;
 import com.mycompany.citizenship.command.RankCommand;
 import com.mycompany.citizenship.command.JailCommand;
 import com.mycompany.citizenship.database.MySQLControl;
+import com.mycompany.citizenship.database.PlayerData;
 import static com.mycompany.citizenship.config.Config.programCode;
 
 /**
@@ -70,7 +71,7 @@ public class Citizenship extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerQuit( PlayerQuitEvent event ) {
         Player player = event.getPlayer();
-        MySQLControl.SetLogoutToSQL( player.getUniqueId() );
-        MySQLControl.SetTickTimeToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
+        PlayerData.SetLogoutToSQL( player.getUniqueId() );
+        PlayerData.SetTickTimeToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
     }
 }

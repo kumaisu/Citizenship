@@ -64,8 +64,8 @@ public class ConfigManager {
         Config.PromotBroadcast  = config.getBoolean( "PlayerBroadcast", false );
         Config.Prison           = config.getString( "PrisonGroup", "" );
         Config.Penalty          = config.getInt( "PenaltyTime", 0 );
-        Config.Imprisonment     = config.getBoolean( "Imprisonment", false );
         
+        Config.Imprisonment     = config.getBoolean( "Prison.enable", false );
         Config.fworld   = config.getString( "Prison.world" );
         Config.fx       = Float.valueOf( config.getString( "Prison.x" ) );
         Config.fy       = Float.valueOf( config.getString( "Prison.y" ) );
@@ -73,6 +73,7 @@ public class ConfigManager {
         Config.fyaw     = Float.valueOf( config.getString( "Prison.yaw" ) );
         Config.fpitch   = Float.valueOf( config.getString( "Prison.pitch" ) );
 
+        Config.Outprisonment    = config.getBoolean( "Release.enable", false );
         Config.rworld   = config.getString( "Release.world" );
         Config.rx       = Float.valueOf( config.getString( "Release.x" ) );
         Config.ry       = Float.valueOf( config.getString( "Release.y" ) );

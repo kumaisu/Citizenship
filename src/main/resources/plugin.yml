@@ -1,6 +1,6 @@
 main: com.mycompany.citizenship.Citizenship
 name: Citizenship
-version: 0.5
+version: 0.6
 description: Citizenship Control Manager plugins
 author: Kumaisu
 database: true
@@ -10,7 +10,6 @@ commands:
         permission: citizenship.jail
         default: op
         permission-message: You do not have permission.
-        usage: /<command> <player>
     ranks:
         description: Citizenship Control Admin Commands
 permissions:

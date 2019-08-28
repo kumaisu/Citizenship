@@ -6,12 +6,15 @@
 package com.mycompany.citizenship.database;
 
 import java.util.Date;
+import com.zaxxer.hikari.HikariDataSource;
 
 /**
  *
  * @author sugichan
  */
 public class Database {
+    public static HikariDataSource dataSource = null;
+
     public static String name = "Unknown";
     public static Date logout;
     public static Date basedate;

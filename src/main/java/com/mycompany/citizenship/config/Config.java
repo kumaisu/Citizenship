@@ -39,6 +39,7 @@ public class Config {
     public static float fpitch;
     public static String fworld;
 
+    public static boolean Outprisonment = false;
     public static float rx;
     public static float ry;
     public static float rz;

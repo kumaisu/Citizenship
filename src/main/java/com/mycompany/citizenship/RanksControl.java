@@ -5,6 +5,7 @@
  */
 package com.mycompany.citizenship;
 
+import net.milkbowl.vault.permission.Permission;
 import java.util.Date;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,11 +16,10 @@ import static org.bukkit.Bukkit.getServer;
 import com.mycompany.citizenship.config.Config;
 import com.mycompany.citizenship.database.Database;
 import com.mycompany.citizenship.database.PlayerData;
+import com.mycompany.citizenship.database.ReasonData;
 import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.kumaisulibraries.Utility;
 import static com.mycompany.citizenship.config.Config.programCode;
-import com.mycompany.citizenship.database.ReasonData;
-import net.milkbowl.vault.permission.Permission;
 
 /**
  *

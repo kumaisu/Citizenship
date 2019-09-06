@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,7 +21,6 @@ import com.mycompany.citizenship.config.Config;
 import com.mycompany.citizenship.database.PlayerData;
 import com.mycompany.citizenship.database.ReasonData;
 import static com.mycompany.citizenship.config.Config.programCode;
-import org.bukkit.OfflinePlayer;
 
 /**
  *

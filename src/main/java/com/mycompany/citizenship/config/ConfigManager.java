@@ -5,6 +5,7 @@
  */
 package com.mycompany.citizenship.config;
 
+import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import com.mycompany.kumaisulibraries.Tools;
 import static com.mycompany.citizenship.config.Config.programCode;
-import java.util.Map;
 
 /**
  *

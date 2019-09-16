@@ -90,7 +90,7 @@
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit</artifactId>
-      <version>1.14.3-R0.1-SNAPSHOT</version>
+      <version>1.14.4-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -132,7 +132,7 @@
   </dependencies>
   <properties>
     <github.global.server>github-kumaisu</github.global.server>
-    <bukkitVersion>1.14.3-R0.1-SNAPSHOT</bukkitVersion>
+    <bukkitVersion>1.14.4-R0.1-SNAPSHOT</bukkitVersion>
     <maven.compiler.source>1.8</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.target>1.8</maven.compiler.target>

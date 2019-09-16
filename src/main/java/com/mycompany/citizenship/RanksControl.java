@@ -93,11 +93,26 @@ public class RanksControl {
         }
 
         try {
-            String Cmd = "pex user " + player.getName() + " group set " + Config.rankName.get( Config.rankName.indexOf( baseGroup ) - 1 );
+            String NewGroup = Config.rankName.get( Config.rankName.indexOf( baseGroup ) - 1 );
+            String Cmd = "pex user " + player.getName() + " group set " + NewGroup;
             Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
             PlayerData.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
             PlayerData.SetBaseDateToSQL( player.getUniqueId() );
+
+            String LevelupMessage = 
+                ChatColor.YELLOW + player.getName() + " さんを " +
+                ChatColor.AQUA + NewGroup +
+                ChatColor.YELLOW + " に降格しました";
+
+            if ( Config.PromotBroadcast ) {
+                LevelupMessage = "<鯖アナウンス> " + LevelupMessage;
+                Bukkit.broadcastMessage( LevelupMessage );
+                Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), "discord broadcast " + LevelupMessage );
+            } else {
+                Tools.Prt( player, LevelupMessage, Tools.consoleMode.normal, programCode );
+            }
+
             return true;
         } catch ( ArrayIndexOutOfBoundsException e ) {
             return false;

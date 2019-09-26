@@ -107,7 +107,7 @@ public class MySQLControl {
             //          date : DATETIME         update Date
             //          Reason : varchar(50)    Last Jail Reason
             //  存在すれば、無視される
-            sql = "CREATE TABLE IF NOT EXISTS player( id int auto_increment, uuid varchar(36), date DATETIME, reason varchar(50), index(id) );";
+            sql = "CREATE TABLE IF NOT EXISTS reason( id int auto_increment, uuid varchar(36), date DATETIME, reason varchar(50), index(id) );";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
             preparedStatement = con.prepareStatement( sql );
             preparedStatement.executeUpdate();

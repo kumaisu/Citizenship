@@ -3,7 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.mycompany</groupId>
   <artifactId>Citizenship</artifactId>
-  <version>0.6</version>
+  <version>0.6.1</version>
+  <description>Citizenship Control Manager plugins</description>
   <scm>
     <connection>scm:svn:http://127.0.0.1/dummy</connection>
     <developerConnection>scm:svn:https://127.0.0.1/dummy</developerConnection>
@@ -90,12 +91,16 @@
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit</artifactId>
-      <version>1.14.4-R0.1-SNAPSHOT</version>
+      <version>1.12.2-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
           <artifactId>commons-lang</artifactId>
           <groupId>commons-lang</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>json-simple</artifactId>
+          <groupId>com.googlecode.json-simple</groupId>
         </exclusion>
         <exclusion>
           <artifactId>guava</artifactId>
@@ -132,7 +137,7 @@
   </dependencies>
   <properties>
     <github.global.server>github-kumaisu</github.global.server>
-    <bukkitVersion>1.14.4-R0.1-SNAPSHOT</bukkitVersion>
+    <bukkitVersion>1.12.2-R0.1-SNAPSHOT</bukkitVersion>
     <maven.compiler.source>1.8</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.target>1.8</maven.compiler.target>

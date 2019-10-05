@@ -97,7 +97,7 @@ public class RanksControl {
             String Cmd = "pex user " + player.getName() + " group set " + NewGroup;
             Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
-            PlayerData.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
+            PlayerData.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_TICK ) );
             PlayerData.SetBaseDateToSQL( player.getUniqueId() );
 
             String LevelupMessage = 
@@ -157,7 +157,7 @@ public class RanksControl {
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
             //  現状、牢獄処理しか使っていないので、ここでオフセットをリセットしている
             //  本来は設定したランクに応じて再計算が必要になる
-            PlayerData.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
+            PlayerData.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_TICK ) );
             PlayerData.SetBaseDateToSQL( player.getUniqueId() );
             return true;
         } catch( ArrayIndexOutOfBoundsException e ) {
@@ -172,8 +172,8 @@ public class RanksControl {
      * @return 
      */
     public static boolean CheckRank( Player player ) {
-        int allTime = ( int ) Math.round( player.getStatistic( Statistic.PLAY_ONE_MINUTE ) * 0.05 / 60 /60 );
-        Tools.Prt( "PlayTime = " + Float.toString( ( float ) player.getStatistic( Statistic.PLAY_ONE_MINUTE ) ), Tools.consoleMode.full, programCode );
+        int allTime = ( int ) Math.round( player.getStatistic( Statistic.PLAY_ONE_TICK ) * 0.05 / 60 /60 );
+        Tools.Prt( "PlayTime = " + Float.toString( ( float ) player.getStatistic( Statistic.PLAY_ONE_TICK ) ), Tools.consoleMode.full, programCode );
         Tools.Prt( player,
             ChatColor.YELLOW + "貴方の通算接続時間は " +
             ChatColor.AQUA + allTime +
@@ -200,7 +200,7 @@ public class RanksControl {
         }
 
         int progress = Utility.dateDiff( Database.logout, new Date() );
-        int checkHour = ( int ) Math.round( ( player.getStatistic( Statistic.PLAY_ONE_MINUTE ) - Database.offset ) * 0.05 / 60 / 60 );
+        int checkHour = ( int ) Math.round( ( player.getStatistic( Statistic.PLAY_ONE_TICK ) - Database.offset ) * 0.05 / 60 / 60 );
 
         String NowGroup = getGroup( player );
 

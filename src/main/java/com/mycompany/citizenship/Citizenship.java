@@ -72,6 +72,6 @@ public class Citizenship extends JavaPlugin implements Listener {
     public void onPlayerQuit( PlayerQuitEvent event ) {
         Player player = event.getPlayer();
         PlayerData.SetLogoutToSQL( player.getUniqueId() );
-        PlayerData.SetTickTimeToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
+        PlayerData.SetTickTimeToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_TICK ) );
     }
 }

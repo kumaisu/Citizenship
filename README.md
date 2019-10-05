@@ -6,7 +6,7 @@ Citizenship Control Manager Repository
 Citizenship は、プレイヤーのログイン経過時間に応じて、Permissionグループを変更するプラグインです  
 Citizenship is a plugin that changes the Permission group according to the player login elapsed time  
   
-## Operation check
+## Operation check  
 Spigot 1.14.4  
 PermissionsEx 1.23.4  
   

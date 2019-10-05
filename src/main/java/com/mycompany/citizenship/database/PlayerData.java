@@ -103,7 +103,7 @@ public class PlayerData {
                 Database.offset         = rs.getInt( "offset" );
                 Database.jail           = rs.getInt( "jail" );
                 Database.imprisonment   = rs.getInt( "imprisonment" );
-                Tools.Prt( "Get Data from SQL Success.", Tools.consoleMode.full , programCode );
+                Tools.Prt( "Get Data from SQL Success.", Tools.consoleMode.max , programCode );
                 retStat = true;
             }
             con.close();

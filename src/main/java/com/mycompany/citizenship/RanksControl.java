@@ -37,7 +37,12 @@ public class RanksControl {
         Tools.Prt( "Promotion Process", Tools.consoleMode.full, programCode );
         String baseGroup = getGroup( player );
 
-        if ( baseGroup.equals( "" ) ) { return false; }
+        Tools.Prt( "Player now Group is " + baseGroup, Tools.consoleMode.full, programCode );
+
+        if ( baseGroup.equals( "" ) || baseGroup == null ) {
+            Tools.Prt( "グループ設定がありません", Tools.consoleMode.full, programCode );
+            return false;
+        }
         if ( Config.rankName.contains( baseGroup ) == false ) {
             Tools.Prt( player, ChatColor.BLUE + "ランク制御対象外グループです", Tools.consoleMode.full, programCode );
             return false;
@@ -82,7 +87,12 @@ public class RanksControl {
         Tools.Prt( "Demotion Process", Tools.consoleMode.full, programCode );
         String baseGroup = getGroup( player );
 
-        if ( baseGroup.equals("") ) { return false; }
+        Tools.Prt( "Player now Group is " + baseGroup, Tools.consoleMode.full, programCode );
+
+        if ( baseGroup.equals( "" ) || baseGroup == null ) {
+            Tools.Prt( "グループ設定がありません", Tools.consoleMode.full, programCode );
+            return false;
+        }
         if ( Config.rankName.contains( baseGroup ) == false ) {
             Tools.Prt( player, "ランク制御対象外グループです", Tools.consoleMode.full, programCode );
             return false;
@@ -136,7 +146,7 @@ public class RanksControl {
             return "";
         }
 
-        for ( String StrItem1 : perm.getPlayerGroups( player ) ) Tools.Prt( "{" + StrItem1 + "}", Tools.consoleMode.max, programCode );
+        for ( String StrItem1 : perm.getPlayerGroups( player ) ) Tools.Prt( "Have Gr. {" + StrItem1 + "}", Tools.consoleMode.max, programCode );
 
         String NowGroup = perm.getPlayerGroups( player )[0];
         Tools.Prt( "NowGroup [" + NowGroup + "]", Tools.consoleMode.full, programCode );
@@ -232,7 +242,10 @@ public class RanksControl {
         //
         //  経過時間によるユーザーの昇格処理
         //
-        if ( Config.rankTime.get( NowGroup ) == null ) { return false; }
+        if ( Config.rankTime.get( NowGroup ) == null ) {
+            Tools.Prt( ChatColor.GOLD + "チェック対象グループではありません", Tools.consoleMode.full, programCode );
+            return false;
+        }
 
         if ( Config.rankTime.get( NowGroup ).get( "E" ) == null ) {
             boolean UpCheck = false;

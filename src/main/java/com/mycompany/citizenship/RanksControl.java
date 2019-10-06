@@ -211,7 +211,8 @@ public class RanksControl {
             if ( ( Config.Penalty > 0 ) && ( progress > Config.Penalty ) ) {
                 return PlayerControl.outJail( player );
             } else {
-                Tools.Prt( player, ChatColor.RED + "投獄理由 : " + ReasonData.GetReason( player.getUniqueId() ), Tools.consoleMode.normal, programCode );
+                ReasonData.GetReason( player.getUniqueId() );
+                Tools.Prt( player, ChatColor.RED + "投獄理由 : " + Database.Reason + " By." + Database.enforcer, Tools.consoleMode.normal, programCode );
                 return false;
             }
         }

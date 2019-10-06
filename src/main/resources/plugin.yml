@@ -1,7 +1,7 @@
 main: com.mycompany.citizenship.Citizenship
 name: Citizenship
-version: 0.6
-description: Citizenship Control Manager plugins
+version: ${project.version}
+description: ${project.description}
 author: Kumaisu
 database: true
 api-version: 1.14

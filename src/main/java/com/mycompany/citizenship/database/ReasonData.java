@@ -32,15 +32,17 @@ public class ReasonData {
      *
      * @param uuid
      * @param reason
+     * @param enforcer
      */
-    public static void AddReason( UUID uuid, String reason ) {
+    public static void AddReason( UUID uuid, String reason, String enforcer ) {
         try ( Connection con = Database.dataSource.getConnection() ) {
-            String sql = "INSERT INTO reason (uuid, date, reason) VALUES (?, ?, ?);";
+            String sql = "INSERT INTO reason (uuid, date, reason, enforcer) VALUES (?, ?, ?, ?);";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
             PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.setString( 1, uuid.toString() );
             preparedStatement.setString( 2, sdf.format( new Date() ) );
             preparedStatement.setString( 3, reason );
+            preparedStatement.setString( 4, enforcer );
             preparedStatement.executeUpdate();
             con.close();
 
@@ -75,9 +77,8 @@ public class ReasonData {
      * UUIDからプレイヤー情報を取得する
      *
      * @param uuid
-     * @return
      */
-    public static String GetReason( UUID uuid ) {
+    public static void GetReason( UUID uuid ) {
         String reason = "違反行為";
         try ( Connection con = Database.dataSource.getConnection() ) {
             Statement stmt = con.createStatement();
@@ -85,14 +86,14 @@ public class ReasonData {
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
             ResultSet rs = stmt.executeQuery( sql );
             if ( rs.next() ) {
-                reason = rs.getString( "reason" );
+                Database.Reason = rs.getString( "reason" );
+                Database.enforcer = rs.getString( "enforcer" );
                 Tools.Prt( "Get Reason from SQL Success.", Tools.consoleMode.full , programCode );
             }
             con.close();
         } catch ( SQLException e ) {
             Tools.Prt( ChatColor.RED + "Error GetReason" + e.getMessage(), programCode );
         }
-        return reason;
     }
 
     /**
@@ -107,7 +108,8 @@ public class ReasonData {
                 ChatColor.WHITE + String.format( "%3d", gs.getInt( "id" ) ) + ": " +
                 ChatColor.GREEN + sdf.format( gs.getTimestamp( "date" ) ) + " " +
                 ChatColor.AQUA + Bukkit.getOfflinePlayer( UUID.fromString( gs.getString( "uuid" ) ) ).getName() + " " +
-                ChatColor.RED + gs.getString( "reason" );
+                ChatColor.RED + gs.getString( "reason" ) +
+                ChatColor.WHITE + "(by." + gs.getString( "enforcer" ) + ")";
             return retStr;
         } catch ( SQLException ex ) {
             Tools.Prt( ChatColor.RED + "Line Make Error : " + ex.getMessage(), programCode );

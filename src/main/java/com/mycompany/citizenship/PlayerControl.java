@@ -46,13 +46,13 @@ public class PlayerControl {
         //  投獄処理
         if ( Config.Imprisonment ) {
             JailTeleport( player );
-            String Reason = ReasonData.GetReason( player.getUniqueId() );
+            ReasonData.GetReason( player.getUniqueId() );
             player.sendTitle(
                 ChatColor.RED + "投獄されました",
-                ChatColor.YELLOW + Reason,
+                ChatColor.YELLOW + Database.Reason + "(By." + Database.enforcer + ")",
                 0, 100, 0 );
             Bukkit.broadcastMessage( ChatColor.RED + player.getDisplayName() + " さんは投獄されました" );
-            Tools.Prt( ChatColor.RED + "Reason:" + Reason, programCode );
+            Tools.Prt( ChatColor.RED + "Reason:" + Database.Reason + " By." + Database.enforcer, programCode );
             retStat = true;
         }
 
@@ -70,7 +70,9 @@ public class PlayerControl {
         boolean retStat = false;
 
         //  投獄処理で降格された場合のみ一般への変更処理
-        if ( !Config.Prison.equals( RanksControl.getGroup( player ) ) ) {
+        Tools.Prt( Config.Prison + " : " + RanksControl.getGroup( player ), Tools.consoleMode.max, programCode );
+        if ( Config.Prison.equals( RanksControl.getGroup( player ) ) ) {
+            Tools.Prt( "Jail Player to : " + Config.rankName.get( 0 ), Tools.consoleMode.full, programCode );
             RanksControl.setGroup( player, Config.rankName.get( 0 ) );
         }
         

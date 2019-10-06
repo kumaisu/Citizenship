@@ -22,4 +22,7 @@ public class Database {
     public static int offset = 0;
     public static int jail = 0;
     public static int imprisonment = 0;
+    
+    public static String Reason = "";
+    public static String enforcer = "";
 }

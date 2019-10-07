@@ -11,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import static org.bukkit.Bukkit.getWorld;
 import com.mycompany.citizenship.config.Config;
@@ -150,4 +151,35 @@ public class PlayerControl {
             return false;
         }
     }
-}
+
+    /**
+     * 未ログイン者の事前登録
+     *
+     * @param player
+     * @param name
+     * @return 
+     */
+    public static boolean putPlayer( Player player, String name ) {
+        if ( name.equals( "" ) ) { return false; }
+
+        UUID lookUUID;
+        int lookTick = 0;
+
+        Tools.Prt( "Put Player [" + name + "]", Tools.consoleMode.max, programCode );
+        if ( Bukkit.getServer().getPlayer( name ) == null ) {
+            Tools.Prt( player, "Get Offline Player Data : " + Bukkit.getServer().getOfflinePlayer( name ).getName(), Tools.consoleMode.max, programCode );
+            lookUUID = Bukkit.getServer().getOfflinePlayer( name ).getUniqueId();
+        } else {
+            lookUUID = Bukkit.getServer().getPlayer( name ).getUniqueId();
+            lookTick = Bukkit.getServer().getPlayer( name ).getStatistic( Statistic.PLAY_ONE_MINUTE );
+        }
+
+        if ( PlayerData.GetSQL( lookUUID ) ) {
+            Tools.Prt( player, ChatColor.RED + "既に存在しているプレイヤーです", Tools.consoleMode.full, programCode );
+            return false;
+        } else {
+            PlayerData.AddSQL( lookUUID, name, lookTick );
+            PlayerData.SetLogoutToSQL( lookUUID );
+            return true;
+        }
+    }}

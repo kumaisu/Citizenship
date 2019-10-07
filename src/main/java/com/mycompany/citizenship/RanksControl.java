@@ -31,16 +31,18 @@ public class RanksControl {
      * 昇格
      *
      * @param player
+     * @param target
      * @return 
      */
-    public static boolean Promotion( Player player ) {
+    public static boolean Promotion( Player player, Player target ) {
         Tools.Prt( "Promotion Process", Tools.consoleMode.full, programCode );
-        String baseGroup = getGroup( player );
+        if ( target == null ) target = player;
+        String baseGroup = getGroup( target );
 
         Tools.Prt( "Player now Group is " + baseGroup, Tools.consoleMode.full, programCode );
 
         if ( baseGroup.equals( "" ) || baseGroup == null ) {
-            Tools.Prt( "グループ設定がありません", Tools.consoleMode.full, programCode );
+            Tools.Prt( player, "グループ設定がありません", Tools.consoleMode.full, programCode );
             return false;
         }
         if ( Config.rankName.contains( baseGroup ) == false ) {
@@ -54,12 +56,12 @@ public class RanksControl {
 
         try {
             String NewGroup = Config.rankName.get( Config.rankName.indexOf( baseGroup ) + 1 );
-            String Cmd = "pex user " + player.getName() + " group set " + NewGroup;
+            String Cmd = "pex user " + target.getName() + " group set " + NewGroup;
             Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
 
             String LevelupMessage = 
-                ChatColor.YELLOW + player.getName() + " さんが " +
+                ChatColor.YELLOW + target.getName() + " さんが " +
                 ChatColor.AQUA + NewGroup +
                 ChatColor.YELLOW + " に昇格しました";
 
@@ -68,7 +70,7 @@ public class RanksControl {
                 Bukkit.broadcastMessage( LevelupMessage );
                 Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), "discord broadcast " + LevelupMessage );
             } else {
-                Tools.Prt( player, LevelupMessage, Tools.consoleMode.normal, programCode );
+                Tools.Prt( target, LevelupMessage, Tools.consoleMode.normal, programCode );
             }
 
             return true;
@@ -81,16 +83,18 @@ public class RanksControl {
      * 降格
      *
      * @param player
+     * @param target
      * @return 
      */
-    public static boolean Demotion( Player player ){
+    public static boolean Demotion( Player player, Player target ){
         Tools.Prt( "Demotion Process", Tools.consoleMode.full, programCode );
-        String baseGroup = getGroup( player );
+        if ( target == null ) target = player;
+        String baseGroup = getGroup( target );
 
         Tools.Prt( "Player now Group is " + baseGroup, Tools.consoleMode.full, programCode );
 
         if ( baseGroup.equals( "" ) || baseGroup == null ) {
-            Tools.Prt( "グループ設定がありません", Tools.consoleMode.full, programCode );
+            Tools.Prt( player, "グループ設定がありません", Tools.consoleMode.full, programCode );
             return false;
         }
         if ( Config.rankName.contains( baseGroup ) == false ) {
@@ -104,14 +108,14 @@ public class RanksControl {
 
         try {
             String NewGroup = Config.rankName.get( Config.rankName.indexOf( baseGroup ) - 1 );
-            String Cmd = "pex user " + player.getName() + " group set " + NewGroup;
+            String Cmd = "pex user " + target.getName() + " group set " + NewGroup;
             Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
-            PlayerData.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_TICK ) );
-            PlayerData.SetBaseDateToSQL( player.getUniqueId() );
+            PlayerData.SetOffsetToSQL( target.getUniqueId(), target.getStatistic( Statistic.PLAY_ONE_TICK ) );
+            PlayerData.SetBaseDateToSQL( target.getUniqueId() );
 
             String LevelupMessage = 
-                ChatColor.YELLOW + player.getName() + " さんを " +
+                ChatColor.YELLOW + target.getName() + " さんを " +
                 ChatColor.AQUA + NewGroup +
                 ChatColor.YELLOW + " に降格しました";
 
@@ -120,7 +124,7 @@ public class RanksControl {
                 Bukkit.broadcastMessage( LevelupMessage );
                 Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), "discord broadcast " + LevelupMessage );
             } else {
-                Tools.Prt( player, LevelupMessage, Tools.consoleMode.normal, programCode );
+                Tools.Prt( target, LevelupMessage, Tools.consoleMode.normal, programCode );
             }
 
             return true;
@@ -234,7 +238,7 @@ public class RanksControl {
             Tools.Prt( "Logout date = " + Database.logout.toString(), Tools.consoleMode.full, programCode);
             Tools.Prt( "Diff Date : " + progress + " 日", Tools.consoleMode.full, programCode );
             if ( progress > Config.demotion ) {
-                Demotion( player );
+                Demotion( player, null );
                 return true;
             }
         }
@@ -242,7 +246,7 @@ public class RanksControl {
         //
         //  経過時間によるユーザーの昇格処理
         //
-        if ( Config.rankTime.get( NowGroup ) == null ) {
+        if ( NowGroup.equals( "" ) || Config.rankTime.get( NowGroup ) == null ) {
             Tools.Prt( ChatColor.GOLD + "チェック対象グループではありません", Tools.consoleMode.full, programCode );
             return false;
         }
@@ -260,7 +264,7 @@ public class RanksControl {
             }
             if ( UpCheck ) {
                 Tools.Prt( ChatColor.YELLOW + "Player promotion!!", Tools.consoleMode.full, programCode);
-                Promotion( player );
+                Promotion( player, null );
                 return true;
             }
         } else Tools.Prt( "This player is Last Group", Tools.consoleMode.full, programCode );

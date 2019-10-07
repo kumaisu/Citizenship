@@ -15,10 +15,11 @@ import com.mycompany.citizenship.Citizenship;
 import com.mycompany.citizenship.PlayerControl;
 import com.mycompany.citizenship.RanksControl;
 import com.mycompany.citizenship.config.Config;
+import static com.mycompany.citizenship.config.Config.programCode;
 import com.mycompany.citizenship.config.ConfigManager;
 import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.kumaisulibraries.Utility;
-import static com.mycompany.citizenship.config.Config.programCode;
+import org.bukkit.Statistic;
 
 /**
  *
@@ -83,18 +84,35 @@ public class RankCommand implements CommandExecutor {
             switch ( CtlCmd ) {
                 case "promotion":
                     if ( lookPlayer != null ) {
-                        RanksControl.Promotion( lookPlayer );
+                        RanksControl.Promotion( player, lookPlayer );
                         return true;
-                    }
+                    } else Tools.Prt( ChatColor.RED + "正しいプレイヤー名を指定してください", Tools.consoleMode.max, programCode );
                     break;
                 case "demotion":
                     if ( lookPlayer != null ) {
-                        RanksControl.Demotion( lookPlayer );
+                        RanksControl.Demotion( player, lookPlayer );
                         return true;
-                    }
+                    } else Tools.Prt( ChatColor.RED + "正しいプレイヤー名を指定してください", Tools.consoleMode.max, programCode );
                     break;
                 case "time":
                     return PlayerControl.getAccess( player, CmdArg );
+                case "addplayer":
+                    return PlayerControl.putPlayer( player, CmdArg );
+                case "getuuid":
+                    if ( Bukkit.getServer().getPlayer( CmdArg ) == null ) {
+                        Tools.Prt( player, ChatColor.GREEN + "Offline : " +
+                            Bukkit.getServer().getOfflinePlayer( CmdArg ).getName() + " [" +
+                            Bukkit.getServer().getOfflinePlayer( CmdArg ).getUniqueId().toString() + "]",
+                            programCode
+                        );
+                    } else {
+                        Tools.Prt( player, ChatColor.GREEN + "Online : " +
+                            Bukkit.getServer().getPlayer( CmdArg ).getName() + " [" +
+                            Bukkit.getServer().getPlayer( CmdArg ).getUniqueId().toString() + "]",
+                            programCode
+                        );
+                    }
+                    return true;
                 case "Status":
                     ConfigManager.Status( player );
                     return true;
@@ -105,6 +123,7 @@ public class RankCommand implements CommandExecutor {
         if ( ( player == null ) || player.hasPermission( "citizenship.initialize" ) ) {
             Tools.Prt( player, "ranks initialize <player>", programCode );
         }
+
         if ( ( player == null ) || player.hasPermission( "citizenship.console" ) ) {
             Tools.Prt( player, "ranks Reload", programCode );
             Tools.Prt( player, "ranks Console [max,full,normal,none]", programCode );
@@ -114,9 +133,10 @@ public class RankCommand implements CommandExecutor {
             Tools.Prt( player, "ranks promotion <player>", programCode );
             Tools.Prt( player, "ranks demotion <player>", programCode );
             Tools.Prt( player, "ranks time <player>", programCode );
+            Tools.Prt( player, "ranks getuuid <player>", programCode );
+            Tools.Prt( player, "ranks addplayer <player>", programCode );
             Tools.Prt( player, "ranks Status", programCode );
         }
-
         return false;
     }
 }

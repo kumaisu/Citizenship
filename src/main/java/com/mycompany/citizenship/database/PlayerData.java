@@ -30,18 +30,20 @@ public class PlayerData {
     /**
      * プレイヤー情報を新規追加する
      *
-     * @param player
+     * @param uuid
+     * @param name
+     * @param Tick
      */
-    public static void AddSQL( Player player ) {
+    public static void AddSQL( UUID uuid, String name, int Tick ) {
         try ( Connection con = Database.dataSource.getConnection() ) {
             String sql = "INSERT INTO player (uuid, name, logout, basedate, tick, offset, jail, imprisonment) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
             PreparedStatement preparedStatement = con.prepareStatement( sql );
-            preparedStatement.setString( 1, player.getUniqueId().toString() );
-            preparedStatement.setString( 2, player.getName() );
+            preparedStatement.setString( 1, uuid.toString() );
+            preparedStatement.setString( 2, name );
             preparedStatement.setString( 3, sdf.format( new Date() ) );
             preparedStatement.setString( 4, sdf.format( new Date() ) );
-            preparedStatement.setInt( 5, player.getStatistic( Statistic.PLAY_ONE_TICK ) );
+            preparedStatement.setInt( 5, Tick );
             preparedStatement.setInt( 6, 0 );
             preparedStatement.setInt( 7, 0 );
             preparedStatement.setInt( 8, 0 );
@@ -49,7 +51,7 @@ public class PlayerData {
             preparedStatement.executeUpdate();
             con.close();
 
-            Database.name = player.getName();
+            Database.name = name;
             Database.logout = new Date();
             Database.basedate = new Date();
             Database.offset = 0;
@@ -59,6 +61,10 @@ public class PlayerData {
         } catch ( SQLException e ) {
             Tools.Prt( ChatColor.RED + "Error AddToSQL" + e.getMessage(), programCode );
         }
+    }
+
+    public static void AddSQL( Player player ) {
+        AddSQL( player.getUniqueId(), player.getName(), player.getStatistic( Statistic.PLAY_ONE_TICK ) );
     }
 
     /**

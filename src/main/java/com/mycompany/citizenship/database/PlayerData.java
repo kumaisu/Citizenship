@@ -37,7 +37,7 @@ public class PlayerData {
     public static void AddSQL( UUID uuid, String name, int Tick ) {
         try ( Connection con = Database.dataSource.getConnection() ) {
             String sql = "INSERT INTO player (uuid, name, logout, basedate, tick, offset, jail, imprisonment) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
-            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.setString( 1, uuid.toString() );
             preparedStatement.setString( 2, name );
@@ -57,7 +57,7 @@ public class PlayerData {
             Database.offset = 0;
             Database.imprisonment = 0;
 
-            Tools.Prt( "Add Data to SQL Success.", Tools.consoleMode.full , programCode );
+            Tools.Prt( "Add Data to SQL Success.", Tools.consoleMode.max, programCode );
         } catch ( SQLException e ) {
             Tools.Prt( ChatColor.RED + "Error AddToSQL" + e.getMessage(), programCode );
         }
@@ -76,10 +76,10 @@ public class PlayerData {
     public static boolean DelSQL( UUID uuid ) {
         try ( Connection con = Database.dataSource.getConnection() ) {
             String sql = "DELETE FROM player WHERE uuid = '" + uuid.toString() + "';";
-            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.executeUpdate();
-            Tools.Prt( "Delete Data from SQL Success.", Tools.consoleMode.full , programCode );
+            Tools.Prt( "Delete Data from SQL Success.", Tools.consoleMode.max, programCode );
             con.close();
             return true;
         } catch ( SQLException e ) {
@@ -99,7 +99,7 @@ public class PlayerData {
             boolean retStat = false;
             Statement stmt = con.createStatement();
             String sql = "SELECT * FROM player WHERE uuid = '" + uuid.toString() + "';";
-            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             ResultSet rs = stmt.executeQuery( sql );
             if ( rs.next() ) {
                 Database.name           = rs.getString( "name" );
@@ -109,7 +109,7 @@ public class PlayerData {
                 Database.offset         = rs.getInt( "offset" );
                 Database.jail           = rs.getInt( "jail" );
                 Database.imprisonment   = rs.getInt( "imprisonment" );
-                Tools.Prt( "Get Data from SQL Success.", Tools.consoleMode.max , programCode );
+                Tools.Prt( "Get Data from SQL Success.", Tools.consoleMode.max, programCode );
                 retStat = true;
             }
             con.close();
@@ -128,11 +128,11 @@ public class PlayerData {
     public static void SetLogoutToSQL( UUID uuid ) {
         try ( Connection con = Database.dataSource.getConnection() ) {
             String sql = "UPDATE player SET logout = '" + sdf.format( new Date() ) + "' WHERE uuid = '" + uuid.toString() + "';";
-            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.executeUpdate();
             con.close();
-            Tools.Prt( "Set logout Date to SQL Success.", Tools.consoleMode.full , programCode );
+            Tools.Prt( "Set logout Date to SQL Success.", Tools.consoleMode.max, programCode );
         } catch ( SQLException e ) {
             Tools.Prt( ChatColor.RED + "Error ChangeStatus" + e.getMessage(), programCode );
         }
@@ -146,11 +146,11 @@ public class PlayerData {
     public static void SetBaseDateToSQL( UUID uuid ) {
         try ( Connection con = Database.dataSource.getConnection() ) {
             String sql = "UPDATE player SET basedate = '" + sdf.format( new Date() ) + "' WHERE uuid = '" + uuid.toString() + "';";
-            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.executeUpdate();
             con.close();
-            Tools.Prt( "Set logout Date to SQL Success.", Tools.consoleMode.full , programCode );
+            Tools.Prt( "Set logout Date to SQL Success.", Tools.consoleMode.max, programCode );
         } catch ( SQLException e ) {
             Tools.Prt( ChatColor.RED + "Error ChangeStatus" + e.getMessage(), programCode );
         }
@@ -165,11 +165,11 @@ public class PlayerData {
     public static void SetTickTimeToSQL( UUID uuid, int tickTime ) {
         try ( Connection con = Database.dataSource.getConnection() ) {
             String sql = "UPDATE player SET tick = " + tickTime + " WHERE uuid = '" + uuid.toString() + "';";
-            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.executeUpdate();
             con.close();
-            Tools.Prt( "Set TickTime to SQL Success.", Tools.consoleMode.full , programCode );
+            Tools.Prt( "Set TickTime to SQL Success.", Tools.consoleMode.max, programCode );
         } catch ( SQLException e ) {
             Tools.Prt( ChatColor.RED + "Error ChangeStatus" + e.getMessage(), programCode );
         }
@@ -207,11 +207,11 @@ public class PlayerData {
     public static boolean SetJailToSQL( UUID uuid, int jail ) {
         try ( Connection con = Database.dataSource.getConnection() ) {
             String sql = "UPDATE player SET jail = " + jail + " WHERE uuid = '" + uuid.toString() + "';";
-            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.executeUpdate();
             con.close();
-            Tools.Prt( "Set Jail Data to SQL Success.", Tools.consoleMode.full , programCode );
+            Tools.Prt( "Set Jail Data to SQL Success.", Tools.consoleMode.max, programCode );
             return true;
         } catch ( SQLException e ) {
             Tools.Prt( ChatColor.RED + "Error ChangeStatus" + e.getMessage(), programCode );
@@ -227,19 +227,19 @@ public class PlayerData {
     public static void addImprisonment( UUID uuid ) {
         try ( Connection con = Database.dataSource.getConnection() ) {
             String sql = "UPDATE player SET imprisonment = imprisonment + 1 WHERE uuid = '" + uuid.toString() + "'";
-            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.executeUpdate();
 
             int imprisonment = 0;
             sql = "SELECT * FROM player WHERE uuid = '" + uuid.toString() + "'";
-            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery( sql );
             if ( rs.next() ) {
                 imprisonment = rs.getInt( "imprisonment" );
             }
-            Tools.Prt( ChatColor.RED + "現在の投獄回数は : " + imprisonment + "回です", Tools.consoleMode.normal , programCode );
+            Tools.Prt( ChatColor.RED + "現在の投獄回数は : " + imprisonment + "回です", Tools.consoleMode.max, programCode );
             con.close();
         } catch ( SQLException e ) {
             Tools.Prt( ChatColor.RED + "Error Add Imprisonment : " + e.getMessage(), programCode );

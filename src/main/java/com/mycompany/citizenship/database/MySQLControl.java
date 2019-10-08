@@ -28,10 +28,10 @@ public class MySQLControl {
     public static void connect() {
         if ( Database.dataSource != null ) {
             if ( Database.dataSource.isClosed() ) {
-                Tools.Prt( ChatColor.RED + "database closed.", Tools.consoleMode.full, programCode );
+                Tools.Prt( ChatColor.RED + "database closed.", programCode );
                 disconnect();
             } else {
-                Tools.Prt( ChatColor.AQUA + "dataSource is not null", Tools.consoleMode.max, programCode );
+                Tools.Prt( ChatColor.AQUA + "dataSource is not null", programCode );
                 return;
             }
         }
@@ -97,7 +97,7 @@ public class MySQLControl {
             //          Imprisonment : int      Imprisonment Count
             //  存在すれば、無視される
             String sql = "CREATE TABLE IF NOT EXISTS player( uuid varchar(36), name varchar(20), logout DATETIME, basedate DATETIME, tick int, offset int, jail int, imprisonment int );";
-            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.executeUpdate();
 
@@ -109,11 +109,11 @@ public class MySQLControl {
             //          enforcer : varchar(20)  The person who caught
             //  存在すれば、無視される
             sql = "CREATE TABLE IF NOT EXISTS reason( id int auto_increment, uuid varchar(36), date DATETIME, reason varchar(50), enforcer varchar(20), index(id) );";
-            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             preparedStatement = con.prepareStatement( sql );
             preparedStatement.executeUpdate();
 
-            Tools.Prt( ChatColor.AQUA + "dataSource Open Success.", Tools.consoleMode.max, programCode );
+            Tools.Prt( ChatColor.AQUA + "dataSource Open Success.", programCode );
             con.close();
         } catch( SQLException e ) {
             Tools.Prt( ChatColor.RED + "Connection Error : " + e.getMessage(), programCode);

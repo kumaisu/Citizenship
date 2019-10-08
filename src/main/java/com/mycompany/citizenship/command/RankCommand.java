@@ -15,11 +15,10 @@ import com.mycompany.citizenship.Citizenship;
 import com.mycompany.citizenship.PlayerControl;
 import com.mycompany.citizenship.RanksControl;
 import com.mycompany.citizenship.config.Config;
-import static com.mycompany.citizenship.config.Config.programCode;
 import com.mycompany.citizenship.config.ConfigManager;
 import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.kumaisulibraries.Utility;
-import org.bukkit.Statistic;
+import static com.mycompany.citizenship.config.Config.programCode;
 
 /**
  *

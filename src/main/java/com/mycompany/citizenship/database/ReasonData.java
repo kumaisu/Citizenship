@@ -37,7 +37,7 @@ public class ReasonData {
     public static void AddReason( UUID uuid, String reason, String enforcer ) {
         try ( Connection con = Database.dataSource.getConnection() ) {
             String sql = "INSERT INTO reason (uuid, date, reason, enforcer) VALUES (?, ?, ?, ?);";
-            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.setString( 1, uuid.toString() );
             preparedStatement.setString( 2, sdf.format( new Date() ) );
@@ -46,7 +46,7 @@ public class ReasonData {
             preparedStatement.executeUpdate();
             con.close();
 
-            Tools.Prt( "Add Reason to SQL Success.", Tools.consoleMode.full , programCode );
+            Tools.Prt( "Add Reason to SQL Success.", Tools.consoleMode.max, programCode );
         } catch ( SQLException e ) {
             Tools.Prt( ChatColor.RED + "Error AddReason" + e.getMessage(), programCode );
         }
@@ -61,10 +61,10 @@ public class ReasonData {
     public static boolean DelReason( int ID ) {
         try ( Connection con = Database.dataSource.getConnection() ) {
             String sql = "DELETE FROM reason WHERE id = " + ID +";";
-            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.executeUpdate();
-            Tools.Prt( "Delete Reason from SQL Success.", Tools.consoleMode.full , programCode );
+            Tools.Prt( "Delete Reason from SQL Success.", Tools.consoleMode.max, programCode );
             con.close();
             return true;
         } catch ( SQLException e ) {
@@ -83,12 +83,12 @@ public class ReasonData {
         try ( Connection con = Database.dataSource.getConnection() ) {
             Statement stmt = con.createStatement();
             String sql = "SELECT * FROM reason WHERE uuid = '" + uuid.toString() + "' ORDER BY id DESC;";
-            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             ResultSet rs = stmt.executeQuery( sql );
             if ( rs.next() ) {
                 Database.Reason = rs.getString( "reason" );
                 Database.enforcer = rs.getString( "enforcer" );
-                Tools.Prt( "Get Reason from SQL Success.", Tools.consoleMode.full , programCode );
+                Tools.Prt( "Get Reason from SQL Success.", Tools.consoleMode.max, programCode );
             }
             con.close();
         } catch ( SQLException e ) {
@@ -134,7 +134,7 @@ public class ReasonData {
             } else {
                 sql += " WHERE uuid = '" + uuid.toString() + "';";
             }
-            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             ResultSet rs = stmt.executeQuery( sql );
             while( rs.next() ) {
                 Tools.Prt( player, LineMake( rs ), programCode );
@@ -156,7 +156,7 @@ public class ReasonData {
         try ( Connection con = Database.dataSource.getConnection() ) {
             Statement stmt = con.createStatement();
             String sql = "UPDATE reason SET reason = '" + Reason + "' WHERE id = " + ID + ";";
-            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.executeUpdate();
             con.close();
@@ -175,7 +175,7 @@ public class ReasonData {
         try ( Connection con = Database.dataSource.getConnection() ) {
             Statement stmt = con.createStatement();
             String sql = "SELECT * FROM reason WHERE id = " + ID;
-            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max , programCode );
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             ResultSet rs = stmt.executeQuery( sql );
             if ( rs.next() ) {
                 Tools.Prt( player, 

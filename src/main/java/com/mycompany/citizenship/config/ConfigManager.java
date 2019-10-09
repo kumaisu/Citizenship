@@ -62,7 +62,7 @@ public class ConfigManager {
 
         Config.demotion         = config.getInt( "Demotion", 0 );
         Config.PromotBroadcast  = config.getBoolean( "PlayerBroadcast", false );
-        Config.Prison           = config.getString( "PrisonGroup", "" );
+        Config.PrisonGroup      = config.getString( "PrisonGroup", "" );
         Config.Penalty          = config.getInt( "PenaltyTime", 0 );
         
         Config.Imprisonment     = config.getBoolean( "Prison.enable", false );
@@ -102,7 +102,7 @@ public class ConfigManager {
         }
         Tools.Prt( p, ChatColor.WHITE + "降格日数     : " + ChatColor.YELLOW + Config.demotion + " 日", programCode );
         Tools.Prt( p, ChatColor.WHITE + "昇格時ｱﾅｳﾝｽ  : " + ChatColor.YELLOW + ( Config.PromotBroadcast ? "する":"しない" ), programCode );
-        Tools.Prt( p, ChatColor.WHITE + "牢獄グループ : " + ChatColor.YELLOW + Config.Prison, programCode );
+        Tools.Prt( p, ChatColor.WHITE + "牢獄グループ : " + ChatColor.YELLOW + Config.PrisonGroup, programCode );
         Tools.Prt( p, ChatColor.WHITE + "投獄期間     : " + ChatColor.YELLOW + Config.Penalty + "日", programCode );
         Tools.Prt( p, ChatColor.WHITE + "牢獄ジャンプ : " + ChatColor.YELLOW + ( Config.Imprisonment ? "する":"しない" ), programCode );
         if ( Config.Imprisonment ) {

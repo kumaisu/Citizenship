@@ -117,18 +117,25 @@ public class JailCommand implements CommandExecutor {
                         return true;
                     } else Tools.Prt( player, ChatColor.RED + "Reson ID を指定してください", Tools.consoleMode.normal, programCode );
                     break;
+                case "info":
+                    if ( jailUUID != null ) {
+                        return PlayerControl.getInfo( player, jailUUID );
+                    } else { Tools.Prt( player, "指定プレイヤーの情報はありません", programCode ); }
+                    break;
                 default:
-                    Tools.Prt( player, ChatColor.YELLOW + "Reson : " + Reason + " By." + enforcer, Tools.consoleMode.normal, programCode );
-                    if ( offlineMode ) {
-                        Tools.Prt( player, ChatColor.RED + enforcer + " Jail to offline " + offPlayer.getName(), Tools.consoleMode.full, programCode );
-                        PlayerData.SetReasonID( jailUUID, ReasonData.AddReason( jailUUID, Reason, enforcer ) );
-                        return PlayerData.SetJailToSQL( jailUUID, 1 );
-                    } else {
-                        Tools.Prt( player, ChatColor.RED + enforcer + " Jail to " + jailPlayer.getName(), Tools.consoleMode.full, programCode );
-                        int ReasonID = ReasonData.AddReason( jailUUID, Reason, enforcer );
-                        PlayerData.SetReasonID( jailUUID, ReasonID );
-                        return PlayerControl.toJail( jailPlayer, ReasonID );
-                    }
+                    if ( jailUUID != null ) {
+                        Tools.Prt( player, ChatColor.YELLOW + "Reson : " + Reason + " By." + enforcer, Tools.consoleMode.normal, programCode );
+                        if ( offlineMode ) {
+                            Tools.Prt( player, ChatColor.RED + enforcer + " Jail to offline " + offPlayer.getName(), Tools.consoleMode.full, programCode );
+                            PlayerData.SetReasonID( jailUUID, ReasonData.AddReason( jailUUID, Reason, enforcer ) );
+                            return PlayerData.SetJailToSQL( jailUUID, 1 );
+                        } else {
+                            Tools.Prt( player, ChatColor.RED + enforcer + " Jail to " + jailPlayer.getName(), Tools.consoleMode.full, programCode );
+                            int ReasonID = ReasonData.AddReason( jailUUID, Reason, enforcer );
+                            PlayerData.SetReasonID( jailUUID, ReasonID );
+                            return PlayerControl.toJail( jailPlayer, ReasonID );
+                        }
+                    } else { Tools.Prt( player, "正しくプレイヤー指定してください", programCode ); }
             }
         }
         Tools.Prt( player, "/jail u:<PlayerName> r:<Reason>", programCode );
@@ -136,6 +143,7 @@ public class JailCommand implements CommandExecutor {
         Tools.Prt( player, "/jail list", programCode );
         Tools.Prt( player, "/jail alllist [u:<PlayerName>]", programCode );
         Tools.Prt( player, "/jail change i:<ReasonID> r:<Reason>", programCode );
+        Tools.Prt( player, "/jail info u:<PlayerName>", programCode );
         return false;
     }
 }

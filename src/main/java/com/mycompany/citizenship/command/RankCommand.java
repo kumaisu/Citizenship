@@ -5,6 +5,7 @@
  */
 package com.mycompany.citizenship.command;
 
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -48,11 +49,15 @@ public class RankCommand implements CommandExecutor {
         String CtlCmd = "";
         String CmdArg = ( player == null ? "":player.getName() );
         Player lookPlayer = null;
+        UUID lookUUID = null;
 
         if ( args.length > 0 ) CtlCmd = args[0];
         if ( ( args.length > 1 ) && ( !CmdArg.equals( args[1] ) ) ) {
             CmdArg = args[1];
             lookPlayer = Bukkit.getServer().getPlayer( CmdArg );
+            lookUUID = ( Bukkit.getServer().getPlayer( CmdArg ) == null ?
+                    Bukkit.getServer().getOfflinePlayer( CmdArg ).getUniqueId() : 
+                    Bukkit.getServer().getPlayer( CmdArg ).getUniqueId() );
         }
 
         if ( ( ( player == null ) || player.hasPermission( "citizenship.initialize" ) ) && CtlCmd.equals( "initialize" ) ) {
@@ -94,7 +99,10 @@ public class RankCommand implements CommandExecutor {
                     } else Tools.Prt( ChatColor.RED + "正しいプレイヤー名を指定してください", Tools.consoleMode.max, programCode );
                     break;
                 case "time":
-                    return PlayerControl.getAccess( player, CmdArg );
+                    if ( lookUUID != null ) {
+                        return PlayerControl.getInfo( player, lookUUID );
+                    } else { Tools.Prt( player, "指定プレイヤーの情報はありません", programCode ); }
+                    break;
                 case "addplayer":
                     return PlayerControl.putPlayer( player, CmdArg );
                 case "getuuid":

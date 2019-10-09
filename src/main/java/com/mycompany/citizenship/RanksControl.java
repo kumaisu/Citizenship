@@ -38,9 +38,6 @@ public class RanksControl {
         Tools.Prt( "Promotion Process", Tools.consoleMode.full, programCode );
         if ( target == null ) target = player;
         String baseGroup = getGroup( target );
-
-        Tools.Prt( "Player now Group is " + baseGroup, Tools.consoleMode.full, programCode );
-
         if ( baseGroup.equals( "" ) || baseGroup == null ) {
             Tools.Prt( player, "グループ設定がありません", Tools.consoleMode.full, programCode );
             return false;
@@ -72,7 +69,7 @@ public class RanksControl {
             } else {
                 Tools.Prt( target, LevelupMessage, Tools.consoleMode.normal, programCode );
             }
-
+            Tools.Prt( "Player new Group is " + NewGroup, Tools.consoleMode.full, programCode );
             return true;
         } catch( ArrayIndexOutOfBoundsException e ) {
             return false;
@@ -90,9 +87,6 @@ public class RanksControl {
         Tools.Prt( "Demotion Process", Tools.consoleMode.full, programCode );
         if ( target == null ) target = player;
         String baseGroup = getGroup( target );
-
-        Tools.Prt( "Player now Group is " + baseGroup, Tools.consoleMode.full, programCode );
-
         if ( baseGroup.equals( "" ) || baseGroup == null ) {
             Tools.Prt( player, "グループ設定がありません", Tools.consoleMode.full, programCode );
             return false;
@@ -126,7 +120,7 @@ public class RanksControl {
             } else {
                 Tools.Prt( target, LevelupMessage, Tools.consoleMode.normal, programCode );
             }
-
+            Tools.Prt( "Player new Group is " + NewGroup, Tools.consoleMode.full, programCode );
             return true;
         } catch ( ArrayIndexOutOfBoundsException e ) {
             return false;

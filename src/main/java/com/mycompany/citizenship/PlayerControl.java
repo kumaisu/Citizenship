@@ -125,7 +125,7 @@ public class PlayerControl {
     public static void JailerList( Player player ) {
         Map< UUID, Integer > getList = PlayerData.ListJailMenber();
 
-        Tools.Prt( player, "=== Players currently imprisoned ===", programCode);
+        Tools.Prt( player, ChatColor.RED + "=== Players currently imprisoned ===", programCode );
 
         getList.keySet().forEach( ( key ) -> {
             PlayerData.GetSQL( key );
@@ -139,32 +139,32 @@ public class PlayerControl {
                 programCode );
         } );
 
-        Tools.Prt( player, "=== [EOF] ===", programCode);
+        Tools.Prt( player, ChatColor.RED + "=== [EOF] ===", programCode );
     }
 
     /**
      * プレイヤーの接続時間取得
      *
      * @param player
-     * @param name
+     * @param uuid
      * @return 
      */
-    public static boolean getAccess( Player player, String name ) {
-        if ( name.equals( "" ) ) { return false; }
+    public static boolean getInfo( Player player, UUID uuid ) {
+        if ( uuid == null ) { return false; }
 
-        UUID lookUUID;
+        String lookNAME;
         
-        Tools.Prt( "Get Access Time [" + name + "]", Tools.consoleMode.max, programCode );
-
-        if ( Bukkit.getServer().getPlayer( name ) == null ) {
-            Tools.Prt( player, "Get Offline Player Data : " + Bukkit.getServer().getOfflinePlayer( name ).getName(), Tools.consoleMode.full, programCode );
-            lookUUID = Bukkit.getServer().getOfflinePlayer( name ).getUniqueId();
+        if ( Bukkit.getServer().getPlayer( uuid ) == null ) {
+            lookNAME = Bukkit.getServer().getOfflinePlayer( uuid ).getName();
+            Tools.Prt( player, "Get Offline Player Data : " + lookNAME, Tools.consoleMode.full, programCode );
         } else {
-            lookUUID = Bukkit.getServer().getPlayer( name ).getUniqueId();
+            lookNAME = Bukkit.getServer().getPlayer( uuid ).getName();
         }
 
-        if ( PlayerData.GetSQL( lookUUID ) ) {
-            Tools.Prt( player, "Player Name    : " + name, programCode );
+        Tools.Prt( "Get Access Time [" + lookNAME + "]", Tools.consoleMode.max, programCode );
+
+        if ( PlayerData.GetSQL( uuid ) ) {
+            Tools.Prt( player, "Player Name    : " + lookNAME, programCode );
             Tools.Prt( player, "Total TickTime : " + Float.toString( ( float ) Database.tick ) + " Ticks(0.05sec)", programCode );
             Tools.Prt( player, "総接続時間     : " + Float.toString( ( float ) ( Database.tick * 0.05 / 60 / 60)) + " hour" , programCode );
             Tools.Prt( player, "ランク判定時間 : " + Float.toString( ( float ) ( ( Database.tick - Database.offset ) * 0.05 / 60 / 60)) + " hour" , programCode );
@@ -175,7 +175,7 @@ public class PlayerControl {
             Tools.Prt( player, "投獄回数       : 前科" + ( Database.imprisonment == 0 ? "無し":" " + Database.imprisonment + " 犯"), programCode );
             return true;
         } else {
-            Tools.Prt( player, ChatColor.RED + "Player[" + name + "]が存在しません", programCode );
+            Tools.Prt( player, ChatColor.RED + "Player[" + lookNAME + "]が存在しません", programCode );
             return false;
         }
     }

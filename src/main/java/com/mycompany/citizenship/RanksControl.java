@@ -208,7 +208,7 @@ public class RanksControl {
         //  不在投獄時処理
         //
         if ( Database.jail == 1 ) {
-            PlayerControl.toJail( player );
+            PlayerControl.toJail( player, Database.ReasonID );
             PlayerData.SetJailToSQL( player.getUniqueId(), 0 );
             return true;
         }
@@ -221,11 +221,11 @@ public class RanksControl {
         //
         //  ペナルティユーザーに対する処理
         //
-        if ( NowGroup.equals( Config.Prison ) ) {
+        if ( Database.ReasonID != 0 ) {
             if ( ( Config.Penalty > 0 ) && ( progress > Config.Penalty ) ) {
                 return PlayerControl.outJail( player );
             } else {
-                ReasonData.GetReason( player.getUniqueId() );
+                ReasonData.GetReason( Database.ReasonID );
                 Tools.Prt( player, ChatColor.RED + "投獄理由 : " + Database.Reason + " By." + Database.enforcer, Tools.consoleMode.normal, programCode );
                 return false;
             }

@@ -21,6 +21,7 @@ import com.mycompany.citizenship.database.ReasonData;
 import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.kumaisulibraries.Utility;
 import static com.mycompany.citizenship.config.Config.programCode;
+import java.util.Map;
 
 /**
  *
@@ -32,9 +33,10 @@ public class PlayerControl {
      * 投獄処理
      *
      * @param player
+     * @param ReasonID
      * @return 
      */
-    public static boolean toJail( Player player ) {
+    public static boolean toJail( Player player, int ReasonID ) {
         boolean retStat = false;
 
         //  降格処理
@@ -47,7 +49,7 @@ public class PlayerControl {
         //  投獄処理
         if ( Config.Imprisonment ) {
             JailTeleport( player );
-            ReasonData.GetReason( player.getUniqueId() );
+            ReasonData.GetReason( ReasonID );
             player.sendTitle(
                 ChatColor.RED + "投獄されました",
                 ChatColor.YELLOW + Database.Reason + "(By." + Database.enforcer + ")",
@@ -112,6 +114,30 @@ public class PlayerControl {
         loc.setPitch( Config.rpitch );
         loc.setYaw( Config.ryaw );
         player.teleport( loc );
+    }
+
+    /**
+     * 投獄中のプレイヤー一覧表示
+     *
+     * @param player 
+     */
+    public static void JailerList( Player player ) {
+        Map< UUID, Integer > getList = PlayerData.ListJailMenber();
+
+        Tools.Prt( player, "=== Players currently imprisoned ===", programCode);
+
+        getList.keySet().forEach( ( key ) -> {
+            PlayerData.GetSQL( key );
+            ReasonData.GetReason( getList.get( key ) );
+            Tools.Prt( player,
+                ChatColor.WHITE + String.format( "%3d", getList.get( key ) ) + ": " +
+                ChatColor.GREEN + Database.sdf.format( Database.ReasonDate ) + " " +
+                ChatColor.AQUA + Database.name + " " +
+                ChatColor.RED + Database.Reason +
+                ChatColor.WHITE + "(by." + Database.enforcer, programCode );
+        } );
+
+        Tools.Prt( player, "=== [EOF] ===", programCode);
     }
 
     /**

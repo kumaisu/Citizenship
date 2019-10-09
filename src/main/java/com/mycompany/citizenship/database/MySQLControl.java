@@ -94,9 +94,19 @@ public class MySQLControl {
             //          tick : int              total Tick Time
             //		offset : int 		total Login Time offset
             //		jail : int		to jail flag
-            //          Imprisonment : int      Imprisonment Count
+            //          imprisonment : int      Imprisonment Count
+            //          reason : int            Reason ID
             //  存在すれば、無視される
-            String sql = "CREATE TABLE IF NOT EXISTS player( uuid varchar(36), name varchar(20), logout DATETIME, basedate DATETIME, tick int, offset int, jail int, imprisonment int );";
+            String sql = "CREATE TABLE IF NOT EXISTS player( "
+                    + "uuid varchar(36), "
+                    + "name varchar(20), "
+                    + "logout DATETIME, "
+                    + "basedate DATETIME, "
+                    + "tick int, "
+                    + "offset int, "
+                    + "jail int, "
+                    + "imprisonment "
+                    + "int, reason int );";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.executeUpdate();
@@ -108,7 +118,13 @@ public class MySQLControl {
             //          Reason : varchar(50)    Last Jail Reason
             //          enforcer : varchar(20)  The person who caught
             //  存在すれば、無視される
-            sql = "CREATE TABLE IF NOT EXISTS reason( id int auto_increment, uuid varchar(36), date DATETIME, reason varchar(50), enforcer varchar(20), index(id) );";
+            sql = "CREATE TABLE IF NOT EXISTS reason( "
+                    + "id int auto_increment, "
+                    + "uuid varchar(36), "
+                    + "date DATETIME, "
+                    + "reason varchar(50), "
+                    + "enforcer varchar(20), "
+                    + "index(id) );";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             preparedStatement = con.prepareStatement( sql );
             preparedStatement.executeUpdate();

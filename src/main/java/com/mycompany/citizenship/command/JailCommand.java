@@ -104,6 +104,9 @@ public class JailCommand implements CommandExecutor {
                     } else Tools.Prt( player, ChatColor.YELLOW + "指定プレイヤーがログインしていません", Tools.consoleMode.full, programCode );
                     break;
                 case "list":
+                    PlayerControl.JailerList( player );
+                    return true;
+                case "alllist":
                     ReasonData.ListReason( player, jailUUID );
                     return true;
                 case "change":
@@ -117,18 +120,20 @@ public class JailCommand implements CommandExecutor {
                     Tools.Prt( player, ChatColor.YELLOW + "Reson : " + Reason + " By." + enforcer, Tools.consoleMode.normal, programCode );
                     if ( offlineMode ) {
                         Tools.Prt( player, ChatColor.RED + enforcer + " Jail to offline " + offPlayer.getName(), Tools.consoleMode.full, programCode );
-                        ReasonData.AddReason( jailUUID, Reason, enforcer );
+                        PlayerData.SetReasonID( jailUUID, ReasonData.AddReason( jailUUID, Reason, enforcer ) );
                         return PlayerData.SetJailToSQL( jailUUID, 1 );
                     } else {
                         Tools.Prt( player, ChatColor.RED + enforcer + " Jail to " + jailPlayer.getName(), Tools.consoleMode.full, programCode );
-                        ReasonData.AddReason( jailUUID, Reason, enforcer );
-                        return PlayerControl.toJail( jailPlayer );
+                        int ReasonID = ReasonData.AddReason( jailUUID, Reason, enforcer );
+                        PlayerData.SetReasonID( jailUUID, ReasonID );
+                        return PlayerControl.toJail( jailPlayer, ReasonID );
                     }
             }
         }
         Tools.Prt( player, "/jail u:<PlayerName> r:<Reason>", programCode );
         Tools.Prt( player, "/jail release u:<PlayerName>", programCode );
-        Tools.Prt( player, "/jail list [u:<PlayerName>]", programCode );
+        Tools.Prt( player, "/jail list", programCode );
+        Tools.Prt( player, "/jail alllist [u:<PlayerName>]", programCode );
         Tools.Prt( player, "/jail change i:<ReasonID> r:<Reason>", programCode );
         return false;
     }

@@ -16,8 +16,7 @@ import org.bukkit.command.CommandSender;
 import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.citizenship.Citizenship;
 import com.mycompany.citizenship.PlayerControl;
-import com.mycompany.citizenship.RanksControl;
-import com.mycompany.citizenship.config.Config;
+import com.mycompany.citizenship.database.Database;
 import com.mycompany.citizenship.database.PlayerData;
 import com.mycompany.citizenship.database.ReasonData;
 import static com.mycompany.citizenship.config.Config.programCode;
@@ -98,10 +97,11 @@ public class JailCommand implements CommandExecutor {
             switch( args[0].toLowerCase() ) {
                 case "release":
                     if ( jailPlayer != null ) {
-                        if ( RanksControl.getGroup( jailPlayer ).equals( Config.Prison ) ) {
+                        PlayerData.GetSQL( jailPlayer.getUniqueId() );
+                        if ( Database.ReasonID != 0 ) {
                             PlayerControl.outJail( jailPlayer );
                             return true;
-                        } else Tools.Prt( player, ChatColor.RED + "対象プレイヤーが [" + Config.Prison + "] ではありません", Tools.consoleMode.normal, programCode );
+                        } else Tools.Prt( player, ChatColor.RED + "対象プレイヤーは投獄されていません", Tools.consoleMode.normal, programCode );
                     } else Tools.Prt( player, ChatColor.YELLOW + "指定プレイヤーがログインしていません", Tools.consoleMode.full, programCode );
                     break;
                 case "list":

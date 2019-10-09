@@ -40,9 +40,9 @@ public class PlayerControl {
         boolean retStat = false;
 
         //  降格処理
-        if ( !Config.Prison.equals( "" ) ) {
+        if ( !Config.PrisonGroup.equals( "" ) ) {
             Tools.Prt( "Demotion Citizenship", Tools.consoleMode.max, programCode );
-            RanksControl.setGroup( player, Config.Prison );
+            RanksControl.setGroup( player, Config.PrisonGroup );
             retStat = true;
         }
 
@@ -73,8 +73,8 @@ public class PlayerControl {
         boolean retStat = false;
 
         //  投獄処理で降格された場合のみ一般への変更処理
-        Tools.Prt( Config.Prison + " : " + RanksControl.getGroup( player ), Tools.consoleMode.max, programCode );
-        if ( Config.Prison.equals( RanksControl.getGroup( player ) ) ) {
+        Tools.Prt( Config.PrisonGroup + " : " + RanksControl.getGroup( player ), Tools.consoleMode.max, programCode );
+        if ( Config.PrisonGroup.equals( RanksControl.getGroup( player ) ) ) {
             Tools.Prt( "Jail Player to : " + Config.rankName.get( 0 ), Tools.consoleMode.full, programCode );
             RanksControl.setGroup( player, Config.rankName.get( 0 ) );
         }
@@ -85,6 +85,7 @@ public class PlayerControl {
             Bukkit.broadcastMessage( ChatColor.RED + player.getDisplayName() + " さんは釈放されました" );
         }
 
+        PlayerData.SetReasonID( player.getUniqueId(), 0 );
         return retStat;
     }
     
@@ -129,7 +130,8 @@ public class PlayerControl {
                 ChatColor.GREEN + Database.sdf.format( Database.ReasonDate ) + " " +
                 ChatColor.AQUA + Database.name + " " +
                 ChatColor.RED + Database.Reason +
-                ChatColor.WHITE + "(by." + Database.enforcer, programCode );
+                ChatColor.WHITE + "(by." + Database.enforcer + ")",
+                programCode );
         } );
 
         Tools.Prt( player, "=== [EOF] ===", programCode);

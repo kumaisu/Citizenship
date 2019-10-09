@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mycompany</groupId>
     <artifactId>Citizenship</artifactId>
-    <version>0.8.1</version>
+    <version>0.8.1-1.12.2</version>
     <description>Citizenship Control Manager plugins</description>
     <packaging>jar</packaging>
     <properties>
@@ -139,6 +139,6 @@
                 </configuration>
             </plugin>    
         </plugins>
-        <finalName>${project.artifactId}-${project.version}.${buildNumber}</finalName>
+        <finalName>${project.artifactId}-${project.version}.b${buildNumber}</finalName>
     </build>
 </project>

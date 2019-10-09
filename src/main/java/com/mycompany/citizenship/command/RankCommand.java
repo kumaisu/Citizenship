@@ -55,7 +55,9 @@ public class RankCommand implements CommandExecutor {
         if ( ( args.length > 1 ) && ( !CmdArg.equals( args[1] ) ) ) {
             CmdArg = args[1];
             lookPlayer = Bukkit.getServer().getPlayer( CmdArg );
-            lookUUID = Bukkit.getServer().getPlayer( CmdArg ).getUniqueId();
+            lookUUID = ( Bukkit.getServer().getPlayer( CmdArg ) == null ?
+                    Bukkit.getServer().getOfflinePlayer( CmdArg ).getUniqueId() : 
+                    Bukkit.getServer().getPlayer( CmdArg ).getUniqueId() );
         }
 
         if ( ( ( player == null ) || player.hasPermission( "citizenship.initialize" ) ) && CtlCmd.equals( "initialize" ) ) {

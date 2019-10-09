@@ -120,7 +120,7 @@ public class PlayerControl {
     public static void JailerList( Player player ) {
         Map< UUID, Integer > getList = PlayerData.ListJailMenber();
 
-        Tools.Prt( player, ChatColor.RED + "=== Players currently imprisoned ===", programCode);
+        Tools.Prt( player, ChatColor.RED + "=== Players currently imprisoned ===", programCode );
 
         getList.keySet().forEach( ( key ) -> {
             PlayerData.GetSQL( key );

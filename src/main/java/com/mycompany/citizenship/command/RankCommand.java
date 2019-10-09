@@ -102,6 +102,7 @@ public class RankCommand implements CommandExecutor {
                     if ( lookUUID != null ) {
                         return PlayerControl.getInfo( player, lookUUID );
                     } else { Tools.Prt( player, "指定プレイヤーの情報はありません", programCode ); }
+                    break;
                 case "addplayer":
                     return PlayerControl.putPlayer( player, CmdArg );
                 case "getuuid":
@@ -143,7 +144,6 @@ public class RankCommand implements CommandExecutor {
             Tools.Prt( player, "ranks addplayer <player>", programCode );
             Tools.Prt( player, "ranks Status", programCode );
         }
-
         return false;
     }
 }

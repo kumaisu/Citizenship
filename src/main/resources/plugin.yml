@@ -1,7 +1,6 @@
 main: com.mycompany.citizenship.Citizenship
 name: Citizenship
-version: ${project.version}
-description: ${project.description}
+version: 0.8.1
 author: Kumaisu
 database: true
 commands:

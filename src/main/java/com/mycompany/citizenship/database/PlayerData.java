@@ -15,8 +15,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import org.bukkit.ChatColor;
-import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
+import com.mycompany.citizenship.TickTime;
 import com.mycompany.kumaisulibraries.Tools;
 import static com.mycompany.citizenship.config.Config.programCode;
 
@@ -64,7 +64,7 @@ public class PlayerData {
     }
 
     public static void AddSQL( Player player ) {
-        AddSQL( player.getUniqueId(), player.getName(), player.getStatistic( Statistic.PLAY_ONE_TICK ) );
+        AddSQL( player.getUniqueId(), player.getName(), TickTime.get( player ) );
     }
 
     /**
@@ -253,16 +253,6 @@ public class PlayerData {
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement(sql);
             preparedStatement.executeUpdate();
-
-            int imprisonment = 0;
-            sql = "SELECT * FROM player WHERE uuid = '" + uuid.toString() + "'";
-            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery( sql );
-            if ( rs.next() ) {
-                imprisonment = rs.getInt( "imprisonment" );
-            }
-            Tools.Prt( ChatColor.RED + "現在の投獄回数は : " + imprisonment + "回です", Tools.consoleMode.normal , programCode );
             con.close();
         } catch ( SQLException e ) {
             Tools.Prt( ChatColor.RED + "Error Add Imprisonment : " + e.getMessage(), programCode );
@@ -275,7 +265,7 @@ public class PlayerData {
      * @return 
      */
     public static Map< UUID, Integer > ListJailMenber() {
-        Map< UUID, Integer > getList = new HashMap< UUID, Integer >();
+        Map< UUID, Integer > getList = new HashMap<>();
         try ( Connection con = Database.dataSource.getConnection() ) {
             Statement stmt = con.createStatement();
             String sql = "SELECT * FROM player WHERE reason > 0;";

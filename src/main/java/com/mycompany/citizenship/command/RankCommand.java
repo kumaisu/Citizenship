@@ -48,8 +48,8 @@ public class RankCommand implements CommandExecutor {
 
         String CtlCmd = "";
         String CmdArg = ( player == null ? "":player.getName() );
-        Player lookPlayer = null;
-        UUID lookUUID = null;
+        Player lookPlayer = ( player == null ? null:player );
+        UUID lookUUID = ( player == null ? null:player.getUniqueId() );
 
         if ( args.length > 0 ) CtlCmd = args[0];
         if ( ( args.length > 1 ) && ( !CmdArg.equals( args[1] ) ) ) {
@@ -99,6 +99,7 @@ public class RankCommand implements CommandExecutor {
                     } else Tools.Prt( ChatColor.RED + "正しいプレイヤー名を指定してください", Tools.consoleMode.max, programCode );
                     break;
                 case "time":
+                    Tools.Prt( player, "Player Information for : " + lookUUID.toString(), programCode );
                     if ( lookUUID != null ) {
                         return PlayerControl.getInfo( player, lookUUID );
                     } else { Tools.Prt( player, "指定プレイヤーの情報はありません", programCode ); }

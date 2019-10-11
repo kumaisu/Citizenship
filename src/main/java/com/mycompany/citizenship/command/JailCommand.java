@@ -119,22 +119,30 @@ public class JailCommand implements CommandExecutor {
                     break;
                 case "info":
                     if ( jailUUID != null ) {
+                        Tools.Prt( player, "Player Information for : " + jailUUID.toString(), programCode );
                         return PlayerControl.getInfo( player, jailUUID );
                     } else { Tools.Prt( player, "指定プレイヤーの情報はありません", programCode ); }
-                    break;
+                    return false;
                 default:
                     if ( jailUUID != null ) {
-                        Tools.Prt( player, ChatColor.YELLOW + "Reson : " + Reason + " By." + enforcer, Tools.consoleMode.normal, programCode );
+                        boolean RetFlag;
                         if ( offlineMode ) {
-                            Tools.Prt( player, ChatColor.RED + enforcer + " Jail to offline " + offPlayer.getName(), Tools.consoleMode.full, programCode );
+                            Tools.Prt( player, ChatColor.RED + enforcer + " Jail to offline " + offPlayer.getName(), Tools.consoleMode.normal, programCode );
                             PlayerData.SetReasonID( jailUUID, ReasonData.AddReason( jailUUID, Reason, enforcer ) );
-                            return PlayerData.SetJailToSQL( jailUUID, 1 );
+                            RetFlag = PlayerData.SetJailToSQL( jailUUID, 1 );
                         } else {
-                            Tools.Prt( player, ChatColor.RED + enforcer + " Jail to " + jailPlayer.getName(), Tools.consoleMode.full, programCode );
+                            Tools.Prt( player, ChatColor.RED + enforcer + " Jail to " + jailPlayer.getName(), Tools.consoleMode.normal, programCode );
                             int ReasonID = ReasonData.AddReason( jailUUID, Reason, enforcer );
                             PlayerData.SetReasonID( jailUUID, ReasonID );
-                            return PlayerControl.toJail( jailPlayer, ReasonID );
+                            RetFlag = PlayerControl.toJail( jailPlayer, ReasonID );
                         }
+                        Tools.Prt( player, 
+                                ChatColor.RED + "Reson : "
+                                + ChatColor.YELLOW + Reason
+                                + ChatColor.AQUA + " By." + enforcer,
+                                Tools.consoleMode.normal, programCode
+                        );
+                        return RetFlag;
                     } else { Tools.Prt( player, "正しくプレイヤー指定してください", programCode ); }
             }
         }

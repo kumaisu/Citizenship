@@ -12,7 +12,6 @@ import org.bukkit.World;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import static org.bukkit.Bukkit.getWorld;
 import com.mycompany.citizenship.config.Config;
@@ -60,6 +59,15 @@ public class PlayerControl {
         }
 
         PlayerData.addImprisonment( player.getUniqueId() );
+        PlayerData.GetSQL( player.getUniqueId() );
+        String message = ChatColor.AQUA + player.getName()
+                + ChatColor.GREEN + "さんの"
+                + ChatColor.RED + "投獄回数"
+                + ChatColor.GREEN + "は : "
+                + ChatColor.RED + Database.imprisonment + "回"
+                + ChatColor.GREEN + "です";
+        Tools.Prt( message, Tools.consoleMode.normal , programCode );
+        Bukkit.getOnlinePlayers().stream().filter( ( p ) -> ( p.hasPermission( "citizenship.admin" ) || p.isOp() ) ).forEachOrdered( ( p ) -> { p.sendMessage( message ); } );
         return retStat;
     }
 
@@ -194,7 +202,7 @@ public class PlayerControl {
             lookUUID = Bukkit.getServer().getOfflinePlayer( name ).getUniqueId();
         } else {
             lookUUID = Bukkit.getServer().getPlayer( name ).getUniqueId();
-            lookTick = Bukkit.getServer().getPlayer( name ).getStatistic( Statistic.PLAY_ONE_TICK );
+            lookTick = TickTime.get( Bukkit.getServer().getPlayer( name ) );
         }
 
         if ( PlayerData.GetSQL( lookUUID ) ) {

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mycompany</groupId>
     <artifactId>Citizenship</artifactId>
-    <version>0.8.1-1.14.4</version>
+    <version>0.8.1</version>
     <description>Citizenship Control Manager plugins</description>
     <packaging>jar</packaging>
     <properties>
@@ -11,9 +11,41 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <github.global.server>github-kumaisu</github.global.server>
-        <bukkitVersion>1.14.4-R0.1-SNAPSHOT</bukkitVersion>
     </properties>
     
+    <profiles>
+        <profile>
+            <id>1.12.2</id>
+            <properties>
+                <bukkitVersion>1.12.2-R0.1-SNAPSHOT</bukkitVersion>
+            </properties>
+            <!--spigot API-->
+            <dependencies>
+                <dependency>
+                    <groupId>org.bukkit</groupId>
+                    <artifactId>bukkit</artifactId>
+                    <version>1.12.2-R0.1-SNAPSHOT</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>1.14.4</id>
+            <properties>
+                <bukkitVersion>1.14.4-R0.1-SNAPSHOT</bukkitVersion>
+            </properties>
+            <!--spigot API-->
+            <dependencies>
+                <dependency>
+                    <groupId>org.bukkit</groupId>
+                    <artifactId>bukkit</artifactId>
+                    <version>1.14.4-R0.1-SNAPSHOT</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
     <repositories>
         <repository>
             <id>kumalib-repo</id>
@@ -34,13 +66,6 @@
     </repositories>
 
     <dependencies>
-    <!--spigot API-->
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.14.4-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
     <!--MySQL API-->
         <dependency>
             <groupId>mysql</groupId>
@@ -139,6 +164,6 @@
                 </configuration>
             </plugin>    
         </plugins>
-        <finalName>${project.artifactId}-${project.version}.b${buildNumber}</finalName>
+        <finalName>${project.artifactId}-${project.version}-${bukkitVersion}.b${buildNumber}</finalName>
     </build>
 </project>

@@ -9,7 +9,6 @@ import net.milkbowl.vault.permission.Permission;
 import java.util.Date;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import static org.bukkit.Bukkit.getServer;
@@ -38,6 +37,7 @@ public class RanksControl {
         Tools.Prt( "Promotion Process", Tools.consoleMode.full, programCode );
         if ( target == null ) target = player;
         String baseGroup = getGroup( target );
+
         if ( baseGroup.equals( "" ) || baseGroup == null ) {
             Tools.Prt( player, "グループ設定がありません", Tools.consoleMode.full, programCode );
             return false;
@@ -87,6 +87,7 @@ public class RanksControl {
         Tools.Prt( "Demotion Process", Tools.consoleMode.full, programCode );
         if ( target == null ) target = player;
         String baseGroup = getGroup( target );
+
         if ( baseGroup.equals( "" ) || baseGroup == null ) {
             Tools.Prt( player, "グループ設定がありません", Tools.consoleMode.full, programCode );
             return false;
@@ -105,7 +106,7 @@ public class RanksControl {
             String Cmd = "pex user " + target.getName() + " group set " + NewGroup;
             Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
-            PlayerData.SetOffsetToSQL( target.getUniqueId(), target.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
+            PlayerData.SetOffsetToSQL( target.getUniqueId(), TickTime.get( target ) );
             PlayerData.SetBaseDateToSQL( target.getUniqueId() );
 
             String LevelupMessage = 
@@ -165,7 +166,7 @@ public class RanksControl {
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
             //  現状、牢獄処理しか使っていないので、ここでオフセットをリセットしている
             //  本来は設定したランクに応じて再計算が必要になる
-            PlayerData.SetOffsetToSQL( player.getUniqueId(), player.getStatistic( Statistic.PLAY_ONE_MINUTE ) );
+            PlayerData.SetOffsetToSQL( player.getUniqueId(), TickTime.get( player ) );
             PlayerData.SetBaseDateToSQL( player.getUniqueId() );
             return true;
         } catch( ArrayIndexOutOfBoundsException e ) {
@@ -180,8 +181,9 @@ public class RanksControl {
      * @return 
      */
     public static boolean CheckRank( Player player ) {
-        int allTime = ( int ) Math.round( player.getStatistic( Statistic.PLAY_ONE_MINUTE ) * 0.05 / 60 /60 );
-        Tools.Prt( "PlayTime = " + Float.toString( ( float ) player.getStatistic( Statistic.PLAY_ONE_MINUTE ) ), Tools.consoleMode.full, programCode );
+        int BaseTick = TickTime.get( player );
+        int allTime = ( int ) Math.round( BaseTick * 0.05 / 60 /60 );
+        Tools.Prt( "PlayTime = " + Float.toString( ( float ) BaseTick ), Tools.consoleMode.full, programCode );
         Tools.Prt( player,
             ChatColor.YELLOW + "貴方の通算接続時間は " +
             ChatColor.AQUA + allTime +
@@ -208,7 +210,7 @@ public class RanksControl {
         }
 
         int progress = Utility.dateDiff( Database.logout, new Date() );
-        int checkHour = ( int ) Math.round( ( player.getStatistic( Statistic.PLAY_ONE_MINUTE ) - Database.offset ) * 0.05 / 60 / 60 );
+        int checkHour = ( int ) Math.round( ( BaseTick - Database.offset ) * 0.05 / 60 / 60 );
 
         String NowGroup = getGroup( player );
 

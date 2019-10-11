@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.mycompany</groupId>
   <artifactId>Citizenship</artifactId>
-  <version>0.8.1-1.14.4</version>
+  <version>0.8.1</version>
   <description>Citizenship Control Manager plugins</description>
   <scm>
     <connection>scm:svn:http://127.0.0.1/dummy</connection>
@@ -11,7 +11,7 @@
     <url>http://127.0.0.1/dummy</url>
   </scm>
   <build>
-    <finalName>${project.artifactId}-${project.version}.b${buildNumber}</finalName>
+    <finalName>${project.artifactId}-${project.version}-${bukkitVersion}.b${buildNumber}</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
@@ -70,6 +70,54 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>1.12.2</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.bukkit</groupId>
+          <artifactId>bukkit</artifactId>
+          <version>1.12.2-R0.1-SNAPSHOT</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+      <properties>
+        <bukkitVersion>1.12.2-R0.1-SNAPSHOT</bukkitVersion>
+      </properties>
+    </profile>
+    <profile>
+      <id>1.14.4</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.bukkit</groupId>
+          <artifactId>bukkit</artifactId>
+          <version>1.14.4-R0.1-SNAPSHOT</version>
+          <scope>provided</scope>
+          <exclusions>
+            <exclusion>
+              <artifactId>commons-lang</artifactId>
+              <groupId>commons-lang</groupId>
+            </exclusion>
+            <exclusion>
+              <artifactId>guava</artifactId>
+              <groupId>com.google.guava</groupId>
+            </exclusion>
+            <exclusion>
+              <artifactId>gson</artifactId>
+              <groupId>com.google.code.gson</groupId>
+            </exclusion>
+            <exclusion>
+              <artifactId>snakeyaml</artifactId>
+              <groupId>org.yaml</groupId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+      </dependencies>
+      <properties>
+        <bukkitVersion>1.14.4-R0.1-SNAPSHOT</bukkitVersion>
+      </properties>
+    </profile>
+  </profiles>
   <repositories>
     <repository>
       <snapshots>
@@ -88,6 +136,24 @@
     </repository>
   </repositories>
   <dependencies>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>6.0.2</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.MilkBowl</groupId>
+      <artifactId>VaultAPI</artifactId>
+      <version>1.7</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.mycompany</groupId>
+      <artifactId>KumaisuLibraries</artifactId>
+      <version>0.1</version>
+      <scope>compile</scope>
+    </dependency>
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit</artifactId>
@@ -112,28 +178,9 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>6.0.2</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.github.MilkBowl</groupId>
-      <artifactId>VaultAPI</artifactId>
-      <version>1.7</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.mycompany</groupId>
-      <artifactId>KumaisuLibraries</artifactId>
-      <version>0.1</version>
-      <scope>compile</scope>
-    </dependency>
   </dependencies>
   <properties>
     <github.global.server>github-kumaisu</github.global.server>
-    <bukkitVersion>1.14.4-R0.1-SNAPSHOT</bukkitVersion>
     <maven.compiler.source>1.8</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.target>1.8</maven.compiler.target>

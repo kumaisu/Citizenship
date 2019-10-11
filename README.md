@@ -7,7 +7,7 @@ Citizenship は、プレイヤーのログイン経過時間に応じて、Permi
 Citizenship is a plugin that changes the Permission group according to the player login elapsed time  
   
 ## Operation check  
-Spigot 1.14.4  
+Spigot 1.12.2  
 PermissionsEx 1.23.4  
   
 ## Support  

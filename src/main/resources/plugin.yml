@@ -1,6 +1,6 @@
 main: com.mycompany.citizenship.Citizenship
 name: Citizenship
-version: 0.8.1
+version: 0.8.2
 author: Kumaisu
 database: true
 commands:
@@ -24,4 +24,3 @@ permissions:
         description: Player Force Initialize Command
         permission-message: You do not have permission.
         default: false
-        

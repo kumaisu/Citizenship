@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.mycompany</groupId>
   <artifactId>Citizenship</artifactId>
-  <version>0.8.1</version>
+  <version>0.8.2</version>
   <description>Citizenship Control Manager plugins</description>
   <scm>
     <connection>scm:svn:http://127.0.0.1/dummy</connection>
@@ -79,24 +79,14 @@
           <artifactId>bukkit</artifactId>
           <version>1.12.2-R0.1-SNAPSHOT</version>
           <scope>provided</scope>
-        </dependency>
-      </dependencies>
-      <properties>
-        <bukkitVersion>1.12.2-R0.1-SNAPSHOT</bukkitVersion>
-      </properties>
-    </profile>
-    <profile>
-      <id>1.14.4</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.bukkit</groupId>
-          <artifactId>bukkit</artifactId>
-          <version>1.14.4-R0.1-SNAPSHOT</version>
-          <scope>provided</scope>
           <exclusions>
             <exclusion>
               <artifactId>commons-lang</artifactId>
               <groupId>commons-lang</groupId>
+            </exclusion>
+            <exclusion>
+              <artifactId>json-simple</artifactId>
+              <groupId>com.googlecode.json-simple</groupId>
             </exclusion>
             <exclusion>
               <artifactId>guava</artifactId>
@@ -111,6 +101,20 @@
               <groupId>org.yaml</groupId>
             </exclusion>
           </exclusions>
+        </dependency>
+      </dependencies>
+      <properties>
+        <bukkitVersion>1.12.2-R0.1-SNAPSHOT</bukkitVersion>
+      </properties>
+    </profile>
+    <profile>
+      <id>1.14.4</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.bukkit</groupId>
+          <artifactId>bukkit</artifactId>
+          <version>1.14.4-R0.1-SNAPSHOT</version>
+          <scope>provided</scope>
         </dependency>
       </dependencies>
       <properties>
@@ -151,18 +155,22 @@
     <dependency>
       <groupId>com.mycompany</groupId>
       <artifactId>KumaisuLibraries</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit</artifactId>
-      <version>1.14.4-R0.1-SNAPSHOT</version>
+      <version>1.12.2-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
           <artifactId>commons-lang</artifactId>
           <groupId>commons-lang</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>json-simple</artifactId>
+          <groupId>com.googlecode.json-simple</groupId>
         </exclusion>
         <exclusion>
           <artifactId>guava</artifactId>

@@ -27,7 +27,7 @@ public class ConfigManager {
 
     public ConfigManager(Plugin plugin) {
         this.plugin = plugin;
-        Tools.entryDebugFlag( programCode, Tools.consoleMode.none );
+        Tools.entryDebugFlag( programCode, Tools.consoleMode.print );
         Tools.Prt( "Config Loading now...", programCode );
         load();
     }

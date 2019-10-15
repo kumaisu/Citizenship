@@ -1,8 +1,10 @@
 main: com.mycompany.citizenship.Citizenship
 name: Citizenship
-version: 0.8.2
+version: 0.8.3
+description: Citizen Ship Auto Control plugin
 author: Kumaisu
 database: true
+api-version: 1.14
 commands:
     jail:
         description: Jail Command

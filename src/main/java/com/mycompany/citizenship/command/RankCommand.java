@@ -72,10 +72,13 @@ public class RankCommand implements CommandExecutor {
                     Tools.Prt( player, Utility.ReplaceString( "%$aCitizenShip Config Reloaded." ), programCode );
                     return true;
                 case "Console":
-                    Tools.setDebug( CmdArg, programCode );
+                    if ( !Tools.setDebug( CmdArg, programCode ) ) {
+                        Tools.entryDebugFlag( programCode, Tools.consoleMode.normal );
+                        Tools.Prt( ChatColor.RED + "Config Debugモードの指定値が不正なので、normal設定にしました", programCode );
+                    }
                     Tools.Prt( player,
                         ChatColor.GREEN + "System Debug Mode is [ " +
-                        ChatColor.RED + Tools.consoleFlag.get( programCode ) +
+                        ChatColor.RED + Tools.consoleFlag.get( programCode ).toString() +
                         ChatColor.GREEN + " ]",
                         programCode
                     );

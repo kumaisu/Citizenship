@@ -25,7 +25,10 @@ Rank:
 Demotion: 10
 
 #   昇格時Broadcastアナウンスを行うか
-PlayerBroadcast: false
+PromotBroadcast: true
+
+#   降格時Broadcastアナウンスを行うか
+DemotBroadcast: false
 
 #   牢獄の設定
 #   権限剥奪時のグループ名(WorldGuardに設定しているもの)

@@ -114,7 +114,7 @@ public class RanksControl {
                 ChatColor.AQUA + NewGroup +
                 ChatColor.YELLOW + " に降格しました";
 
-            if ( Config.PromotBroadcast ) {
+            if ( Config.DemotBroadcast ) {
                 LevelupMessage = "<鯖アナウンス> " + LevelupMessage;
                 Bukkit.broadcastMessage( LevelupMessage );
                 Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), "discord broadcast " + LevelupMessage );

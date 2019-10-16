@@ -28,6 +28,7 @@ public class Config {
     public static int demotion = 0;
 
     public static boolean PromotBroadcast = false;
+    public static boolean DemotBroadcast = false;
     public static String PrisonGroup = "";
     public static int Penalty = 0;
 

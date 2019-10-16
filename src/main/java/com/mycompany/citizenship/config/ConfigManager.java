@@ -61,7 +61,8 @@ public class ConfigManager {
         }
 
         Config.demotion         = config.getInt( "Demotion", 0 );
-        Config.PromotBroadcast  = config.getBoolean( "PlayerBroadcast", false );
+        Config.PromotBroadcast  = config.getBoolean( "PromotBroadcast", false );
+        Config.DemotBroadcast   = config.getBoolean( "DemotBroadcast", false );
         Config.PrisonGroup      = config.getString( "PrisonGroup", "" );
         Config.Penalty          = config.getInt( "PenaltyTime", 0 );
         

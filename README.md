@@ -8,7 +8,8 @@ Citizenship is a plugin that changes the Permission group according to the playe
   
 ## Operation check  
 Spigot 1.14.4 or 1.12.2  
-PermissionsEx 1.23.4  
+PermissionsEx 1.23.4 
+Vault 1.7.1 
   
 ## Support  
 Open a new issue here: [https//github.com/kumaisu/Citizenship/issues](https://github.com/kumaisu/Citizenship/issues)  

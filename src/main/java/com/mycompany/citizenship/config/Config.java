@@ -47,4 +47,6 @@ public class Config {
     public static float ryaw;
     public static float rpitch;
     public static String rworld;
+    
+    public static List< String > Aleart;
 }

@@ -53,3 +53,10 @@ Release:
   z: 0.0
   yaw: 0.0
   pitch: 0.0
+
+#   警戒コマンド一覧
+Aleart:
+    - OP
+    - OPME
+    - LOGIN
+    - GAMEMODE

@@ -82,6 +82,8 @@ public class ConfigManager {
         Config.ryaw     = Float.valueOf( config.getString( "Release.yaw" ) );
         Config.rpitch   = Float.valueOf( config.getString( "Release.pitch" ) );
 
+        Config.Aleart   = ( List< String > ) config.getList( "Aleart" );
+
         if ( !Tools.setDebug( config.getString( "Debug" ), programCode ) ) {
             Tools.entryDebugFlag( programCode, Tools.consoleMode.normal );
             Tools.Prt( ChatColor.RED + "Config Debugモードの指定値が不正なので、normal設定にしました", programCode );
@@ -119,9 +121,8 @@ public class ConfigManager {
             Tools.Prt( p, ChatColor.WHITE + "  pitch: " + ChatColor.YELLOW + String.valueOf( Config.rpitch ), programCode );
         }
         Tools.Prt( p, ChatColor.WHITE + "CitizenShip List : 昇格時間",programCode );
-        for( String gn : Config.rankName ) {
+        Config.rankName.stream().map( ( gn ) -> {
             String msg = ChatColor.WHITE + String.format( "%-10s", gn ) + " : " + ChatColor.YELLOW;
-            
             if ( Config.rankTime.get( gn ).get( "H" ) != null ) {
                 msg = msg + Config.rankTime.get( gn ).get( "H" ) + " 時間";
             }
@@ -131,9 +132,12 @@ public class ConfigManager {
             if ( Config.rankTime.get( gn ).get( "E" ) != null ) {
                 msg = msg + "最終ランク";
             }
-            
-            Tools.Prt( p, msg, programCode );
-        }
+            return msg;            
+        } ).forEachOrdered( ( msg ) -> { Tools.Prt( p, msg, programCode ); } );
+
+        Tools.Prt( p, ChatColor.WHITE + "警戒Keyword", programCode );
+        Config.Aleart.forEach( ( key ) -> { Tools.Prt( p, ChatColor.YELLOW + " - " + key, programCode ); } );
+
         Tools.Prt( p, ChatColor.GREEN + "==========================", programCode );
     }
 }

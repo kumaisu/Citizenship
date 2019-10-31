@@ -6,6 +6,7 @@
 package com.mycompany.citizenship;
 
 import java.net.UnknownHostException;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,10 +22,12 @@ import com.mycompany.citizenship.config.ConfigManager;
 import com.mycompany.citizenship.command.RankCommand;
 import com.mycompany.citizenship.command.JailCommand;
 import com.mycompany.citizenship.config.Config;
+import com.mycompany.citizenship.database.Database;
 import com.mycompany.citizenship.database.MySQLControl;
 import com.mycompany.citizenship.database.PlayerData;
+import com.mycompany.citizenship.database.ReasonData;
+import com.mycompany.citizenship.database.YellowData;
 import static com.mycompany.citizenship.config.Config.programCode;
-import org.bukkit.Bukkit;
 
 /**
  *
@@ -35,7 +38,7 @@ public class Citizenship extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         this.getServer().getPluginManager().registerEvents( this, this );
-        ConfigManager config = new ConfigManager( this );
+        new ConfigManager( this );
         MySQLControl.connect();
         MySQLControl.TableUpdate();
         getCommand( "ranks" ).setExecutor( new RankCommand( this ) );
@@ -94,12 +97,31 @@ public class Citizenship extends JavaPlugin implements Listener {
 
         for ( String key : Config.Aleart ) {
             if ( message.toLowerCase().contains( key.toLowerCase() ) ) {
-                player.sendTitle( ChatColor.RED + "なにかしようとしてますか？", ChatColor.YELLOW + "イエローカード" + ChatColor.AQUA + "( 1 )", 0, 300, 0 );
-                String msgLog = Utility.StringBuild( ChatColor.RED.toString(), player.getName(), " ", message );
-                Tools.Prt( msgLog, Tools.consoleMode.full, programCode );
-                Bukkit.getOnlinePlayers().stream().filter( ( p ) -> ( p.hasPermission( "citizenship.admin" ) || p.isOp() ) ).forEachOrdered( ( p ) -> {
-                    p.sendMessage( ChatColor.YELLOW + "Command Aleart : " + msgLog );
-                } );
+                YellowData.AddCard( player.getName(), message );
+                PlayerData.addYellow( player.getUniqueId() );
+                
+                if ( PlayerData.GetSQL( player.getUniqueId() ) ) {
+                    player.sendTitle(
+                        ChatColor.RED + "なにかしようとしてますか？",
+                        ChatColor.YELLOW + "イエローカード : " + ChatColor.AQUA + Database.yellow,
+                        0, 300, 0
+                    );
+                    String msgLog = Utility.StringBuild( ChatColor.YELLOW.toString(), "Command Aleart : ", ChatColor.RED.toString(), player.getName(), " ", message );
+                    Tools.Prt( msgLog, Tools.consoleMode.full, programCode );
+                    Bukkit.getOnlinePlayers().stream().filter( ( p ) -> ( p.hasPermission( "citizenship.admin" ) || p.isOp() ) ).forEachOrdered( ( p ) -> {
+                        p.sendMessage( msgLog );
+                    } );
+
+                    if ( Config.Imprisonment ) {
+                        if ( ( Config.AutoJail > 0 ) && ( Database.yellow >= Config.AutoJail ) ) {
+                            Tools.Prt( player, ChatColor.RED + "Auto Jail to " + player.getName(), Tools.consoleMode.normal, programCode );
+                            String reason = "Exceeded the specified number of times";
+                            int ReasonID = ReasonData.AddReason( player.getUniqueId(), reason, "Auto Jail" );
+                            PlayerData.SetReasonID( player.getUniqueId(), ReasonID );
+                            PlayerControl.toJail( player, ReasonID );
+                        }
+                    }
+                }
                 return true;
             }
         }

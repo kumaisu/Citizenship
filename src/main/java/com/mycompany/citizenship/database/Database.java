@@ -23,10 +23,15 @@ public class Database {
     public static int tick = 0;
     public static int offset = 0;
     public static int jail = 0;
+    public static int yellow = 0;
     public static int imprisonment = 0;
     public static int ReasonID = 0;
     
     public static String Reason = "";
     public static String enforcer = "";
     public static Date ReasonDate;
+
+    public static String YellowName;
+    public static Date YellowDate;
+    public static String YellowCommand;
 }

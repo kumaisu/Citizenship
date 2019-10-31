@@ -49,4 +49,5 @@ public class Config {
     public static String rworld;
     
     public static List< String > Aleart;
+    public static int AutoJail;
 }

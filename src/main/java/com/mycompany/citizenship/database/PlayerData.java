@@ -34,7 +34,7 @@ public class PlayerData {
      */
     public static void AddSQL( UUID uuid, String name, int Tick ) {
         try ( Connection con = Database.dataSource.getConnection() ) {
-            String sql = "INSERT INTO player (uuid, name, logout, basedate, tick, offset, jail, imprisonment, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+            String sql = "INSERT INTO player (uuid, name, logout, basedate, tick, offset, jail, yellow, imprisonment, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.setString( 1, uuid.toString() );
@@ -46,6 +46,7 @@ public class PlayerData {
             preparedStatement.setInt( 7, 0 );
             preparedStatement.setInt( 8, 0 );
             preparedStatement.setInt( 9, 0 );
+            preparedStatement.setInt( 10, 0 );
 
             preparedStatement.executeUpdate();
             con.close();
@@ -54,6 +55,7 @@ public class PlayerData {
             Database.logout = new Date();
             Database.basedate = new Date();
             Database.offset = 0;
+            Database.yellow = 0;
             Database.imprisonment = 0;
             Database.ReasonID = 0;
 
@@ -108,6 +110,7 @@ public class PlayerData {
                 Database.tick           = rs.getInt( "tick" );
                 Database.offset         = rs.getInt( "offset" );
                 Database.jail           = rs.getInt( "jail" );
+                Database.yellow         = rs.getInt( "yellow" );
                 Database.imprisonment   = rs.getInt( "imprisonment" );
                 Database.ReasonID       = rs.getInt( "reason" );
                 Tools.Prt( "Get Data from SQL Success.", Tools.consoleMode.max, programCode );
@@ -148,7 +151,7 @@ public class PlayerData {
         try ( Connection con = Database.dataSource.getConnection() ) {
             String sql = "UPDATE player SET basedate = '" + Database.sdf.format( new Date() ) + "' WHERE uuid = '" + uuid.toString() + "';";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.executeUpdate();
             con.close();
             Tools.Prt( "Set logout Date to SQL Success.", Tools.consoleMode.max, programCode );
@@ -167,7 +170,7 @@ public class PlayerData {
         try ( Connection con = Database.dataSource.getConnection() ) {
             String sql = "UPDATE player SET tick = " + tickTime + " WHERE uuid = '" + uuid.toString() + "';";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.executeUpdate();
             con.close();
             Tools.Prt( "Set TickTime to SQL Success.", Tools.consoleMode.max, programCode );
@@ -186,7 +189,7 @@ public class PlayerData {
         try ( Connection con = Database.dataSource.getConnection() ) {
             String sql = "UPDATE player SET offset = " + offset + " WHERE uuid = '" + uuid.toString() + "';";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.executeUpdate();
             con.close();
             Tools.Prt( "Set Offset Data to SQL Success.", Tools.consoleMode.max, programCode );
@@ -209,7 +212,7 @@ public class PlayerData {
         try ( Connection con = Database.dataSource.getConnection() ) {
             String sql = "UPDATE player SET jail = " + jail + " WHERE uuid = '" + uuid.toString() + "';";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.executeUpdate();
             con.close();
             Tools.Prt( "Set Jail Data to SQL Success.", Tools.consoleMode.max, programCode );
@@ -231,7 +234,7 @@ public class PlayerData {
         try ( Connection con = Database.dataSource.getConnection() ) {
             String sql = "UPDATE player SET reason = " + ReasonID + " WHERE uuid = '" + uuid.toString() + "';";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.executeUpdate();
             con.close();
             Tools.Prt( "Set ReasonID to SQL Success.", Tools.consoleMode.max, programCode );
@@ -239,6 +242,40 @@ public class PlayerData {
         } catch ( SQLException e ) {
             Tools.Prt( ChatColor.RED + "Error ReasonID Write : " + e.getMessage(), programCode );
             return false;
+        }
+    }
+
+    /**
+     * CountUP Aleart 警告回数カウントアップ
+     *
+     * @param uuid
+     */
+    public static void addYellow( UUID uuid ) {
+        try ( Connection con = Database.dataSource.getConnection() ) {
+            String sql = "UPDATE player SET yellow = yellow + 1 WHERE uuid = '" + uuid.toString() + "'";
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
+            PreparedStatement preparedStatement = con.prepareStatement( sql );
+            preparedStatement.executeUpdate();
+            con.close();
+        } catch ( SQLException e ) {
+            Tools.Prt( ChatColor.RED + "Error Add Yellow Card : " + e.getMessage(), programCode );
+        }
+    }
+
+    /**
+     * 警告回数をリセット
+     *
+     * @param uuid 
+     */
+    public static void zeroAleart( UUID uuid ) {
+        try ( Connection con = Database.dataSource.getConnection() ) {
+            String sql = "UPDATE player SET yellow = 0 WHERE uuid = '" + uuid.toString() + "'";
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
+            PreparedStatement preparedStatement = con.prepareStatement( sql );
+            preparedStatement.executeUpdate();
+            con.close();
+        } catch ( SQLException e ) {
+            Tools.Prt( ChatColor.RED + "Error Zero Yellow Card : " + e.getMessage(), programCode );
         }
     }
 
@@ -251,7 +288,7 @@ public class PlayerData {
         try ( Connection con = Database.dataSource.getConnection() ) {
             String sql = "UPDATE player SET imprisonment = imprisonment + 1 WHERE uuid = '" + uuid.toString() + "'";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
-            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.executeUpdate();
             con.close();
         } catch ( SQLException e ) {

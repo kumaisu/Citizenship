@@ -130,18 +130,18 @@ public class JailCommand implements CommandExecutor {
                             Tools.Prt( player, ChatColor.RED + enforcer + " Jail to offline " + offPlayer.getName(), Tools.consoleMode.normal, programCode );
                             PlayerData.SetReasonID( jailUUID, ReasonData.AddReason( jailUUID, Reason, enforcer ) );
                             RetFlag = PlayerData.SetJailToSQL( jailUUID, 1 );
+                            Tools.Prt( player, 
+                                ChatColor.RED + "Reson : "
+                                + ChatColor.YELLOW + Reason
+                                + ChatColor.AQUA + " By." + enforcer,
+                                Tools.consoleMode.normal, programCode
+                            );
                         } else {
                             Tools.Prt( player, ChatColor.RED + enforcer + " Jail to " + jailPlayer.getName(), Tools.consoleMode.normal, programCode );
                             int ReasonID = ReasonData.AddReason( jailUUID, Reason, enforcer );
                             PlayerData.SetReasonID( jailUUID, ReasonID );
                             RetFlag = PlayerControl.toJail( jailPlayer, ReasonID );
                         }
-                        Tools.Prt( player, 
-                                ChatColor.RED + "Reson : "
-                                + ChatColor.YELLOW + Reason
-                                + ChatColor.AQUA + " By." + enforcer,
-                                Tools.consoleMode.normal, programCode
-                        );
                         return RetFlag;
                     } else { Tools.Prt( player, "正しくプレイヤー指定してください", programCode ); }
             }

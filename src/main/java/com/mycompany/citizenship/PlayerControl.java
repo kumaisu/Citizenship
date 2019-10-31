@@ -54,11 +54,18 @@ public class PlayerControl {
                 ChatColor.YELLOW + Database.Reason + "(By." + Database.enforcer + ")",
                 0, 100, 0 );
             Bukkit.broadcastMessage( ChatColor.RED + player.getDisplayName() + " さんは投獄されました" );
-            Tools.Prt( ChatColor.RED + "Reason:" + Database.Reason + " By." + Database.enforcer, programCode );
             retStat = true;
         }
 
+        Tools.Prt(
+            ChatColor.RED + "Reson : " +
+            ChatColor.YELLOW + Database.Reason +
+            ChatColor.AQUA + " By." + Database.enforcer,
+            Tools.consoleMode.normal, programCode
+        );
+
         PlayerData.addImprisonment( player.getUniqueId() );
+        PlayerData.zeroAleart(  player.getUniqueId() );
         PlayerData.GetSQL( player.getUniqueId() );
         String message = ChatColor.AQUA + player.getName()
                 + ChatColor.GREEN + "さんの"

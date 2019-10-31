@@ -83,6 +83,7 @@ public class ConfigManager {
         Config.rpitch   = Float.valueOf( config.getString( "Release.pitch" ) );
 
         Config.Aleart   = ( List< String > ) config.getList( "Aleart" );
+        Config.AutoJail = config.getInt( "AutoJail", 0 );
 
         if ( !Tools.setDebug( config.getString( "Debug" ), programCode ) ) {
             Tools.entryDebugFlag( programCode, Tools.consoleMode.normal );
@@ -103,6 +104,7 @@ public class ConfigManager {
         Tools.Prt( p, ChatColor.WHITE + "昇格時ｱﾅｳﾝｽ  : " + ChatColor.YELLOW + ( Config.PromotBroadcast ? "する":"しない" ), programCode );
         Tools.Prt( p, ChatColor.WHITE + "牢獄グループ : " + ChatColor.YELLOW + Config.PrisonGroup, programCode );
         Tools.Prt( p, ChatColor.WHITE + "投獄期間     : " + ChatColor.YELLOW + Config.Penalty + "日", programCode );
+        Tools.Prt( p, ChatColor.WHITE + "自動投獄     : " + ChatColor.YELLOW + Config.AutoJail + "回以上", programCode );
         Tools.Prt( p, ChatColor.WHITE + "牢獄ジャンプ : " + ChatColor.YELLOW + ( Config.Imprisonment ? "する":"しない" ), programCode );
         if ( Config.Imprisonment ) {
             Tools.Prt( p, ChatColor.WHITE + "牢獄行き先", programCode );

@@ -57,6 +57,10 @@ Release:
 #   警戒コマンド一覧
 Aleart:
     - OP
-    - OPME
     - LOGIN
     - GAMEMODE
+
+#   指定回数以上の警告で自動的に投獄する
+#   ゼロで無効
+AutoJail: 10
+

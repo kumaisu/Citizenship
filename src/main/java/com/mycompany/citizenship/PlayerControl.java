@@ -14,12 +14,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import static org.bukkit.Bukkit.getWorld;
+import com.mycompany.kumaisulibraries.Tools;
+import com.mycompany.kumaisulibraries.Utility;
 import com.mycompany.citizenship.config.Config;
 import com.mycompany.citizenship.database.Database;
 import com.mycompany.citizenship.database.PlayerData;
 import com.mycompany.citizenship.database.ReasonData;
-import com.mycompany.kumaisulibraries.Tools;
-import com.mycompany.kumaisulibraries.Utility;
 import static com.mycompany.citizenship.config.Config.programCode;
 
 /**

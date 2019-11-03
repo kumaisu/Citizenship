@@ -5,6 +5,9 @@
  */
 package com.mycompany.citizenship.command;
 
+import java.util.UUID;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,12 +16,9 @@ import org.bukkit.entity.Player;
 import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.citizenship.Citizenship;
 import com.mycompany.citizenship.PlayerControl;
-import static com.mycompany.citizenship.config.Config.programCode;
 import com.mycompany.citizenship.database.PlayerData;
 import com.mycompany.citizenship.database.YellowData;
-import java.util.UUID;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
+import static com.mycompany.citizenship.config.Config.programCode;
 
 /**
  *

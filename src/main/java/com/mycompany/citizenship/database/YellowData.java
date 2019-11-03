@@ -11,13 +11,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import com.mycompany.kumaisulibraries.Tools;
 import static com.mycompany.citizenship.config.Config.programCode;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import org.bukkit.entity.Player;
 
 /**
  *

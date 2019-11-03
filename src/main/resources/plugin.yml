@@ -1,11 +1,16 @@
 main: com.mycompany.citizenship.Citizenship
 name: Citizenship
-version: 0.9.1
+version: 0.9.2
 description: Citizen Ship Auto Control plugin
 author: Kumaisu
 database: true
 api-version: 1.14
 commands:
+    yellow:
+        description: Yellow Card Command
+        permission: citizenship.yellow
+        default: op
+        permission-message: You do not have permission.
     jail:
         description: Jail Command
         permission: citizenship.jail

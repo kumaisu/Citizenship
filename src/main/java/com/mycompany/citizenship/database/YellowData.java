@@ -14,6 +14,10 @@ import java.util.Date;
 import org.bukkit.ChatColor;
 import com.mycompany.kumaisulibraries.Tools;
 import static com.mycompany.citizenship.config.Config.programCode;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import org.bukkit.entity.Player;
 
 /**
  *
@@ -91,7 +95,89 @@ public class YellowData {
         }
     }
 
-    /*
-    sqlCmd = "SELECT * FROM yellow WHERE date BETWEEN '" + checkString + " 00:00:00' AND '" + checkString + " 23:59:59' ORDER BY date DESC;";
-    */
+    /**
+     * DBからリストを取得する
+     *
+     * @param player
+     * @param sqlCmd
+     * @param Title
+     * @param line
+     * @return 
+     */
+    public static boolean GetList( Player player, String sqlCmd, String Title, int line ) {
+        List< String > StringData = new ArrayList<>();
+        Tools.Prt( "SQL : " + sqlCmd, Tools.consoleMode.max, programCode );
+
+        try ( Connection con = Database.dataSource.getConnection() ) {
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery( sqlCmd );
+
+            int loopCount = 0;
+            while( rs.next() && ( loopCount<line ) ) {
+                StringData.add(
+                    ChatColor.WHITE + String.format( "%6d", rs.getInt( "id" ) ) + ": " +
+                    ChatColor.GREEN + Database.sdf.format( rs.getTimestamp( "date" ) ) + " " +
+                    ChatColor.AQUA + rs.getString( "name" ) +
+                    ChatColor.GREEN + " : " +
+                    ChatColor.YELLOW + rs.getString( "command" )
+                );
+                loopCount++;
+            }
+
+            con.close();
+        } catch ( SQLException e ) {
+            Tools.Prt( ChatColor.RED + "Error CardList : " + e.getMessage(), programCode );
+            return false;
+        }
+
+        if ( StringData.size() > 0 ) {
+            Tools.Prt( player, Title, programCode );
+            StringData.forEach( ( s ) -> { Tools.Prt( player, s, programCode ); } );
+            Tools.Prt( player, "=== End ===", programCode );
+        }
+        return true;
+    }
+
+    /**
+     * リスト表示
+     *
+     * @param player
+     * @param name
+     * @param date
+     * @param line
+     * @return 
+     */
+    public static boolean CardList( Player player, String name, String date, int line ) {
+        String TitleString = ChatColor.WHITE + "== Yellow Card List == ";
+        String sqlCmd = "SELECT * FROM yellow";
+
+        if ( !"".equals( name ) ) {
+            TitleString += "[Name:" + name + "] ";
+            sqlCmd += " WHERE name = '" + name +"'";
+        }
+
+        if ( !"".equals( date ) ) {
+            if ( "".equals( name ) ) { sqlCmd += " WHERE "; } else { sqlCmd += " AND "; }
+            TitleString += "[Date:" + date + "]";
+            sqlCmd += "date BETWEEN '" + date + " 00:00:00' AND '" + date + " 23:59:59'";
+        }
+
+        sqlCmd +=  " ORDER BY date DESC;";
+
+        return GetList( player, sqlCmd, TitleString, line );
+    }
+
+    /**
+     * 指定日以降のリストを表示する
+     * 
+     * @param player
+     * @param date
+     * @return 
+     */
+    public static boolean CardLog( Player player, Date date ) {
+        String sqlCmd = "SELECT * FROM yellow WHERE date BETWEEN '" +
+            Database.sdf.format( date ) + "' AND '" +
+            Database.sdf.format( new Date() ) + "' ORDER BY date DESC;";
+        return GetList( player, sqlCmd, ChatColor.WHITE + "== Yellow Card Logs == " + Database.sdf.format( date ), 5 );
+    }
 }

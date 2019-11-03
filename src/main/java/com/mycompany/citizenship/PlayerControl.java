@@ -187,6 +187,7 @@ public class PlayerControl {
             Tools.Prt( player, "経過日数       : " + Utility.dateDiff( Database.basedate, new Date() ) + " 日", programCode );
             Tools.Prt( player, "Logout日       : " + Database.logout.toString(), programCode );
             Tools.Prt( player, "Logout経過日数 : " + Utility.dateDiff( Database.logout, new Date() ) + " 日", programCode );
+            Tools.Prt( player, "イエローカード : " + ( Database.yellow == 0 ? "無し":" " + Database.yellow + " 枚"), programCode );
             Tools.Prt( player, "投獄回数       : 前科" + ( Database.imprisonment == 0 ? "無し":" " + Database.imprisonment + " 犯"), programCode );
             return true;
         } else {

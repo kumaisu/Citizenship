@@ -17,10 +17,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import com.mycompany.kumaisulibraries.Tools;
-import com.mycompany.kumaisulibraries.Utility;
 import com.mycompany.citizenship.config.ConfigManager;
 import com.mycompany.citizenship.command.RankCommand;
 import com.mycompany.citizenship.command.JailCommand;
+import com.mycompany.citizenship.command.YellowCommand;
 import com.mycompany.citizenship.config.Config;
 import com.mycompany.citizenship.database.Database;
 import com.mycompany.citizenship.database.MySQLControl;
@@ -43,6 +43,7 @@ public class Citizenship extends JavaPlugin implements Listener {
         MySQLControl.TableUpdate();
         getCommand( "ranks" ).setExecutor( new RankCommand( this ) );
         getCommand( "jail" ).setExecutor( new JailCommand( this ) );
+        getCommand( "yellow" ).setExecutor( new YellowCommand( this ) );
     }
 
     @Override
@@ -68,6 +69,7 @@ public class Citizenship extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
         Tools.Prt( "onPlayerLogin process", Tools.consoleMode.max, programCode );
         RanksControl.CheckRank( player );
+        if ( player.hasPermission( "citizenship.yellow" ) ) YellowData.CardLog( player, Database.logout );
     }
 
     /**
@@ -106,7 +108,7 @@ public class Citizenship extends JavaPlugin implements Listener {
                         ChatColor.YELLOW + "イエローカード : " + ChatColor.AQUA + Database.yellow,
                         0, 300, 0
                     );
-                    String msgLog = Utility.StringBuild( ChatColor.YELLOW.toString(), "Command Aleart : ", ChatColor.RED.toString(), player.getName(), " ", message );
+                    String msgLog = ChatColor.YELLOW + "Command Aleart : " + ChatColor.RED + player.getName() + " " + message;
                     Tools.Prt( msgLog, Tools.consoleMode.full, programCode );
                     Bukkit.getOnlinePlayers().stream().filter( ( p ) -> ( p.hasPermission( "citizenship.admin" ) || p.isOp() ) ).forEachOrdered( ( p ) -> {
                         p.sendMessage( msgLog );

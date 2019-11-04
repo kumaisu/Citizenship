@@ -55,6 +55,7 @@ public class YellowCommand implements CommandExecutor {
         int PrtLine = 5;
         String YellowName = "";
         String YellowDate = "";
+        String YellowKey  = "";
 
         if ( args.length > 0 ) {
             for ( String arg : args ) {
@@ -66,6 +67,9 @@ public class YellowCommand implements CommandExecutor {
                     case "d":
                         YellowDate = param[1];
                         break;
+                    case "k":
+                        YellowKey = param[1];
+                        break;
                     case "l":
                         try {
                             PrtLine = Integer.valueOf( param[1] );
@@ -76,7 +80,7 @@ public class YellowCommand implements CommandExecutor {
 
             switch( args[0].toLowerCase() ) {
                 case "list":
-                    return YellowData.CardList( player, YellowName, YellowDate, PrtLine );
+                    return YellowData.CardList( player, YellowName, YellowDate, YellowKey, PrtLine );
                 case "reset":
                     if ( "".equals( YellowName ) ) {
                         Tools.Prt( player, ChatColor.RED + "プレイヤーを指定してください", Tools.consoleMode.max, programCode );
@@ -106,7 +110,7 @@ public class YellowCommand implements CommandExecutor {
             }
         }
         Tools.Prt( player, "\n=== Yellow Card Command Help ===", programCode );
-        Tools.Prt( player, "/yellow list [u:<PlayerName>] [d:<Date>] [l:<line>]", programCode );
+        Tools.Prt( player, "/yellow list [u:<PlayerName>] [d:<Date>] [k:<Keyword>] [l:<line>]", programCode );
         Tools.Prt( player, "/yellow reset u:<PlayerName>", programCode );
         return false;
     }

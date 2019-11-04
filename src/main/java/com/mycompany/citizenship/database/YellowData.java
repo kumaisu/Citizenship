@@ -143,22 +143,32 @@ public class YellowData {
      * @param player
      * @param name
      * @param date
+     * @param keyword
      * @param line
      * @return 
      */
-    public static boolean CardList( Player player, String name, String date, int line ) {
+    public static boolean CardList( Player player, String name, String date, String keyword, int line ) {
         String TitleString = ChatColor.WHITE + "== Yellow Card List == ";
         String sqlCmd = "SELECT * FROM yellow";
+        boolean sqlAdd = false;
 
         if ( !"".equals( name ) ) {
             TitleString += "[Name:" + name + "] ";
-            sqlCmd += " WHERE name = '" + name +"'";
+            sqlCmd += " WHERE name = '%" + name +"%'";
+            sqlAdd = true;
         }
 
         if ( !"".equals( date ) ) {
-            if ( "".equals( name ) ) { sqlCmd += " WHERE "; } else { sqlCmd += " AND "; }
+            if ( sqlAdd ) { sqlCmd += " ADD "; } else { sqlCmd += " WHERE "; }
             TitleString += "[Date:" + date + "]";
             sqlCmd += "date BETWEEN '" + date + " 00:00:00' AND '" + date + " 23:59:59'";
+            sqlAdd = true;
+        }
+
+        if ( !"".equals( keyword ) ) {
+            if ( sqlAdd ) { sqlCmd += " ADD "; } else { sqlCmd += " WHERE "; }
+            TitleString += "[Keyword:" + keyword + "]";
+            sqlCmd += "command LIKE '%" + keyword + "%'";
         }
 
         sqlCmd +=  " ORDER BY date DESC;";

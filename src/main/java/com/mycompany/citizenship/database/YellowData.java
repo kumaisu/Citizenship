@@ -125,7 +125,7 @@ public class YellowData {
 
             con.close();
         } catch ( SQLException e ) {
-            Tools.Prt( ChatColor.RED + "Error CardList : " + e.getMessage(), programCode );
+            Tools.Prt( ChatColor.RED + "Error GetList : " + e.getMessage(), programCode );
             return false;
         }
 

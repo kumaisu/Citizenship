@@ -154,7 +154,7 @@ public class YellowData {
 
         if ( !"".equals( name ) ) {
             TitleString += "[Name:" + name + "] ";
-            sqlCmd += " WHERE name = '%" + name +"%'";
+            sqlCmd += " WHERE name LIKE '%" + name +"%'";
             sqlAdd = true;
         }
 

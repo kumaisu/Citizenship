@@ -60,7 +60,14 @@ public class ConfigManager {
             Config.rankName.add( param[0] );
         }
 
-        Config.demotion         = config.getInt( "Demotion", 0 );
+        Config.demotion         = config.getBoolean( "Demotion.enable", false );
+        Config.demotionDefault  = config.getInt( "Demotion.default", 0 );
+        List< String > getd = ( List< String > ) config.getList( "Demotion.Rank" );
+        for( int i = 0; i<getd.size(); i++ ) {
+            String[] param = getd.get( i ).split(",");
+            Config.demot.put( param[0].toUpperCase(), Integer.valueOf( param[1] ) );
+        }
+
         Config.PromotBroadcast  = config.getBoolean( "PromotBroadcast", false );
         Config.DemotBroadcast   = config.getBoolean( "DemotBroadcast", false );
         Config.PrisonGroup      = config.getString( "PrisonGroup", "" );
@@ -100,8 +107,31 @@ public class ConfigManager {
             Tools.Prt( p, ChatColor.WHITE + "DB UserName  : " + ChatColor.YELLOW + Config.username, programCode );
             Tools.Prt( p, ChatColor.WHITE + "DB Password  : " + ChatColor.YELLOW + Config.password, programCode );
         }
-        Tools.Prt( p, ChatColor.WHITE + "降格日数     : " + ChatColor.YELLOW + Config.demotion + " 日", programCode );
         Tools.Prt( p, ChatColor.WHITE + "昇格時ｱﾅｳﾝｽ  : " + ChatColor.YELLOW + ( Config.PromotBroadcast ? "する":"しない" ), programCode );
+        Tools.Prt( p, ChatColor.WHITE + "CitizenShip List : 昇格時間",programCode );
+        Config.rankName.stream().map( ( gn ) -> {
+            String msg = ChatColor.WHITE + String.format( "%-10s", gn ) + " : " + ChatColor.YELLOW;
+            if ( Config.rankTime.get( gn ).get( "H" ) != null ) {
+                msg = msg + Config.rankTime.get( gn ).get( "H" ) + " 時間";
+            }
+            if ( Config.rankTime.get( gn ).get( "D" ) != null ) {
+                msg = msg + Config.rankTime.get( gn ).get( "D" ) + " 日";
+            }
+            if ( Config.rankTime.get( gn ).get( "E" ) != null ) {
+                msg = msg + "最終ランク";
+            }
+            return msg;            
+        } ).forEachOrdered( ( msg ) -> { Tools.Prt( p, msg, programCode ); } );
+        if ( Config.demotion ) {
+            Tools.Prt( p, ChatColor.WHITE + "降格基礎日数 : " + ChatColor.YELLOW + Config.demotionDefault + " 日", programCode );
+            Tools.Prt( p, ChatColor.WHITE + "ランク別降格日数",programCode );
+            Config.demot.forEach( ( key, value ) -> { Tools.Prt( p, key + " - " + value + " 日", programCode ); } );
+        }
+        Tools.Prt( p, ChatColor.GREEN + "==========================", programCode );
+    }
+
+    public static void JailStatus( Player p ) {
+        Tools.Prt( p, ChatColor.GREEN + "=== Citizenship Jail Status ===", programCode );
         Tools.Prt( p, ChatColor.WHITE + "牢獄グループ : " + ChatColor.YELLOW + Config.PrisonGroup, programCode );
         Tools.Prt( p, ChatColor.WHITE + "投獄期間     : " + ChatColor.YELLOW + Config.Penalty + "日", programCode );
         Tools.Prt( p, ChatColor.WHITE + "自動投獄     : " + ChatColor.YELLOW + Config.AutoJail + "回以上", programCode );
@@ -122,24 +152,13 @@ public class ConfigManager {
             Tools.Prt( p, ChatColor.WHITE + "  yaw  : " + ChatColor.YELLOW + String.valueOf( Config.ryaw ), programCode );
             Tools.Prt( p, ChatColor.WHITE + "  pitch: " + ChatColor.YELLOW + String.valueOf( Config.rpitch ), programCode );
         }
-        Tools.Prt( p, ChatColor.WHITE + "CitizenShip List : 昇格時間",programCode );
-        Config.rankName.stream().map( ( gn ) -> {
-            String msg = ChatColor.WHITE + String.format( "%-10s", gn ) + " : " + ChatColor.YELLOW;
-            if ( Config.rankTime.get( gn ).get( "H" ) != null ) {
-                msg = msg + Config.rankTime.get( gn ).get( "H" ) + " 時間";
-            }
-            if ( Config.rankTime.get( gn ).get( "D" ) != null ) {
-                msg = msg + Config.rankTime.get( gn ).get( "D" ) + " 日";
-            }
-            if ( Config.rankTime.get( gn ).get( "E" ) != null ) {
-                msg = msg + "最終ランク";
-            }
-            return msg;            
-        } ).forEachOrdered( ( msg ) -> { Tools.Prt( p, msg, programCode ); } );
+        Tools.Prt( p, ChatColor.GREEN + "==========================", programCode );
+    }
 
+    public static void YellowStatus( Player p ) {
+        Tools.Prt( p, ChatColor.GREEN + "=== Citizenship Yellow Status ===", programCode );
         Tools.Prt( p, ChatColor.WHITE + "警戒Keyword", programCode );
         Config.Aleart.forEach( ( key ) -> { Tools.Prt( p, ChatColor.YELLOW + " - " + key, programCode ); } );
-
         Tools.Prt( p, ChatColor.GREEN + "==========================", programCode );
     }
 }

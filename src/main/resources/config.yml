@@ -21,8 +21,19 @@ Rank:
   - Nation,500,d
   - Uiverse,0,E
 
-#   降格判定　日数、ゼロならば降格無し
-Demotion: 10
+#   降格判定　日数
+#   ゼロ日設定は降格無し
+#   defaultをゼロにするとRankの降格対象以外は降格無しになる
+Demotion:
+    enable: false
+    default: 10
+    Rank:
+      - Civilian,7
+      - Citizen,15
+      - Nation,15
+      - Uiverse,30
+      - Manager,60
+      - Master,0
 
 #   昇格時Broadcastアナウンスを行うか
 PromotBroadcast: true

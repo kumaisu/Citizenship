@@ -20,6 +20,7 @@ import com.mycompany.citizenship.database.Database;
 import com.mycompany.citizenship.database.PlayerData;
 import com.mycompany.citizenship.database.ReasonData;
 import static com.mycompany.citizenship.config.Config.programCode;
+import com.mycompany.citizenship.config.ConfigManager;
 
 /**
  *
@@ -95,6 +96,9 @@ public class JailCommand implements CommandExecutor {
             }
 
             switch( args[0].toLowerCase() ) {
+                case "status":
+                    ConfigManager.JailStatus( player );
+                    return true;
                 case "release":
                     if ( jailPlayer != null ) {
                         PlayerData.GetSQL( jailPlayer.getUniqueId() );

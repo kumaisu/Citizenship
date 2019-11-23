@@ -230,13 +230,15 @@ public class RanksControl {
         //
         //  降格判定
         //
-        if ( Config.demotion != 0 ) {
+        if ( Config.demotion ) {
             Tools.Prt( "Logout date = " + Database.logout.toString(), Tools.consoleMode.full, programCode);
             Tools.Prt( "Diff Date : " + progress + " 日", Tools.consoleMode.full, programCode );
-            if ( progress > Config.demotion ) {
+            int days = ( Config.demot.get( NowGroup ) == null ? Config.demotionDefault : Config.demot.get( NowGroup ) );
+            Tools.Prt( "CheckDate : " + days + " 日", Tools.consoleMode.full, programCode );
+            if ( ( days > 0 ) && ( progress > days ) ) {
                 Demotion( player, null );
                 return true;
-            }
+            } else Tools.Prt( ChatColor.YELLOW + "No demotion process", Tools.consoleMode.full, programCode );
         }
 
         //
@@ -263,7 +265,7 @@ public class RanksControl {
                 Promotion( player, null );
                 return true;
             }
-        } else Tools.Prt( "This player is Last Group", Tools.consoleMode.full, programCode );
+        } else Tools.Prt( ChatColor.AQUA + "This player is Last Group", Tools.consoleMode.full, programCode );
 
         return false;
     }

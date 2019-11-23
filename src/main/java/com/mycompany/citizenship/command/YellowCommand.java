@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.citizenship.Citizenship;
 import com.mycompany.citizenship.PlayerControl;
+import com.mycompany.citizenship.config.ConfigManager;
 import com.mycompany.citizenship.database.PlayerData;
 import com.mycompany.citizenship.database.YellowData;
 import static com.mycompany.citizenship.config.Config.programCode;
@@ -79,6 +80,9 @@ public class YellowCommand implements CommandExecutor {
             }
 
             switch( args[0].toLowerCase() ) {
+                case "status":
+                    ConfigManager.YellowStatus( player );
+                    return true;
                 case "list":
                     return YellowData.CardList( player, YellowName, YellowDate, YellowKey, PrtLine );
                 case "reset":

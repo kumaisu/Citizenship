@@ -65,7 +65,7 @@ public class ConfigManager {
         List< String > getd = ( List< String > ) config.getList( "Demotion.Rank" );
         for( int i = 0; i<getd.size(); i++ ) {
             String[] param = getd.get( i ).split(",");
-            Config.demot.put( param[0].toUpperCase(), Integer.valueOf( param[1] ) );
+            Config.demot.put( param[0], Integer.valueOf( param[1] ) );
         }
 
         Config.PromotBroadcast  = config.getBoolean( "PromotBroadcast", false );
@@ -125,7 +125,7 @@ public class ConfigManager {
         if ( Config.demotion ) {
             Tools.Prt( p, ChatColor.WHITE + "降格基礎日数 : " + ChatColor.YELLOW + Config.demotionDefault + " 日", programCode );
             Tools.Prt( p, ChatColor.WHITE + "ランク別降格日数",programCode );
-            Config.demot.forEach( ( key, value ) -> { Tools.Prt( p, key + " - " + value + " 日", programCode ); } );
+            Config.demot.forEach( ( key, value ) -> { Tools.Prt( p, String.format( "%-10s", key ) + " : " + value + " 日", programCode ); } );
         }
         Tools.Prt( p, ChatColor.GREEN + "==========================", programCode );
     }
@@ -134,29 +134,33 @@ public class ConfigManager {
         Tools.Prt( p, ChatColor.GREEN + "=== Citizenship Jail Status ===", programCode );
         Tools.Prt( p, ChatColor.WHITE + "牢獄グループ : " + ChatColor.YELLOW + Config.PrisonGroup, programCode );
         Tools.Prt( p, ChatColor.WHITE + "投獄期間     : " + ChatColor.YELLOW + Config.Penalty + "日", programCode );
-        Tools.Prt( p, ChatColor.WHITE + "自動投獄     : " + ChatColor.YELLOW + Config.AutoJail + "回以上", programCode );
         Tools.Prt( p, ChatColor.WHITE + "牢獄ジャンプ : " + ChatColor.YELLOW + ( Config.Imprisonment ? "する":"しない" ), programCode );
         if ( Config.Imprisonment ) {
-            Tools.Prt( p, ChatColor.WHITE + "牢獄行き先", programCode );
-            Tools.Prt( p, ChatColor.WHITE + "  world: " + ChatColor.YELLOW + Config.fworld, programCode );
-            Tools.Prt( p, ChatColor.WHITE + "  x    : " + ChatColor.YELLOW + String.valueOf( Config.fx ), programCode );
-            Tools.Prt( p, ChatColor.WHITE + "  y    : " + ChatColor.YELLOW + String.valueOf( Config.fy ), programCode );
-            Tools.Prt( p, ChatColor.WHITE + "  z    : " + ChatColor.YELLOW + String.valueOf( Config.fz ), programCode );
-            Tools.Prt( p, ChatColor.WHITE + "  yaw  : " + ChatColor.YELLOW + String.valueOf( Config.fyaw ), programCode );
-            Tools.Prt( p, ChatColor.WHITE + "  pitch: " + ChatColor.YELLOW + String.valueOf( Config.fpitch ), programCode );
-            Tools.Prt( p, ChatColor.WHITE + "釈放行き先", programCode );
-            Tools.Prt( p, ChatColor.WHITE + "  world: " + ChatColor.YELLOW + Config.rworld, programCode );
-            Tools.Prt( p, ChatColor.WHITE + "  x    : " + ChatColor.YELLOW + String.valueOf( Config.rx ), programCode );
-            Tools.Prt( p, ChatColor.WHITE + "  y    : " + ChatColor.YELLOW + String.valueOf( Config.ry ), programCode );
-            Tools.Prt( p, ChatColor.WHITE + "  z    : " + ChatColor.YELLOW + String.valueOf( Config.rz ), programCode );
-            Tools.Prt( p, ChatColor.WHITE + "  yaw  : " + ChatColor.YELLOW + String.valueOf( Config.ryaw ), programCode );
-            Tools.Prt( p, ChatColor.WHITE + "  pitch: " + ChatColor.YELLOW + String.valueOf( Config.rpitch ), programCode );
+            Tools.Prt( p, ChatColor.WHITE + "牢獄行き先 : " +
+                ChatColor.YELLOW + "[" + Config.fworld + "] " +
+                ChatColor.WHITE + "x:" + ChatColor.YELLOW + String.valueOf( Config.fx ) + "," +
+                ChatColor.WHITE + "y:" + ChatColor.YELLOW + String.valueOf( Config.fy ) + "," +
+                ChatColor.WHITE + "z:" + ChatColor.YELLOW + String.valueOf( Config.fz ) + "," +
+                ChatColor.WHITE + "pit:" + ChatColor.YELLOW + String.valueOf( Config.fpitch ) + "," +
+                ChatColor.WHITE + "yaw:" + ChatColor.YELLOW + String.valueOf( Config.fyaw ),
+                programCode
+            );
+            Tools.Prt( p, ChatColor.WHITE + "釈放行き先 : " +
+                ChatColor.YELLOW + "[" + Config.rworld + "] " +
+                ChatColor.WHITE + "x:" + ChatColor.YELLOW + String.valueOf( Config.rx ) + "," +
+                ChatColor.WHITE + "y:" + ChatColor.YELLOW + String.valueOf( Config.ry ) + "," +
+                ChatColor.WHITE + "z:" + ChatColor.YELLOW + String.valueOf( Config.rz ) + "," +
+                ChatColor.WHITE + "pit:" + ChatColor.YELLOW + String.valueOf( Config.rpitch ) + "," +
+                ChatColor.WHITE + "yaw:" + ChatColor.YELLOW + String.valueOf( Config.ryaw ),
+                programCode
+            );
         }
         Tools.Prt( p, ChatColor.GREEN + "==========================", programCode );
     }
 
     public static void YellowStatus( Player p ) {
         Tools.Prt( p, ChatColor.GREEN + "=== Citizenship Yellow Status ===", programCode );
+        Tools.Prt( p, ChatColor.WHITE + "自動投獄 : " + ChatColor.YELLOW + Config.AutoJail + "回以上", programCode );
         Tools.Prt( p, ChatColor.WHITE + "警戒Keyword", programCode );
         Config.Aleart.forEach( ( key ) -> { Tools.Prt( p, ChatColor.YELLOW + " - " + key, programCode ); } );
         Tools.Prt( p, ChatColor.GREEN + "==========================", programCode );

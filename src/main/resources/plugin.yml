@@ -1,6 +1,6 @@
 main: com.mycompany.citizenship.Citizenship
 name: Citizenship
-version: 0.9.5
+version: 0.9.6
 description: Citizen Ship Auto Control plugin
 author: Kumaisu
 database: true

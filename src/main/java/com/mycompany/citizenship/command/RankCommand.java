@@ -139,7 +139,7 @@ public class RankCommand implements CommandExecutor {
 
         if ( ( player == null ) || player.hasPermission( "citizenship.console" ) ) {
             Tools.Prt( player, "ranks Reload", programCode );
-            Tools.Prt( player, "ranks Console [max,full,normal,none]", programCode );
+            Tools.Prt( player, "ranks Console [max,full,normal,stop]", programCode );
         }
 
         if ( ( player == null ) || player.hasPermission( "citizenship.admin" ) ) {

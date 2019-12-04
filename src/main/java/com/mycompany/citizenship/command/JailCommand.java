@@ -69,17 +69,14 @@ public class JailCommand implements CommandExecutor {
                     case "u":
                         String Prisoner = param[1];
                         jailPlayer = Bukkit.getServer().getPlayer( Prisoner );
+                        jailUUID = Tools.getUUID( Prisoner );
                         if ( jailPlayer == null ) {
-                            offPlayer = Bukkit.getServer().getOfflinePlayer( param[1] );
-                            if ( offPlayer == null ) {
+                            if ( jailUUID == null ) {
                                 Tools.Prt( player, ChatColor.RED + "対象プレイヤーが居ません", Tools.consoleMode.full, programCode );
                                 return false;
                             } else {
-                                jailUUID = offPlayer.getUniqueId();
                                 offlineMode = true;
                             }
-                        } else {
-                            jailUUID = jailPlayer.getUniqueId();
                         }
                         break;
                     case "r":

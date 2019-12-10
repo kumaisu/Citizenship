@@ -47,7 +47,7 @@ public class RanksControl {
             return false;
         }
         if ( Config.rankTime.get( baseGroup ).get( "E" ) != null ) {
-            Tools.Prt( player, ChatColor.LIGHT_PURPLE + "これ以上、昇格はできません", Tools.consoleMode.full, programCode );
+            Tools.Prt( player, ChatColor.LIGHT_PURPLE + "これ以上の昇格はできません", Tools.consoleMode.full, programCode );
             return false;
         }
 
@@ -97,7 +97,9 @@ public class RanksControl {
             return false;
         }
         if ( Config.rankName.indexOf( baseGroup ) == 0 ) {
-            Tools.Prt( player, "これ以上、降格はできません", Tools.consoleMode.full, programCode );
+            if ( player != target ) {
+                Tools.Prt( player, "これ以下へ降格はできません", Tools.consoleMode.full, programCode );
+            }
             return false;
         }
 
@@ -109,17 +111,17 @@ public class RanksControl {
             PlayerData.SetOffsetToSQL( target.getUniqueId(), TickTime.get( target ) );
             PlayerData.SetBaseDateToSQL( target.getUniqueId() );
 
-            String LevelupMessage = 
+            String LeveldownMessage = 
                 ChatColor.YELLOW + target.getName() + " さんを " +
                 ChatColor.AQUA + NewGroup +
                 ChatColor.YELLOW + " に降格しました";
 
             if ( Config.DemotBroadcast ) {
-                LevelupMessage = "<鯖アナウンス> " + LevelupMessage;
-                Bukkit.broadcastMessage( LevelupMessage );
-                Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), "discord broadcast " + LevelupMessage );
+                LeveldownMessage = "<鯖アナウンス> " + LeveldownMessage;
+                Bukkit.broadcastMessage( LeveldownMessage );
+                Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), "discord broadcast " + LeveldownMessage );
             } else {
-                Tools.Prt( target, LevelupMessage, Tools.consoleMode.normal, programCode );
+                Tools.Prt( target, LeveldownMessage, Tools.consoleMode.normal, programCode );
             }
             Tools.Prt( "Player new Group is " + NewGroup, Tools.consoleMode.full, programCode );
             return true;

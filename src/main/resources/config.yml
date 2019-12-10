@@ -68,7 +68,6 @@ Release:
 #   警戒コマンド一覧
 Aleart:
     - /OP
-    - /LOGIN
     - /GAMEMODE
 
 #   指定回数以上の警告で自動的に投獄する

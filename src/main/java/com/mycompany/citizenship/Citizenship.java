@@ -7,6 +7,7 @@ package com.mycompany.citizenship;
 
 import java.net.UnknownHostException;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -64,12 +65,15 @@ public class Citizenship extends JavaPlugin implements Listener {
      * @param event
      * @throws UnknownHostException
      */
-    @EventHandler( priority = EventPriority.HIGH )
+    @EventHandler( priority = EventPriority.LOWEST )
     public void onPlayerLogin( PlayerJoinEvent event ) throws UnknownHostException {
         Player player = event.getPlayer();
         Tools.Prt( "onPlayerLogin process", Tools.consoleMode.max, programCode );
         RanksControl.CheckRank( player );
-        if ( player.hasPermission( "citizenship.yellow" ) ) YellowData.CardLog( player, Database.logout );
+        if ( player.hasPermission( "citizenship.yellow" ) ) {
+            YellowData.CardLog( player, Database.logout );
+            player.getLocation().getWorld().playSound( player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1 );
+        }
     }
 
     /**

@@ -34,20 +34,20 @@ public class RanksControl {
      * @return 
      */
     public static boolean Promotion( Player player, Player target ) {
-        Tools.Prt( "Promotion Process", Tools.consoleMode.full, programCode );
+        Tools.Prt( "Promotion Process", Tools.consoleMode.max, programCode );
         if ( target == null ) target = player;
         String baseGroup = getGroup( target );
 
         if ( baseGroup.equals( "" ) || baseGroup == null ) {
-            Tools.Prt( player, "グループ設定がありません", Tools.consoleMode.full, programCode );
+            Tools.Prt( player, "グループ設定がありません", Tools.consoleMode.max, programCode );
             return false;
         }
         if ( Config.rankName.contains( baseGroup ) == false ) {
-            Tools.Prt( player, ChatColor.BLUE + "ランク制御対象外グループです", Tools.consoleMode.full, programCode );
+            Tools.Prt( player, ChatColor.BLUE + "ランク制御対象外グループです", Tools.consoleMode.max, programCode );
             return false;
         }
         if ( Config.rankTime.get( baseGroup ).get( "E" ) != null ) {
-            Tools.Prt( player, ChatColor.LIGHT_PURPLE + "これ以上の昇格はできません", Tools.consoleMode.full, programCode );
+            Tools.Prt( player, ChatColor.LIGHT_PURPLE + "これ以上の昇格はできません", Tools.consoleMode.max, programCode );
             return false;
         }
 
@@ -84,21 +84,21 @@ public class RanksControl {
      * @return 
      */
     public static boolean Demotion( Player player, Player target ){
-        Tools.Prt( "Demotion Process", Tools.consoleMode.full, programCode );
+        Tools.Prt( "Demotion Process", Tools.consoleMode.max, programCode );
         if ( target == null ) target = player;
         String baseGroup = getGroup( target );
 
         if ( baseGroup.equals( "" ) || baseGroup == null ) {
-            Tools.Prt( player, "グループ設定がありません", Tools.consoleMode.full, programCode );
+            Tools.Prt( player, "グループ設定がありません", Tools.consoleMode.max, programCode );
             return false;
         }
         if ( Config.rankName.contains( baseGroup ) == false ) {
-            Tools.Prt( player, "ランク制御対象外グループです", Tools.consoleMode.full, programCode );
+            Tools.Prt( player, "ランク制御対象外グループです", Tools.consoleMode.max, programCode );
             return false;
         }
         if ( Config.rankName.indexOf( baseGroup ) == 0 ) {
             if ( player != target ) {
-                Tools.Prt( player, "これ以下へ降格はできません", Tools.consoleMode.full, programCode );
+                Tools.Prt( player, "これ以下へ降格はできません", Tools.consoleMode.max, programCode );
             }
             return false;
         }
@@ -150,7 +150,7 @@ public class RanksControl {
         for ( String StrItem1 : perm.getPlayerGroups( player ) ) Tools.Prt( "Have Gr. {" + StrItem1 + "}", Tools.consoleMode.max, programCode );
 
         String NowGroup = perm.getPlayerGroups( player )[0];
-        Tools.Prt( "NowGroup [" + NowGroup + "]", Tools.consoleMode.full, programCode );
+        Tools.Prt( "NowGroup [" + NowGroup + "]", Tools.consoleMode.max, programCode );
         return NowGroup;
     }
 
@@ -180,9 +180,8 @@ public class RanksControl {
      * 具体的に、昇格・降格を判断処理するメソッド
      *
      * @param player
-     * @return 
      */
-    public static boolean CheckRank( Player player ) {
+    public static void CheckRank( Player player ) {
         int BaseTick = TickTime.get( player );
         int allTime = ( int ) Math.round( BaseTick * 0.05 / 60 /60 );
         Tools.Prt( "PlayTime = " + Float.toString( ( float ) BaseTick ), Tools.consoleMode.full, programCode );
@@ -208,24 +207,36 @@ public class RanksControl {
         if ( Database.jail == 1 ) {
             PlayerControl.toJail( player, Database.ReasonID );
             PlayerData.SetJailToSQL( player.getUniqueId(), 0 );
-            return true;
+            return;
         }
 
         int progress = Utility.dateDiff( Database.logout, new Date() );
         int checkHour = ( int ) Math.round( ( BaseTick - Database.offset ) * 0.05 / 60 / 60 );
 
         String NowGroup = getGroup( player );
+        
+        //
+        //  グループ表示 => コンソールへ
+        //
+        Tools.Prt( ChatColor.GREEN + player.getName() + " [" + NowGroup + "] Login", Tools.consoleMode.normal, programCode );
+
+        //
+        //  経過時間によるユーザーの昇格処理
+        //
+        if ( NowGroup.equals( "" ) || Config.rankTime.get( NowGroup ) == null ) {
+            Tools.Prt( ChatColor.GOLD + "チェック対象グループではありません", Tools.consoleMode.full, programCode );
+            return;
+        }
 
         //
         //  ペナルティユーザーに対する処理
         //
         if ( Database.ReasonID != 0 ) {
             if ( ( Config.Penalty > 0 ) && ( progress > Config.Penalty ) ) {
-                return PlayerControl.outJail( player );
+                PlayerControl.outJail( player );
             } else {
                 ReasonData.GetReason( Database.ReasonID );
                 Tools.Prt( player, ChatColor.RED + "投獄理由 : " + Database.Reason + " By." + Database.enforcer, Tools.consoleMode.normal, programCode );
-                return false;
             }
         }
 
@@ -234,23 +245,18 @@ public class RanksControl {
         //
         if ( Config.demotion ) {
             Tools.Prt( "Logout date = " + Database.logout.toString(), Tools.consoleMode.full, programCode);
-            Tools.Prt( "Diff Date : " + progress + " 日", Tools.consoleMode.full, programCode );
+            Tools.Prt( "Elapsed Date : " + progress + " 日", Tools.consoleMode.max, programCode );
             int days = ( Config.demot.get( NowGroup ) == null ? Config.demotionDefault : Config.demot.get( NowGroup ) );
-            Tools.Prt( "CheckDate : " + days + " 日", Tools.consoleMode.full, programCode );
+            Tools.Prt( "Config Date  : " + days + " 日", Tools.consoleMode.max, programCode );
             if ( ( days > 0 ) && ( progress > days ) ) {
                 Demotion( player, null );
-                return true;
+                return;
             } else Tools.Prt( ChatColor.YELLOW + "No demotion process", Tools.consoleMode.full, programCode );
         }
 
         //
-        //  経過時間によるユーザーの昇格処理
+        //  昇格判定
         //
-        if ( NowGroup.equals( "" ) || Config.rankTime.get( NowGroup ) == null ) {
-            Tools.Prt( ChatColor.GOLD + "チェック対象グループではありません", Tools.consoleMode.full, programCode );
-            return false;
-        }
-
         if ( Config.rankTime.get( NowGroup ).get( "E" ) == null ) {
             boolean UpCheck = false;
             if ( Config.rankTime.get( NowGroup ).get( "H" ) != null ) {
@@ -265,10 +271,7 @@ public class RanksControl {
             if ( UpCheck ) {
                 Tools.Prt( ChatColor.YELLOW + "Player promotion!!", Tools.consoleMode.full, programCode);
                 Promotion( player, null );
-                return true;
             }
         } else Tools.Prt( ChatColor.AQUA + "This player is Last Group", Tools.consoleMode.full, programCode );
-
-        return false;
     }
 }

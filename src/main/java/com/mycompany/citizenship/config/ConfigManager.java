@@ -92,6 +92,9 @@ public class ConfigManager {
         Config.Aleart   = ( List< String > ) config.getList( "Aleart" );
         Config.AutoJail = config.getInt( "AutoJail", 0 );
 
+        Config.AutoDeop = config.getBoolean( "AutoDeop", false );
+        Config.OPName   = config.getString( "ForceOP", "None" );
+
         if ( !Tools.setDebug( config.getString( "Debug" ), programCode ) ) {
             Tools.entryDebugFlag( programCode, Tools.consoleMode.normal );
             Tools.Prt( ChatColor.RED + "Config Debugモードの指定値が不正なので、normal設定にしました", programCode );
@@ -127,6 +130,8 @@ public class ConfigManager {
             Tools.Prt( p, ChatColor.WHITE + "ランク別降格日数",programCode );
             Config.demot.forEach( ( key, value ) -> { Tools.Prt( p, String.format( "%-10s", key ) + " : " + value + " 日", programCode ); } );
         }
+        Tools.Prt( p, ChatColor.WHITE + "Auto Deop    : " + ChatColor.YELLOW + ( Config.AutoDeop ? "する":"しない" ), programCode );
+        Tools.Prt( p, ChatColor.WHITE + "ForceOperator: " + ChatColor.YELLOW + Config.OPName, programCode );
         Tools.Prt( p, ChatColor.GREEN + "==========================", programCode );
     }
 

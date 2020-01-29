@@ -52,4 +52,7 @@ public class Config {
     
     public static List< String > Aleart;
     public static int AutoJail;
+
+    public static boolean AutoDeop;
+    public static String OPName;
 }

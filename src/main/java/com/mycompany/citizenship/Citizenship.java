@@ -85,6 +85,10 @@ public class Citizenship extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
         PlayerData.SetLogoutToSQL( player.getUniqueId() );
         PlayerData.SetTickTimeToSQL( player.getUniqueId(), TickTime.get( player ) );
+        if ( Config.AutoDeop && ( !player.getName().equals( Config.OPName ) ) && player.isOp() ) {
+            Tools.Prt( "Temporary Player [" + player.getName() + "] DEOP Success", Tools.consoleMode.full, Config.programCode );
+            Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), "deop " + player.getName() );
+        }
     }
 
     /**

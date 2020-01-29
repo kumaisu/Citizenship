@@ -74,3 +74,9 @@ Aleart:
 #   ゼロで無効
 AutoJail: 10
 
+#   OP権保持者の強制解除
+AutoDeop: true
+
+#   強制排除対象外者（１名）
+ForceOP: Kumaisu
+

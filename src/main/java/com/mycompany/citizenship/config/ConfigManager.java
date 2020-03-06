@@ -95,6 +95,15 @@ public class ConfigManager {
         Config.AutoDeop = config.getBoolean( "AutoDeop", false );
         Config.OPName   = config.getString( "ForceOP", "None" );
 
+        Reward.sound_play       = config.getBoolean( "rewards.sound.enabled", false );
+        Reward.sound_type       = config.getString( "rewards.sound.type", "" );
+        Reward.sound_volume     = config.getInt( "rewards.sound.volume", 1 );
+        Reward.sound_pitch      = config.getInt( "rewards.sound.pitch", 1 );
+        Reward.basic_message    = config.getString( "rewards.basic.claim-message", "error" );
+        Reward.basic_command    = config.getStringList( "rewards.basic.commands" );
+        Reward.advance_message  = config.getString( "rewards.advanced.claim-message", "error" );
+        Reward.advance_command  = config.getStringList( "rewards.advanced.commands" );
+
         if ( !Tools.setDebug( config.getString( "Debug" ), programCode ) ) {
             Tools.entryDebugFlag( programCode, Tools.consoleMode.normal );
             Tools.Prt( ChatColor.RED + "Config Debugモードの指定値が不正なので、normal設定にしました", programCode );
@@ -169,5 +178,23 @@ public class ConfigManager {
         Tools.Prt( p, ChatColor.WHITE + "警戒Keyword", programCode );
         Config.Aleart.forEach( ( key ) -> { Tools.Prt( p, ChatColor.YELLOW + " - " + key, programCode ); } );
         Tools.Prt( p, ChatColor.GREEN + "==========================", programCode );
+    }
+
+    public static void RewardStatus( Player player ) {
+        Tools.Prt( player, ChatColor.GREEN + "=== LoginContrl Rewards ===", programCode );
+        Tools.Prt( player, ChatColor.WHITE + "Play Sound   : " + ChatColor.YELLOW + ( Reward.sound_play ? "Yes" : "No" ), programCode );
+        if ( Reward.sound_play ) {
+            Tools.Prt( player, ChatColor.WHITE + "Sound Type   : " + ChatColor.YELLOW + Reward.sound_type, programCode );
+            Tools.Prt( player, ChatColor.WHITE + "      Volume : " + ChatColor.YELLOW + Reward.sound_volume, programCode );
+            Tools.Prt( player, ChatColor.WHITE + "      Pitch  : " + ChatColor.YELLOW + Reward.sound_pitch, programCode );
+        }
+        Tools.Prt( player, ChatColor.WHITE + "---Basic Rewards---", programCode );
+        Tools.Prt( player, ChatColor.WHITE + "Message     : " + ChatColor.YELLOW + Reward.basic_message, programCode );
+        Tools.Prt( player, ChatColor.WHITE + "Commands    :", programCode );
+        Reward.basic_command.stream().forEach( BR -> { Tools.Prt( player, ChatColor.WHITE + " - " + ChatColor.YELLOW + BR, programCode ); } );
+        Tools.Prt( player, ChatColor.WHITE + "---Advanced Rewards---", programCode );
+        Tools.Prt( player, ChatColor.WHITE + "Message     : " + ChatColor.YELLOW + Reward.advance_message, programCode );
+        Tools.Prt( player, ChatColor.WHITE + "Commands    :", programCode );
+        Reward.advance_command.stream().forEach( AR -> { Tools.Prt( player, ChatColor.WHITE + " - " + ChatColor.YELLOW + AR, programCode ); } );
     }
 }

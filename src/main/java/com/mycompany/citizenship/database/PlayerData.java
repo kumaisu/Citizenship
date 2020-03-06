@@ -106,6 +106,7 @@ public class PlayerData {
             if ( rs.next() ) {
                 Database.name           = rs.getString( "name" );
                 Database.logout         = rs.getTimestamp( "logout" );
+                Database.Rewards        = rs.getTimestamp( "rewards" );
                 Database.basedate       = rs.getTimestamp( "basedate" );
                 Database.tick           = rs.getInt( "tick" );
                 Database.offset         = rs.getInt( "offset" );
@@ -139,6 +140,25 @@ public class PlayerData {
             Tools.Prt( "Set logout Date to SQL Success.", Tools.consoleMode.max, programCode );
         } catch ( SQLException e ) {
             Tools.Prt( ChatColor.RED + "Error ChangeStatus" + e.getMessage(), programCode );
+        }
+    }
+
+    /**
+     * Reward 配布日のセット
+     *
+     * @param uuid
+     */
+    public static void SetRewardDate( UUID uuid ) {
+        try ( Connection con = Database.dataSource.getConnection() ) {
+            String sql = "UPDATE player SET rewards = '" + Database.sdf.format( new Date() ) + "' WHERE uuid = '" + uuid.toString() + "';";
+            Database.Rewards = new Date();
+            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
+            PreparedStatement preparedStatement = con.prepareStatement( sql );
+            preparedStatement.executeUpdate();
+            con.close();
+            Tools.Prt( "Reward Date Reset Success", Tools.consoleMode.max, programCode );
+        } catch ( SQLException e ) {
+            Tools.Prt( ChatColor.RED + "Error SetRewardDate : " + e.getMessage(), programCode );
         }
     }
 

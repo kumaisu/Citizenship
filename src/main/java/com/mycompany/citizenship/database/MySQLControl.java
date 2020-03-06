@@ -89,7 +89,8 @@ public class MySQLControl {
             //  テーブルの作成
             //		uuid : varchar(36)	player uuid
             //		name : varchar(20)	player name
-            //		logiut : DATETIME	last Logout Date
+            //		logout : DATETIME	last Logout Date
+            //          rewards : DATETIME      Rewards Date
             //          basedate : DATETIME     update Date
             //          tick : int              total Tick Time
             //		offset : int 		total Login Time offset
@@ -102,6 +103,7 @@ public class MySQLControl {
                     + "uuid varchar(36), "
                     + "name varchar(20), "
                     + "logout DATETIME, "
+                    + "rewards DATETIME, "
                     + "basedate DATETIME, "
                     + "tick int, "
                     + "offset int, "

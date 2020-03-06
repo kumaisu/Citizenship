@@ -5,6 +5,7 @@
  */
 package com.mycompany.citizenship;
 
+import java.util.Date;
 import java.net.UnknownHostException;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -18,6 +19,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import com.mycompany.kumaisulibraries.Tools;
+import com.mycompany.kumaisulibraries.Utility;
+import com.mycompany.citizenship.tools.Rewards;
 import com.mycompany.citizenship.config.Config;
 import com.mycompany.citizenship.config.ConfigManager;
 import com.mycompany.citizenship.command.RankCommand;
@@ -68,6 +71,23 @@ public class Citizenship extends JavaPlugin implements Listener {
     public void onPlayerLogin( PlayerJoinEvent event ) throws UnknownHostException {
         Player player = event.getPlayer();
         Tools.Prt( "onPlayerLogin process", Tools.consoleMode.max, Config.programCode );
+
+        //  Daily Rewards の判定
+        PlayerData.GetSQL( player.getUniqueId() );
+        if ( Tools.isDebugFlag( Tools.consoleMode.full, Config.programCode ) ) {
+            long dateTimeTo = new Date().getTime();
+            long dateTimeFrom = Database.Rewards.getTime();
+            long dayDiff = dateTimeTo - dateTimeFrom;
+            Tools.Prt( "Last distribution : " + dateTimeFrom, Tools.consoleMode.full, Config.programCode );
+            Tools.Prt( "Current time      : " + dateTimeTo, Tools.consoleMode.full, Config.programCode );
+            Tools.Prt( "Differential time : " + dayDiff, Tools.consoleMode.full, Config.programCode );
+        }
+        int progress = Utility.dateDiff( Database.Rewards, new Date() );
+        if ( progress >= 1 ) {
+            Tools.Prt( "Rewards distribution : " + progress, Config.programCode );
+            Rewards.Reward( player );
+        } else Tools.Prt( "Player Progress : " + progress, Config.programCode );
+
         RanksControl.CheckRank( player );
         if ( player.hasPermission( "citizenship.yellow" ) ) {
             YellowData.CardLog( player, Database.logout );

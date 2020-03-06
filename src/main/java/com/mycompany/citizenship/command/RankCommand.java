@@ -89,6 +89,9 @@ public class RankCommand implements CommandExecutor {
 
         if ( ( player == null ) || player.hasPermission( "citizenship.admin" ) ) {
             switch ( CtlCmd ) {
+                case "reward":
+                    ConfigManager.RewardStatus( player );
+                    return true;
                 case "promotion":
                     if ( lookPlayer != null ) {
                         RanksControl.Promotion( player, lookPlayer );

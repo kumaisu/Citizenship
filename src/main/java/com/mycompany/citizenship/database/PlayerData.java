@@ -34,19 +34,32 @@ public class PlayerData {
      */
     public static void AddSQL( UUID uuid, String name, int Tick ) {
         try ( Connection con = Database.dataSource.getConnection() ) {
-            String sql = "INSERT INTO player (uuid, name, logout, basedate, tick, offset, jail, yellow, imprisonment, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+            //  テーブルの作成
+            //		uuid : varchar(36)	player uuid
+            //		name : varchar(20)	player name
+            //		logout : DATETIME	last Logout Date
+            //          rewards : DATETIME      Rewards Date
+            //          basedate : DATETIME     update Date
+            //          tick : int              total Tick Time
+            //		offset : int 		total Login Time offset
+            //		jail : int		to jail flag
+            //          Yellow : int            Yellow Card Count
+            //          imprisonment : int      Imprisonment Count
+            //          reason : int            Reason ID
+            String sql = "INSERT INTO player (uuid, name, logout, rewards, basedate, tick, offset, jail, yellow, imprisonment, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.setString( 1, uuid.toString() );
             preparedStatement.setString( 2, name );
             preparedStatement.setString( 3, Database.sdf.format( new Date() ) );
             preparedStatement.setString( 4, Database.sdf.format( new Date() ) );
-            preparedStatement.setInt( 5, Tick );
-            preparedStatement.setInt( 6, 0 );
+            preparedStatement.setString( 5, Database.sdf.format( new Date() ) );
+            preparedStatement.setInt( 6, Tick );
             preparedStatement.setInt( 7, 0 );
             preparedStatement.setInt( 8, 0 );
             preparedStatement.setInt( 9, 0 );
             preparedStatement.setInt( 10, 0 );
+            preparedStatement.setInt( 11, 0 );
 
             preparedStatement.executeUpdate();
             con.close();

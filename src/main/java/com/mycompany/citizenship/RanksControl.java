@@ -183,7 +183,7 @@ public class RanksControl {
      */
     public static void CheckRank( Player player ) {
         int BaseTick = TickTime.get( player );
-        int allTime = ( int ) Math.round( BaseTick * 0.05 / 60 /60 );
+        int allTime = ( int ) Math.round( BaseTick * 0.05 / 60 / 60 );
         Tools.Prt( "PlayTime = " + Float.toString( ( float ) BaseTick ), Tools.consoleMode.full, programCode );
         Tools.Prt( player,
             ChatColor.YELLOW + "貴方の通算接続時間は " +

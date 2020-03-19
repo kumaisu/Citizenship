@@ -5,6 +5,7 @@
  */
 package com.mycompany.citizenship.tools;
 
+import java.util.Date;
 import java.util.Random;
 import org.bukkit.Sound;
 import org.bukkit.ChatColor;
@@ -13,6 +14,7 @@ import com.mycompany.kumaisulibraries.Tools;
 import com.mycompany.kumaisulibraries.Utility;
 import com.mycompany.citizenship.config.Config;
 import com.mycompany.citizenship.config.Reward;
+import com.mycompany.citizenship.database.Database;
 import com.mycompany.citizenship.database.PlayerData;
 
 /**
@@ -55,4 +57,30 @@ public class Rewards {
         }
     }
 
+    public static void CheckRewards( Player player ) {
+        //  Daily Rewards の判定
+        PlayerData.GetSQL( player.getUniqueId() );
+        int progress = Utility.dateDiff( Database.Rewards, new Date() );
+        if ( progress >= 1 ) {
+            Tools.Prt( "Rewards distribution : " + progress, Config.programCode );
+            Reward( player );
+        } else {
+            Tools.Prt( "Player Progress : " + progress, Config.programCode );
+            long dateTimeTo = new Date().getTime();
+            long dateTimeFrom = Database.Rewards.getTime();
+            long dayDiff = dateTimeTo - dateTimeFrom;
+            Tools.Prt( "Current time      : " + dateTimeTo, Tools.consoleMode.full, Config.programCode );
+            Tools.Prt( "Last distribution : " + dateTimeFrom, Tools.consoleMode.full, Config.programCode );
+            Tools.Prt( "Differential time : " + dayDiff, Tools.consoleMode.full, Config.programCode );
+            //  純粋に時間なのでms秒での数値を時間に修正
+            int NextTime = ( int ) Math.round( dayDiff / 1000 / 60 );
+            Tools.Prt( player,
+                ChatColor.YELLOW + "次のREWARDまで " +
+                ChatColor.AQUA + ( 1440 - NextTime ) +
+                ChatColor.YELLOW + " 分です" ,
+                Tools.consoleMode.max,
+                Config.programCode
+            );
+        }
+    }
 }

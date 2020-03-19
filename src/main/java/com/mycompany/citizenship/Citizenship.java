@@ -72,27 +72,11 @@ public class Citizenship extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
         Tools.Prt( "onPlayerLogin process", Tools.consoleMode.max, Config.programCode );
 
-        //  Daily Rewards の判定
-        PlayerData.GetSQL( player.getUniqueId() );
-        if ( Tools.isDebugFlag( Tools.consoleMode.full, Config.programCode ) ) {
-            long dateTimeTo = new Date().getTime();
-            long dateTimeFrom = Database.Rewards.getTime();
-            long dayDiff = dateTimeTo - dateTimeFrom;
-            Tools.Prt( "Last distribution : " + dateTimeFrom, Tools.consoleMode.full, Config.programCode );
-            Tools.Prt( "Current time      : " + dateTimeTo, Tools.consoleMode.full, Config.programCode );
-            Tools.Prt( "Differential time : " + dayDiff, Tools.consoleMode.full, Config.programCode );
-        }
-        int progress = Utility.dateDiff( Database.Rewards, new Date() );
-        if ( progress >= 1 ) {
-            Tools.Prt( "Rewards distribution : " + progress, Config.programCode );
-            Rewards.Reward( player );
-        } else Tools.Prt( "Player Progress : " + progress, Config.programCode );
-
         RanksControl.CheckRank( player );
-        if ( player.hasPermission( "citizenship.yellow" ) ) {
-            YellowData.CardLog( player, Database.logout );
-            player.getLocation().getWorld().playSound( player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1 );
-        }
+        if ( player.hasPermission( "citizenship.yellow" ) ) { YellowData.CardLog( player, Database.logout ); }
+
+        //  Daily Rewards の判定
+        Rewards.CheckRewards( player );
     }
 
     /**

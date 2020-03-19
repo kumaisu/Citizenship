@@ -17,6 +17,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import com.mycompany.kumaisulibraries.Tools;
 import static com.mycompany.citizenship.config.Config.programCode;
+import org.bukkit.Sound;
 
 /**
  *
@@ -187,6 +188,8 @@ public class YellowData {
         String sqlCmd = "SELECT * FROM yellow WHERE date BETWEEN '" +
             Database.sdf.format( date ) + "' AND '" +
             Database.sdf.format( new Date() ) + "' ORDER BY date DESC;";
-        return GetList( player, sqlCmd, ChatColor.WHITE + "== Yellow Card Logs == " + Database.sdf.format( date ), 5 );
+        boolean ret = GetList( player, sqlCmd, ChatColor.WHITE + "== Yellow Card Logs == " + Database.sdf.format( date ), 5 );
+        if ( ret ) { player.getLocation().getWorld().playSound( player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1 ); }
+        return ret;
     }
 }

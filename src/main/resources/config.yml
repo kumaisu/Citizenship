@@ -98,3 +98,12 @@ rewards:
     commands:
     - give %player% diamond 9
     - give %player% emerald 9
+
+# YellowCard Alart
+  yellow:
+    sound:
+      enabled: true
+      type: BLOCK_END_GATEWAY_SPAWN
+      volume: 2
+      pitch: 1
+      

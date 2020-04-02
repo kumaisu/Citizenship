@@ -104,6 +104,11 @@ public class ConfigManager {
         Reward.advance_message  = config.getString( "rewards.advanced.claim-message", "error" );
         Reward.advance_command  = config.getStringList( "rewards.advanced.commands" );
 
+        Yellow.sound_play       = config.getBoolean( "yellow.sound.enabled", false );
+        Yellow.sound_type       = config.getString( "yellow.sound.type", "" );
+        Yellow.sound_volume     = config.getInt( "yellow.sound.volume", 1 );
+        Yellow.sound_pitch      = config.getInt( "yellow.sound.pitch", 1 );
+
         if ( !Tools.setDebug( config.getString( "Debug" ), programCode ) ) {
             Tools.entryDebugFlag( programCode, Tools.consoleMode.normal );
             Tools.Prt( ChatColor.RED + "Config Debugモードの指定値が不正なので、normal設定にしました", programCode );

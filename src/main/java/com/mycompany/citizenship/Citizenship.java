@@ -5,10 +5,8 @@
  */
 package com.mycompany.citizenship;
 
-import java.util.Date;
 import java.net.UnknownHostException;
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,7 +17,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import com.mycompany.kumaisulibraries.Tools;
-import com.mycompany.kumaisulibraries.Utility;
 import com.mycompany.citizenship.tools.Rewards;
 import com.mycompany.citizenship.config.Config;
 import com.mycompany.citizenship.config.ConfigManager;
@@ -52,7 +49,7 @@ public class Citizenship extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         super.onDisable(); //To change body of generated methods, choose Tools | Templates.
-        MySQLControl.disconnect();
+        //  MySQLControl.disconnect();
     }
 
     @Override
@@ -73,10 +70,12 @@ public class Citizenship extends JavaPlugin implements Listener {
         Tools.Prt( "onPlayerLogin process", Tools.consoleMode.max, Config.programCode );
 
         RanksControl.CheckRank( player );
-        if ( player.hasPermission( "citizenship.yellow" ) ) { YellowData.CardLog( player, Database.logout ); }
 
         //  Daily Rewards の判定
         Rewards.CheckRewards( player );
+
+        //  Yellow Card 警告表示判定
+        if ( player.hasPermission( "citizenship.yellow" ) ) { YellowData.CardLog( player, Database.logout ); }
     }
 
     /**

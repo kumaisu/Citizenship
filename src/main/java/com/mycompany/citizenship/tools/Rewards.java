@@ -65,13 +65,13 @@ public class Rewards {
             Tools.Prt( "Rewards distribution : " + progress, Config.programCode );
             Reward( player );
         } else {
-            Tools.Prt( "Player Progress : " + progress, Config.programCode );
+            Tools.Prt( "Reward Progress   : " + progress, Tools.consoleMode.full, Config.programCode );
             long dateTimeTo = new Date().getTime();
             long dateTimeFrom = Database.Rewards.getTime();
             long dayDiff = dateTimeTo - dateTimeFrom;
-            Tools.Prt( "Current time      : " + dateTimeTo, Tools.consoleMode.full, Config.programCode );
-            Tools.Prt( "Last distribution : " + dateTimeFrom, Tools.consoleMode.full, Config.programCode );
-            Tools.Prt( "Differential time : " + dayDiff, Tools.consoleMode.full, Config.programCode );
+            Tools.Prt( "Current time      : " + dateTimeTo, Tools.consoleMode.max, Config.programCode );
+            Tools.Prt( "Last distribution : " + dateTimeFrom, Tools.consoleMode.max, Config.programCode );
+            Tools.Prt( "Differential time : " + dayDiff, Tools.consoleMode.max, Config.programCode );
             //  純粋に時間なのでms秒での数値を時間に修正
             int NextTime = ( int ) Math.round( dayDiff / 1000 / 60 );
             Tools.Prt( player,

@@ -74,7 +74,9 @@ public class PlayerControl {
                 + ChatColor.RED + Database.imprisonment + "回"
                 + ChatColor.GREEN + "です";
         Tools.Prt( message, Tools.consoleMode.normal , programCode );
-        Bukkit.getOnlinePlayers().stream().filter( ( p ) -> ( p.hasPermission( "citizenship.admin" ) || p.isOp() ) ).forEachOrdered( ( p ) -> { p.sendMessage( message ); } );
+        Bukkit.getOnlinePlayers().stream().filter( ( p ) -> ( p.hasPermission( "citizenship.admin" ) || p.isOp() ) ).forEachOrdered( ( p ) -> {
+            p.sendMessage( message );
+        } );
         return retStat;
     }
 

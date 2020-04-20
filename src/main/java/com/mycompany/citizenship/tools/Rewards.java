@@ -62,7 +62,7 @@ public class Rewards {
         PlayerData.GetSQL( player.getUniqueId() );
         int progress = Utility.dateDiff( Database.Rewards, new Date() );
         if ( progress >= 1 ) {
-            Tools.Prt( "Rewards distribution : " + progress, Config.programCode );
+            Tools.Prt( "Rewards distribution : " + progress, Tools.consoleMode.full, Config.programCode );
             Reward( player );
         } else {
             Tools.Prt( "Reward Progress   : " + progress, Tools.consoleMode.full, Config.programCode );

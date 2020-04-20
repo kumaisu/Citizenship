@@ -1,10 +1,11 @@
 main: com.mycompany.citizenship.Citizenship
 name: Citizenship
-version: 1.0.7
+version: 1.0.8
 description: Citizen Ship Auto Control plugin
 author: Kumaisu
 database: true
 api-version: 1.14
+softdepend: [Vault]
 commands:
     yellow:
         description: Yellow Card Command

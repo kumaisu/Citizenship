@@ -88,7 +88,7 @@ public class Citizenship extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
         PlayerData.SetLogoutToSQL( player.getUniqueId() );
         PlayerData.SetTickTimeToSQL( player.getUniqueId(), TickTime.get( player ) );
-        if ( Config.AutoDeop && ( !player.getName().equals( Config.OPName ) ) && player.isOp() ) {
+        if ( Config.AutoDeop && ( !Config.OPName.contains( player.getName() ) ) && player.isOp() ) {
             Tools.Prt(
                 ChatColor.YELLOW + "Temporary Player [" +
                 ChatColor.AQUA + player.getName() +

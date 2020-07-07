@@ -93,7 +93,7 @@ public class ConfigManager {
         Config.AutoJail = config.getInt( "AutoJail", 0 );
 
         Config.AutoDeop = config.getBoolean( "AutoDeop", false );
-        Config.OPName   = config.getString( "ForceOP", "None" );
+        Config.OPName   = config.getStringList( "ForceOP" );
 
         Reward.sound_play       = config.getBoolean( "rewards.sound.enabled", false );
         Reward.sound_type       = config.getString( "rewards.sound.type", "" );

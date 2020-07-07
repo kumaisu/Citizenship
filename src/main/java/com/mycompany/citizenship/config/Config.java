@@ -54,5 +54,5 @@ public class Config {
     public static int AutoJail;
 
     public static boolean AutoDeop;
-    public static String OPName;
+    public static List< String > OPName;
 }

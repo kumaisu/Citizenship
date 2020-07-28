@@ -5,6 +5,7 @@
  */
 package com.mycompany.citizenship.database;
 
+import com.mycompany.citizenship.config.Config;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,6 +18,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import com.mycompany.kumaisulibraries.Tools;
 import static com.mycompany.citizenship.config.Config.programCode;
+import com.mycompany.citizenship.config.Reward;
+import com.mycompany.citizenship.config.Yellow;
+import org.bukkit.Sound;
 
 /**
  *
@@ -133,8 +137,9 @@ public class YellowData {
             Tools.Prt( player, Title, programCode );
             StringData.forEach( ( s ) -> { Tools.Prt( player, s, programCode ); } );
             Tools.Prt( player, "=== End ===", programCode );
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -187,6 +192,18 @@ public class YellowData {
         String sqlCmd = "SELECT * FROM yellow WHERE date BETWEEN '" +
             Database.sdf.format( date ) + "' AND '" +
             Database.sdf.format( new Date() ) + "' ORDER BY date DESC;";
-        return GetList( player, sqlCmd, ChatColor.WHITE + "== Yellow Card Logs == " + Database.sdf.format( date ), 5 );
+        boolean ret = GetList( player, sqlCmd, ChatColor.RED + "== Yellow Card Logs == " + Database.sdf.format( date ), 5 );
+        if ( ret ) {
+            if ( Yellow.sound_play ) {
+                Tools.Prt( "Sound Play !!", Tools.consoleMode.full, Config.programCode );
+                ( player.getWorld() ).playSound(
+                    player.getLocation(),                   // 鳴らす場所
+                    Sound.valueOf( Yellow.sound_type ),     // 鳴らす音
+                    Yellow.sound_volume,                    // 音量
+                    Yellow.sound_pitch                      // 音程
+                );
+            }
+        }
+        return ret;
     }
 }

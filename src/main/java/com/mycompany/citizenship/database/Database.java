@@ -20,6 +20,7 @@ public class Database {
     public static String name = "Unknown";
     public static Date logout;
     public static Date basedate;
+    public static Date Rewards;
     public static int tick = 0;
     public static int offset = 0;
     public static int jail = 0;

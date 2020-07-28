@@ -74,3 +74,37 @@ Aleart:
 #   ゼロで無効
 AutoJail: 10
 
+#   OP権保持者の強制解除
+AutoDeop: true
+
+#   強制排除対象外者
+ForceOP:
+    - Kumaisu
+
+# Daily Reward
+# デイリー報酬設定
+rewards:
+  enabled: true
+  sound:
+    enabled: true
+    type: ENTITY_PLAYER_LEVELUP
+    volume: 1
+    pitch: 1
+  basic:
+    claim-message: "%$aRewards%$f: %$3デイリー報酬%$a(くまそうる)%$fをプレゼントしました"
+    commands:
+    - giveitem kumasoul %player%
+  advanced:
+    claim-message: "%$aRewards%$f: %$3追加報酬%$fをプレゼントしました"
+    commands:
+    - give %player% diamond 9
+    - give %player% emerald 9
+
+# YellowCard Alart
+  yellow:
+    sound:
+      enabled: true
+      type: BLOCK_END_GATEWAY_SPAWN
+      volume: 2
+      pitch: 1
+      

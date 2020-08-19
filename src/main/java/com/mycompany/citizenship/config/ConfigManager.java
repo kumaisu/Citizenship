@@ -122,9 +122,11 @@ public class ConfigManager {
         if ( ( p == null ) || p.hasPermission( "citizenship.console" ) ) {
             Tools.Prt( p, ChatColor.WHITE + "DB User : " + ChatColor.YELLOW + Config.username + " [" + Config.password + "]", programCode );
         }
-        Tools.Prt( p, ChatColor.WHITE + "昇格時ｱﾅｳﾝｽ  : " + ChatColor.YELLOW + ( Config.PromotBroadcast ? "する":"しない" ), programCode );
 
-        String RankMsg = ChatColor.WHITE + "昇格時間→";
+        String RankMsg =
+            ChatColor.WHITE + "昇格時ｱﾅｳﾝｽ  : " +
+            ChatColor.YELLOW + ( Config.PromotBroadcast ? "する":"しない" ) + 
+            ChatColor.WHITE + " 昇格時間→";
         for( int i = 0; i < Config.rankName.size(); i++ ) {
             RankMsg +=
                 ChatColor.WHITE + "[" +
@@ -148,8 +150,10 @@ public class ConfigManager {
         Tools.Prt( p, RankMsg, programCode );
 
         if ( Config.demotion ) {
-            Tools.Prt( p, ChatColor.WHITE + "降格基礎日数 : " + ChatColor.YELLOW + Config.demotionDefault + " 日", programCode );
-            String DmtMsg = ChatColor.WHITE + "降格日数:";
+            String DmtMsg =
+                ChatColor.WHITE + "降格基礎日数 : " +
+                ChatColor.YELLOW + Config.demotionDefault + " 日" +
+                ChatColor.WHITE + " 個別:";
             for ( Map.Entry< String, Integer > entry : Config.demot.entrySet() ) {
                 DmtMsg +=
                     ChatColor.WHITE + "[" +
@@ -171,8 +175,13 @@ public class ConfigManager {
 
     public static void JailStatus( Player p ) {
         Tools.Prt( p, ChatColor.GREEN + "=== Citizenship Jail Status ===", programCode );
-        Tools.Prt( p, ChatColor.WHITE + "牢獄グループ : " + ChatColor.YELLOW + Config.PrisonGroup, programCode );
-        Tools.Prt( p, ChatColor.WHITE + "投獄期間     : " + ChatColor.YELLOW + Config.Penalty + "日", programCode );
+        Tools.Prt( p,
+            ChatColor.WHITE + "牢獄グループ : " +
+            ChatColor.YELLOW + Config.PrisonGroup +
+            ChatColor.WHITE + "    投獄期間 : " +
+            ChatColor.YELLOW + Config.Penalty + "日",
+            programCode
+        );
         if ( Config.Imprisonment ) {
             Tools.Prt( p, ChatColor.WHITE + "牢獄行き先 : " +
                 ChatColor.YELLOW + "[" + Config.fworld + "] " +

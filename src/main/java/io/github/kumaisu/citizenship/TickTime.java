@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.citizenship;
+package io.github.kumaisu.citizenship;
 
 import org.bukkit.Statistic;
 import org.bukkit.entity.Player;

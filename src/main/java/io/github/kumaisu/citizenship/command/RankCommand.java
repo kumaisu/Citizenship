@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.citizenship.command;
+package io.github.kumaisu.citizenship.command;
 
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -12,14 +12,14 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import com.mycompany.citizenship.Citizenship;
-import com.mycompany.citizenship.PlayerControl;
-import com.mycompany.citizenship.RanksControl;
-import com.mycompany.citizenship.config.Config;
-import com.mycompany.citizenship.config.ConfigManager;
-import com.mycompany.kumaisulibraries.Tools;
-import com.mycompany.kumaisulibraries.Utility;
-import static com.mycompany.citizenship.config.Config.programCode;
+import io.github.kumaisu.citizenship.Citizenship;
+import io.github.kumaisu.citizenship.PlayerControl;
+import io.github.kumaisu.citizenship.RanksControl;
+import io.github.kumaisu.citizenship.config.Config;
+import io.github.kumaisu.citizenship.config.ConfigManager;
+import io.github.kumaisu.citizenship.Lib.Tools;
+import io.github.kumaisu.citizenship.Lib.Utility;
+import static io.github.kumaisu.citizenship.config.Config.programCode;
 
 /**
  *

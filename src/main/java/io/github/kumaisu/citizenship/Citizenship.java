@@ -3,9 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.citizenship;
+package io.github.kumaisu.citizenship;
 
 import java.net.UnknownHostException;
+import java.sql.SQLException;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -16,18 +18,18 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import com.mycompany.kumaisulibraries.Tools;
-import com.mycompany.citizenship.tools.Rewards;
-import com.mycompany.citizenship.config.Config;
-import com.mycompany.citizenship.config.ConfigManager;
-import com.mycompany.citizenship.command.RankCommand;
-import com.mycompany.citizenship.command.JailCommand;
-import com.mycompany.citizenship.command.YellowCommand;
-import com.mycompany.citizenship.database.Database;
-import com.mycompany.citizenship.database.MySQLControl;
-import com.mycompany.citizenship.database.PlayerData;
-import com.mycompany.citizenship.database.ReasonData;
-import com.mycompany.citizenship.database.YellowData;
+import io.github.kumaisu.citizenship.Lib.Tools;
+import io.github.kumaisu.citizenship.tools.Rewards;
+import io.github.kumaisu.citizenship.config.Config;
+import io.github.kumaisu.citizenship.config.ConfigManager;
+import io.github.kumaisu.citizenship.command.RankCommand;
+import io.github.kumaisu.citizenship.command.JailCommand;
+import io.github.kumaisu.citizenship.command.YellowCommand;
+import io.github.kumaisu.citizenship.database.Database;
+import io.github.kumaisu.citizenship.database.MySQLControl;
+import io.github.kumaisu.citizenship.database.PlayerData;
+import io.github.kumaisu.citizenship.database.ReasonData;
+import io.github.kumaisu.citizenship.database.YellowData;
 
 /**
  *
@@ -39,7 +41,11 @@ public class Citizenship extends JavaPlugin implements Listener {
     public void onEnable() {
         this.getServer().getPluginManager().registerEvents( this, this );
         new ConfigManager( this );
-        MySQLControl.connect();
+        try {
+            MySQLControl.connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         MySQLControl.TableUpdate();
         getCommand( "ranks" ).setExecutor( new RankCommand( this ) );
         getCommand( "jail" ).setExecutor( new JailCommand( this ) );

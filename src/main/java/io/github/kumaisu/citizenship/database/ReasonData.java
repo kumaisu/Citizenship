@@ -3,20 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.citizenship.database;
+package io.github.kumaisu.citizenship.database;
 
+import java.sql.*;
 import java.util.UUID;
 import java.util.Date;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+
+import io.github.kumaisu.citizenship.config.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import com.mycompany.kumaisulibraries.Tools;
-import static com.mycompany.citizenship.config.Config.programCode;
+import io.github.kumaisu.citizenship.Lib.Tools;
+import static io.github.kumaisu.citizenship.config.Config.programCode;
 
 /**
  *
@@ -32,7 +30,7 @@ public class ReasonData {
      * @return 
      */
     public static int AddReason( UUID uuid, String reason, String enforcer ) {
-        try ( Connection con = Database.dataSource.getConnection() ) {
+        try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
             String sql = "INSERT INTO reason (uuid, date, reason, enforcer) VALUES (?, ?, ?, ?);";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement( sql );
@@ -67,7 +65,7 @@ public class ReasonData {
      * @return
      */
     public static boolean DelReason( int ID ) {
-        try ( Connection con = Database.dataSource.getConnection() ) {
+        try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
             String sql = "DELETE FROM reason WHERE id = " + ID +";";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement( sql );
@@ -87,7 +85,7 @@ public class ReasonData {
      * @param ID
      */
     public static void GetReason( int ID ) {
-        try ( Connection con = Database.dataSource.getConnection() ) {
+        try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
             Statement stmt = con.createStatement();
             String sql = "SELECT * FROM reason WHERE id = " + ID + " ORDER BY id DESC;";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
@@ -134,7 +132,7 @@ public class ReasonData {
     public static void ListReason( Player player, UUID uuid ) {
         String Msg = ChatColor.GREEN + "=== Jail Reason List ===";
         Tools.Prt( player, Msg, programCode );
-        try ( Connection con = Database.dataSource.getConnection() ) {
+        try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
             Statement stmt = con.createStatement();
             String sql = "SELECT * FROM reason";
             if ( uuid == null ) {
@@ -161,7 +159,7 @@ public class ReasonData {
      * @param Reason 
      */
     public static void ChangeReason( int ID, String Reason ) {
-        try ( Connection con = Database.dataSource.getConnection() ) {
+        try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
             Statement stmt = con.createStatement();
             String sql = "UPDATE reason SET reason = '" + Reason + "' WHERE id = " + ID + ";";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
@@ -180,7 +178,7 @@ public class ReasonData {
      * @param ID
      */
     public static void PrintReason( Player player, int ID ) {
-        try ( Connection con = Database.dataSource.getConnection() ) {
+        try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
             Statement stmt = con.createStatement();
             String sql = "SELECT * FROM reason WHERE id = " + ID;
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );

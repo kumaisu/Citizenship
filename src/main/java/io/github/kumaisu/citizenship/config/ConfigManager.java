@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.citizenship.config;
+package io.github.kumaisu.citizenship.config;
 
 import java.util.Map;
 import java.util.List;
@@ -13,8 +13,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import com.mycompany.kumaisulibraries.Tools;
-import static com.mycompany.citizenship.config.Config.programCode;
+import io.github.kumaisu.citizenship.Lib.Tools;
+import static io.github.kumaisu.citizenship.config.Config.programCode;
 
 /**
  *

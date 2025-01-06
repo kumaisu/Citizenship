@@ -3,22 +3,30 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.citizenship;
+package io.github.kumaisu.citizenship;
 
-import net.milkbowl.vault.permission.Permission;
+import java.util.Collection;
 import java.util.Date;
+
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.group.Group;
+import net.luckperms.api.model.user.User;
+import net.luckperms.api.model.user.UserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import static org.bukkit.Bukkit.getServer;
-import com.mycompany.kumaisulibraries.Tools;
-import com.mycompany.kumaisulibraries.Utility;
-import com.mycompany.citizenship.config.Config;
-import com.mycompany.citizenship.database.Database;
-import com.mycompany.citizenship.database.PlayerData;
-import com.mycompany.citizenship.database.ReasonData;
-import static com.mycompany.citizenship.config.Config.programCode;
+import io.github.kumaisu.citizenship.Lib.Tools;
+import io.github.kumaisu.citizenship.Lib.Utility;
+import io.github.kumaisu.citizenship.config.Config;
+import io.github.kumaisu.citizenship.database.Database;
+import io.github.kumaisu.citizenship.database.PlayerData;
+import io.github.kumaisu.citizenship.database.ReasonData;
+import static io.github.kumaisu.citizenship.config.Config.programCode;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.model.group.GroupManager;
 
 /**
  *
@@ -53,7 +61,7 @@ public class RanksControl {
 
         try {
             String NewGroup = Config.rankName.get( Config.rankName.indexOf( baseGroup ) + 1 );
-            String Cmd = "pex user " + target.getName() + " group set " + NewGroup;
+            String Cmd = "lp user " + target.getName() + " group set " + NewGroup;
             Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
 
@@ -105,7 +113,7 @@ public class RanksControl {
 
         try {
             String NewGroup = Config.rankName.get( Config.rankName.indexOf( baseGroup ) - 1 );
-            String Cmd = "pex user " + target.getName() + " group set " + NewGroup;
+            String Cmd = "lp user " + target.getName() + " group set " + NewGroup;
             Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
             PlayerData.SetOffsetToSQL( target.getUniqueId(), TickTime.get( target ) );
@@ -137,6 +145,26 @@ public class RanksControl {
      * @return 
      */
     public static String getGroup( Player player ) {
+        String NowGroup = "Unknown";
+        UserManager userManager = LuckPermsProvider.get().getUserManager();
+        User user = userManager.loadUser( player.getUniqueId() ).join();
+        if (user != null) {
+            NowGroup = user.getPrimaryGroup();
+            Tools.Prt( player.getName() + "のグループ: " + NowGroup, Tools.consoleMode.max, programCode );
+        } else {
+            Tools.Prt( "ユーザーが見つかりません: " + player.getName(), Tools.consoleMode.max, programCode );
+        }
+
+        /* 登録されているGroupの一覧
+        GroupManager groupManager = LuckPermsProvider.get().getGroupManager();
+        Collection<Group> groups = groupManager.getLoadedGroups();
+
+        for (Group group : groups) {
+            Tools.Prt( "Group Name: " + group.getName(), programCode );
+        }
+         */
+
+        /*　旧Permission Groupの取得
         Permission perm = null;
         RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration( net.milkbowl.vault.permission.Permission.class );
         if (permissionProvider != null) {
@@ -151,6 +179,7 @@ public class RanksControl {
 
         String NowGroup = perm.getPlayerGroups( player )[0];
         Tools.Prt( "NowGroup [" + NowGroup + "]", Tools.consoleMode.max, programCode );
+         */
         return NowGroup;
     }
 
@@ -163,7 +192,7 @@ public class RanksControl {
      */
     public static boolean setGroup( Player player, String newGroup ) {
         try {
-            String Cmd = "pex user " + player.getName() + " group set " + newGroup;
+            String Cmd = "lp user " + player.getName() + " group set " + newGroup;
             Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
             //  現状、牢獄処理しか使っていないので、ここでオフセットをリセットしている

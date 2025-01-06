@@ -3,29 +3,26 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.citizenship.database;
+package io.github.kumaisu.citizenship.database;
 
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
+import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import org.bukkit.ChatColor;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-import com.mycompany.kumaisulibraries.Tools;
-import com.mycompany.citizenship.config.Config;
-import static com.mycompany.citizenship.config.Config.programCode;
+import io.github.kumaisu.citizenship.Lib.Tools;
+import io.github.kumaisu.citizenship.config.Config;
+import static io.github.kumaisu.citizenship.config.Config.programCode;
 
 /**
  *
- * @author sugichan
+ * @author NineTailedFox
  */
 public class MySQLControl {
     /**
      * Database Open(接続) 処理
      */
-    public static void connect() {
+    public static void connect() throws SQLException {
         if ( Database.dataSource != null ) {
             if ( Database.dataSource.isClosed() ) {
                 Tools.Prt( ChatColor.RED + "database closed.", programCode );
@@ -36,48 +33,19 @@ public class MySQLControl {
             }
         }
 
-        // HikariCPの初期化
-        HikariConfig config = new HikariConfig();
-
-        config.setJdbcUrl( "jdbc:mysql://" + Config.host + ":" + Config.port + "/" + Config.database );
-        config.setPoolName( Config.database );
-        config.setAutoCommit( true );
-        config.setConnectionInitSql( "SELECT 1" );
-        config.setMaximumPoolSize( 2 );
-        config.setMinimumIdle( 2 );
-        config.setMaxLifetime( TimeUnit.MINUTES.toMillis( 15 ) );
-        //  config.setConnectionTimeout(0);
-        //  config.setIdleTimeout(0);
-        config.setUsername( Config.username );
-        config.setPassword( Config.password );
-
-        Properties properties = new Properties();
-        properties.put( "useSSL", "false" );
-        properties.put( "autoReconnect", "true" );
-        properties.put( "maintainTimeStats", "false" );
-        properties.put( "elideSetAutoCommits", "true" );
-        properties.put( "useLocalSessionState", "true" );
-        properties.put( "alwaysSendSetIsolation", "false" );
-        properties.put( "cacheServerConfiguration", "true" );
-        properties.put( "cachePrepStmts", "true" );
-        properties.put( "prepStmtCacheSize", "250" );
-        properties.put( "prepStmtCacheSqlLimit", "2048" );
-        properties.put( "useUnicode", "true" );
-        properties.put( "characterEncoding", "UTF-8" );
-        properties.put( "characterSetResults", "UTF-8" );
-        properties.put( "useServerPrepStmts", "true" );
-
-        config.setDataSourceProperties( properties );
-
-        Database.dataSource = new HikariDataSource( config );
+        Database.DB_URL = "jdbc:mysql://" + Config.host + ":" + Config.port + "/" + Config.database;
     }
 
     /**
      * Database Close 処理
      */
-    public static void disconnect() {
+    public static void disconnect() throws SQLException {
         if ( Database.dataSource != null ) {
-            Database.dataSource.close();
+            try {
+                Database.dataSource.close();
+            } catch ( SQLException e ) {
+                throw new RuntimeException( e );
+            }
         }
     }
 
@@ -85,7 +53,7 @@ public class MySQLControl {
      * Database Table Initialize
      */
     public static void TableUpdate() {
-        try ( Connection con = Database.dataSource.getConnection() ) {
+        try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
             //  テーブルの作成
             //		uuid : varchar(36)	player uuid
             //		name : varchar(20)	player name
@@ -113,7 +81,8 @@ public class MySQLControl {
                     + "reason int );";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement( sql );
-            preparedStatement.executeUpdate();
+            int rowsAffected = preparedStatement.executeUpdate();
+            Tools.Prt( "Create Table player Success." + rowsAffected + "row(s) inserted.", Tools.consoleMode.max, programCode );
 
             //  テーブルの作成
             //          id : int auto_increment Jail_ID
@@ -131,7 +100,8 @@ public class MySQLControl {
                     + "index(id) );";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             preparedStatement = con.prepareStatement( sql );
-            preparedStatement.executeUpdate();
+            rowsAffected = preparedStatement.executeUpdate();
+            Tools.Prt( "Create Table reason Success." + rowsAffected + "row(s) inserted.", Tools.consoleMode.max, programCode );
 
             //  テーブルの作成
             //          id : int auto_increment Aleart ID
@@ -147,12 +117,12 @@ public class MySQLControl {
                     + "index(id) );";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             preparedStatement = con.prepareStatement( sql );
-            preparedStatement.executeUpdate();
-
+            rowsAffected = preparedStatement.executeUpdate();
+            Tools.Prt( "Create Table yellow Success." + rowsAffected + "row(s) inserted.", Tools.consoleMode.max, programCode );
             Tools.Prt( ChatColor.AQUA + "dataSource Open Success.", programCode );
             con.close();
         } catch( SQLException e ) {
-            Tools.Prt( ChatColor.RED + "Connection Error : " + e.getMessage(), programCode);
+            Tools.Prt( ChatColor.RED + "Create Tables Error : " + e.getMessage(), programCode);
         }
     }
 }

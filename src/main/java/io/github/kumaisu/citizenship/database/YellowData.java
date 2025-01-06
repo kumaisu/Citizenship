@@ -3,23 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.citizenship.database;
+package io.github.kumaisu.citizenship.database;
 
-import com.mycompany.citizenship.config.Config;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import io.github.kumaisu.citizenship.config.Config;
+
+import java.sql.*;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import com.mycompany.kumaisulibraries.Tools;
-import static com.mycompany.citizenship.config.Config.programCode;
-import com.mycompany.citizenship.config.Reward;
-import com.mycompany.citizenship.config.Yellow;
+import io.github.kumaisu.citizenship.Lib.Tools;
+import static io.github.kumaisu.citizenship.config.Config.programCode;
+
+import io.github.kumaisu.citizenship.config.Yellow;
 import org.bukkit.Sound;
 
 /**
@@ -34,14 +31,15 @@ public class YellowData {
      * @param command
      */
     public static void AddCard( String name, String command ) {
-        try ( Connection con = Database.dataSource.getConnection() ) {
+        try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
             String sql = "INSERT INTO yellow (name, date, command) VALUES (?, ?, ?);";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.setString( 1, name );
             preparedStatement.setString( 2, Database.sdf.format( new Date() ) );
             preparedStatement.setString( 3, command );
-            preparedStatement.executeUpdate();
+            int rowsAffected = preparedStatement.executeUpdate();
+            Tools.Prt( "Add Card Success." + rowsAffected + "row(s) inserted.", io.github.kumaisu.citizenship.Lib.Tools.consoleMode.max, programCode );
             con.close();
             Tools.Prt( "Add Yellow to SQL Success", Tools.consoleMode.max, programCode );
         } catch ( SQLException e ) {
@@ -56,12 +54,13 @@ public class YellowData {
      * @return
      */
     public static boolean DelCard( int ID ) {
-        try ( Connection con = Database.dataSource.getConnection() ) {
+        try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
             String sql = "DELETE FROM yellow WHERE id = " + ID +";";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.executeUpdate();
-            Tools.Prt( "Delete Yellow from SQL Success.", Tools.consoleMode.max, programCode );
+            int rowsAffected = preparedStatement.executeUpdate();
+            Tools.Prt( "Delete Yellow from SQL Success." + rowsAffected + "row(s) inserted.", Tools.consoleMode.max, programCode );
             con.close();
             return true;
         } catch ( SQLException e ) {
@@ -77,7 +76,7 @@ public class YellowData {
      * @return 
      */
     public static boolean GetCard( int ID ) {
-        try ( Connection con = Database.dataSource.getConnection() ) {
+        try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
             Statement stmt = con.createStatement();
             String sql = "SELECT * FROM yellow WHERE id = " + ID + " ORDER BY id DESC;";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
@@ -111,7 +110,7 @@ public class YellowData {
         List< String > StringData = new ArrayList<>();
         Tools.Prt( "SQL : " + sqlCmd, Tools.consoleMode.max, programCode );
 
-        try ( Connection con = Database.dataSource.getConnection() ) {
+        try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery( sqlCmd );
 

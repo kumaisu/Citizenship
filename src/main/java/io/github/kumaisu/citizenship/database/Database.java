@@ -3,20 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.citizenship.database;
+package io.github.kumaisu.citizenship.database;
 
 import java.util.Date;
 import java.text.SimpleDateFormat;
-import com.zaxxer.hikari.HikariDataSource;
+import java.sql.Connection;
 
 /**
  *
  * @author sugichan
  */
 public class Database {
-    public static HikariDataSource dataSource = null;
+    public static Connection dataSource = null;
     public static final SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
 
+    public static String IP = "0.0.0.0";
+    public static String Host = "Unknown";
+    public static String DB_URL = "";
     public static String name = "Unknown";
     public static Date logout;
     public static Date basedate;

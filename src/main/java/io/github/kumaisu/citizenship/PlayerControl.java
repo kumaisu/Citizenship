@@ -3,24 +3,25 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.citizenship;
+package io.github.kumaisu.citizenship;
 
 import java.util.Map;
 import java.util.Date;
 import java.util.UUID;
+
 import org.bukkit.World;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import static org.bukkit.Bukkit.getWorld;
-import com.mycompany.kumaisulibraries.Tools;
-import com.mycompany.kumaisulibraries.Utility;
-import com.mycompany.citizenship.config.Config;
-import com.mycompany.citizenship.database.Database;
-import com.mycompany.citizenship.database.PlayerData;
-import com.mycompany.citizenship.database.ReasonData;
-import static com.mycompany.citizenship.config.Config.programCode;
+import io.github.kumaisu.citizenship.Lib.Tools;
+import io.github.kumaisu.citizenship.Lib.Utility;
+import io.github.kumaisu.citizenship.config.Config;
+import io.github.kumaisu.citizenship.database.Database;
+import io.github.kumaisu.citizenship.database.PlayerData;
+import io.github.kumaisu.citizenship.database.ReasonData;
+import static io.github.kumaisu.citizenship.config.Config.programCode;
 
 /**
  *

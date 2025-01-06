@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.citizenship.config;
+package io.github.kumaisu.citizenship.config;
 
 import java.util.Map;
 import java.util.List;

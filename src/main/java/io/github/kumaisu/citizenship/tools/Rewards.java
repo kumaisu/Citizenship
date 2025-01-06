@@ -3,19 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.citizenship.tools;
+package io.github.kumaisu.citizenship.tools;
 
 import java.util.Date;
 import java.util.Random;
 import org.bukkit.Sound;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import com.mycompany.kumaisulibraries.Tools;
-import com.mycompany.kumaisulibraries.Utility;
-import com.mycompany.citizenship.config.Config;
-import com.mycompany.citizenship.config.Reward;
-import com.mycompany.citizenship.database.Database;
-import com.mycompany.citizenship.database.PlayerData;
+import io.github.kumaisu.citizenship.Lib.Tools;
+import io.github.kumaisu.citizenship.Lib.Utility;
+import io.github.kumaisu.citizenship.config.Config;
+import io.github.kumaisu.citizenship.config.Reward;
+import io.github.kumaisu.citizenship.database.Database;
+import io.github.kumaisu.citizenship.database.PlayerData;
 
 /**
  *

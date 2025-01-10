@@ -32,6 +32,8 @@ import io.github.kumaisu.citizenship.database.PlayerData;
 import io.github.kumaisu.citizenship.database.ReasonData;
 import io.github.kumaisu.citizenship.database.YellowData;
 
+import static io.github.kumaisu.citizenship.config.Config.programCode;
+
 /**
  *
  * @author sugichan
@@ -75,7 +77,7 @@ public class Citizenship extends JavaPlugin implements Listener {
     @EventHandler( priority = EventPriority.HIGH )
     public void onPlayerLogin( PlayerJoinEvent event ) throws UnknownHostException {
         Player player = event.getPlayer();
-        Tools.Prt( "onPlayerLogin process", Tools.consoleMode.max, Config.programCode );
+        Tools.Prt( "onPlayerLogin process", Tools.consoleMode.max, programCode );
 
         RanksControl.CheckRank( player );
 
@@ -102,7 +104,7 @@ public class Citizenship extends JavaPlugin implements Listener {
                 ChatColor.AQUA + player.getName() +
                 ChatColor.YELLOW + "] DEOP Success",
                 Tools.consoleMode.full,
-                Config.programCode
+                programCode
             );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), "deop " + player.getName() );
         }
@@ -119,9 +121,9 @@ public class Citizenship extends JavaPlugin implements Listener {
         String message = event.getMessage();
         Player player = event.getPlayer();
 
-        if ( ( player == null ) || ( player.hasPermission( "citizenship.admin" ) ) ) { return false; }
+        if ( ( player == null ) || ( player.hasPermission( "citizenship.admin" ) ) || ( player.hasPermission( "citizenship.AlertPass" ) ) ) { return false; }
 
-        for ( String key : Config.Aleart ) {
+        for ( String key : Config.Alert ) {
             if ( message.toLowerCase().contains( key.toLowerCase() ) ) {
                 YellowData.AddCard( player.getName(), message );
                 PlayerData.addYellow( player.getUniqueId() );
@@ -133,14 +135,14 @@ public class Citizenship extends JavaPlugin implements Listener {
                         0, 300, 0
                     );
                     String msgLog = ChatColor.YELLOW + "Command Aleart : " + ChatColor.RED + player.getName() + " " + message;
-                    Tools.Prt( msgLog, Tools.consoleMode.normal, Config.programCode );
+                    Tools.Prt( msgLog, Tools.consoleMode.normal, programCode );
                     Bukkit.getOnlinePlayers().stream().filter( ( p ) -> ( p.hasPermission( "citizenship.admin" ) ) ).forEachOrdered( ( p ) -> {
                         p.sendMessage( msgLog );
                     } );
 
                     if ( Config.Imprisonment ) {
                         if ( ( Config.AutoJail > 0 ) && ( Database.yellow >= Config.AutoJail ) ) {
-                            Tools.Prt( player, ChatColor.RED + "Auto Jail to " + player.getName(), Tools.consoleMode.normal, Config.programCode );
+                            Tools.Prt( player, ChatColor.RED + "Auto Jail to " + player.getName(), Tools.consoleMode.normal, programCode );
                             String reason = "Exceeded the specified number of times";
                             int ReasonID = ReasonData.AddReason( player.getUniqueId(), reason, "Auto Jail" );
                             PlayerData.SetReasonID( player.getUniqueId(), ReasonID );

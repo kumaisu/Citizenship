@@ -37,3 +37,6 @@ permissions:
         description: Player Force Initialize Command
         permission-message: You do not have permission.
         default: false
+    citizenship.AlertPass:
+        description: Ignore alert command check
+        default: false

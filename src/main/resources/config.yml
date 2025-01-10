@@ -66,7 +66,7 @@ Release:
   pitch: 0.0
 
 #   警戒コマンド一覧
-Aleart:
+Alert:
     - /OP
     - /GAMEMODE
 

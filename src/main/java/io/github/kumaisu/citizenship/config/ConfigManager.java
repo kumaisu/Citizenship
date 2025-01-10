@@ -89,7 +89,7 @@ public class ConfigManager {
         Config.ryaw     = Float.valueOf( config.getString( "Release.yaw" ) );
         Config.rpitch   = Float.valueOf( config.getString( "Release.pitch" ) );
 
-        Config.Aleart   = ( List< String > ) config.getList( "Aleart" );
+        Config.Alert   = ( List< String > ) config.getList( "Alert" );
         Config.AutoJail = config.getInt( "AutoJail", 0 );
 
         Config.AutoDeop = config.getBoolean( "AutoDeop", false );
@@ -212,10 +212,10 @@ public class ConfigManager {
         Tools.Prt( p, ChatColor.WHITE + "自動投獄 : " + ChatColor.YELLOW + Config.AutoJail + "回以上", programCode );
 
         String WarnCmd = ChatColor.WHITE + "警戒Keyword:";
-        for( int i = 0; i < Config.Aleart.size(); i++ ) {
+        for( int i = 0; i < Config.Alert.size(); i++ ) {
             WarnCmd += 
                 ChatColor.WHITE + "[" +
-                ChatColor.YELLOW + Config.Aleart.get( i ) +
+                ChatColor.YELLOW + Config.Alert.get( i ) +
                 ChatColor.WHITE + "]";
         }
         Tools.Prt( p, WarnCmd, programCode );

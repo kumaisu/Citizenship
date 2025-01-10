@@ -50,7 +50,7 @@ public class Config {
     public static float rpitch;
     public static String rworld;
     
-    public static List< String > Aleart;
+    public static List< String > Alert;
     public static int AutoJail;
 
     public static boolean AutoDeop;

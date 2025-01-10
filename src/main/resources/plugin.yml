@@ -19,6 +19,11 @@ commands:
         permission-message: You do not have permission.
     ranks:
         description: Citizenship Control Admin Commands
+    fly:
+        description: Flight Mode command
+        permission: citizenship.fly
+        permission-message: You do not have permission.
+        default: op
 permissions:
     citizenship.admin:
         description: Admin Command permissions

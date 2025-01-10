@@ -25,6 +25,7 @@ import io.github.kumaisu.citizenship.config.ConfigManager;
 import io.github.kumaisu.citizenship.command.RankCommand;
 import io.github.kumaisu.citizenship.command.JailCommand;
 import io.github.kumaisu.citizenship.command.YellowCommand;
+import io.github.kumaisu.citizenship.command.GeneralCommand;
 import io.github.kumaisu.citizenship.database.Database;
 import io.github.kumaisu.citizenship.database.MySQLControl;
 import io.github.kumaisu.citizenship.database.PlayerData;
@@ -50,6 +51,7 @@ public class Citizenship extends JavaPlugin implements Listener {
         getCommand( "ranks" ).setExecutor( new RankCommand( this ) );
         getCommand( "jail" ).setExecutor( new JailCommand( this ) );
         getCommand( "yellow" ).setExecutor( new YellowCommand( this ) );
+        getCommand( "fly" ).setExecutor( new GeneralCommand( this ) );
     }
 
     @Override

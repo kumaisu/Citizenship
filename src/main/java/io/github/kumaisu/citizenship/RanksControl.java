@@ -5,19 +5,13 @@
  */
 package io.github.kumaisu.citizenship;
 
-import java.util.Collection;
 import java.util.Date;
-
 import net.luckperms.api.LuckPermsProvider;
-import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.model.user.UserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import static org.bukkit.Bukkit.getServer;
 import io.github.kumaisu.citizenship.Lib.Tools;
 import io.github.kumaisu.citizenship.Lib.Utility;
 import io.github.kumaisu.citizenship.config.Config;
@@ -25,8 +19,6 @@ import io.github.kumaisu.citizenship.database.Database;
 import io.github.kumaisu.citizenship.database.PlayerData;
 import io.github.kumaisu.citizenship.database.ReasonData;
 import static io.github.kumaisu.citizenship.config.Config.programCode;
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.model.group.GroupManager;
 
 /**
  *
@@ -211,17 +203,6 @@ public class RanksControl {
      * @param player
      */
     public static void CheckRank( Player player ) {
-        int BaseTick = TickTime.get( player );
-        int allTime = ( int ) Math.round( BaseTick * 0.05 / 60 / 60 );
-        Tools.Prt( "PlayTime = " + Float.toString( ( float ) BaseTick ), Tools.consoleMode.full, programCode );
-        Tools.Prt( player,
-            ChatColor.YELLOW + "貴方の通算接続時間は " +
-            ChatColor.AQUA + allTime +
-            ChatColor.YELLOW + " 時間です" ,
-            Tools.consoleMode.normal,
-            programCode
-        );
-
         //
         //  DBからデータ取得、無ければ初期化および新規登録
         //
@@ -239,15 +220,37 @@ public class RanksControl {
             return;
         }
 
-        int progress = Utility.dateDiff( Database.logout, new Date() );
+        int BaseTick = TickTime.get( player );
+        int allTime = ( int ) Math.round( BaseTick * 0.05 / 60 / 60 );
+        int checkMin = ( int ) Math.round( ( BaseTick - Database.offset ) * 0.05 / 60 );
         int checkHour = ( int ) Math.round( ( BaseTick - Database.offset ) * 0.05 / 60 / 60 );
+        int checkDate = ( int ) Math.round( ( BaseTick - Database.offset ) * 0.05 / 60 / 60 / 24 );
+
+        Tools.Prt( "Database.basedate : " + Database.basedate, Tools.consoleMode.max, programCode );
+        Tools.Prt( "Database.logout : " + Database.logout, Tools.consoleMode.max, programCode );
+        Tools.Prt( "Database.offset : " + Database.offset, Tools.consoleMode.max, programCode );
+        int progress = Utility.dateDiff( Database.logout, new Date() );
+
+        Tools.Prt( ChatColor.GREEN + "CheckMin = " + ChatColor.AQUA + checkMin + ChatColor.GREEN + " minutes", Tools.consoleMode.max, programCode );
+        Tools.Prt( ChatColor.GREEN + "CheckHour = " + ChatColor.AQUA + checkHour + ChatColor.GREEN + " hour", Tools.consoleMode.max, programCode );
+        Tools.Prt( ChatColor.GREEN + "CheckDate = " + ChatColor.AQUA + checkDate + ChatColor.GREEN + " days", Tools.consoleMode.max, programCode );
+        Tools.Prt( ChatColor.GREEN + "progress = " + ChatColor.YELLOW + Database.logout + ChatColor.GREEN + " - " + ChatColor.AQUA + progress + ChatColor.GREEN + " days", Tools.consoleMode.max, programCode );
+        Tools.Prt( "PlayTime = " + Float.toString( ( float ) BaseTick ), Tools.consoleMode.full, programCode );
+        Tools.Prt( player,
+                ChatColor.YELLOW + "貴方の通算接続時間は " +
+                        ChatColor.AQUA + allTime +
+                        ChatColor.YELLOW + " 時間です" ,
+                Tools.consoleMode.normal,
+                programCode
+        );
 
         String NowGroup = getGroup( player );
         
         //
         //  グループ表示 => コンソールへ
         //
-        Tools.Prt( ChatColor.GREEN + player.getName() + " [" + NowGroup + "] Login", Tools.consoleMode.normal, programCode );
+        // Tools.Prt( ChatColor.GREEN + player.getName() + " [" + NowGroup + "] Login", Tools.consoleMode.normal, programCode );
+        Tools.Prt( player, ChatColor.GREEN + "現在のランクは [ " + ChatColor.AQUA + NowGroup + ChatColor.GREEN + " ] です", Tools.consoleMode.normal, programCode );
 
         //
         //  経過時間によるユーザーの昇格処理
@@ -273,7 +276,6 @@ public class RanksControl {
         //  降格判定
         //
         if ( Config.demotion ) {
-            Tools.Prt( "Logout date = " + Database.logout.toString(), Tools.consoleMode.full, programCode);
             Tools.Prt( "Elapsed Date : " + progress + " 日", Tools.consoleMode.max, programCode );
             int days = ( Config.demot.get( NowGroup ) == null ? Config.demotionDefault : Config.demot.get( NowGroup ) );
             Tools.Prt( "Config Date  : " + days + " 日", Tools.consoleMode.max, programCode );
@@ -288,12 +290,15 @@ public class RanksControl {
         //
         if ( Config.rankTime.get( NowGroup ).get( "E" ) == null ) {
             boolean UpCheck = false;
+            if ( Config.rankTime.get( NowGroup ).get( "M" ) != null ) {
+                Tools.Prt( "Check Time " + Config.rankTime.get( NowGroup ).get( "M" ) + " : " + checkHour + " 分間", Tools.consoleMode.full, programCode );
+                UpCheck = ( Config.rankTime.get( NowGroup ).get( "M" ) <= checkMin );
+            }
             if ( Config.rankTime.get( NowGroup ).get( "H" ) != null ) {
                 Tools.Prt( "Check Time " + Config.rankTime.get( NowGroup ).get( "H" ) + " : " + checkHour + " 時間", Tools.consoleMode.full, programCode );
                 UpCheck = ( Config.rankTime.get( NowGroup ).get( "H" ) <= checkHour );
             }
             if ( Config.rankTime.get( NowGroup ).get( "D" ) != null ) {
-                int checkDate = Utility.dateDiff( Database.basedate, new Date() );
                 Tools.Prt( "Check Time " + Config.rankTime.get( NowGroup ).get( "D" ) + " : " + checkDate + " 日", Tools.consoleMode.full, programCode );
                 UpCheck = ( Config.rankTime.get( NowGroup ).get( "D" ) <= checkDate );
             }

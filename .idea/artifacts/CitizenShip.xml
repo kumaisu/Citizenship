@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="CitizenShip">
+    <output-path>$PROJECT_DIR$/out/artifacts/CitizenShip</output-path>
+    <root id="archive" name="CitizenShip.jar">
+      <element id="module-output" name="Citizenship" />
+    </root>
+  </artifact>
+</component>

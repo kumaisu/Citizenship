@@ -221,7 +221,6 @@ public class RanksControl {
         }
 
         int BaseTick = TickTime.get( player );
-        int allTime = ( int ) Math.round( BaseTick * 0.05 / 60 / 60 );
         int checkMin = ( int ) Math.round( ( BaseTick - Database.offset ) * 0.05 / 60 );
         int checkHour = ( int ) Math.round( ( BaseTick - Database.offset ) * 0.05 / 60 / 60 );
         int checkDate = ( int ) Math.round( ( BaseTick - Database.offset ) * 0.05 / 60 / 60 / 24 );
@@ -236,13 +235,20 @@ public class RanksControl {
         Tools.Prt( ChatColor.GREEN + "CheckDate = " + ChatColor.AQUA + checkDate + ChatColor.GREEN + " days", Tools.consoleMode.max, programCode );
         Tools.Prt( ChatColor.GREEN + "progress = " + ChatColor.YELLOW + Database.logout + ChatColor.GREEN + " - " + ChatColor.AQUA + progress + ChatColor.GREEN + " days", Tools.consoleMode.max, programCode );
         Tools.Prt( "PlayTime = " + Float.toString( ( float ) BaseTick ), Tools.consoleMode.full, programCode );
-        Tools.Prt( player,
-                ChatColor.YELLOW + "貴方の通算接続時間は " +
-                        ChatColor.AQUA + allTime +
-                        ChatColor.YELLOW + " 時間です" ,
-                Tools.consoleMode.normal,
-                programCode
-        );
+
+        if ( checkDate == 0 ) {
+            if ( checkHour == 0 ) {
+                Tools.Prt( player, ChatColor.YELLOW + "貴方の通算接続時間は " + ChatColor.AQUA + checkMin + ChatColor.YELLOW + " 分です", Tools.consoleMode.normal, programCode );
+            } else {
+                Tools.Prt( player, ChatColor.YELLOW + "貴方の通算接続時間は " + ChatColor.AQUA + checkHour + ChatColor.YELLOW + " 時間です", Tools.consoleMode.normal, programCode );
+            }
+        } else {
+            int checkDateHour = checkHour - ( checkDate * 24 );
+            Tools.Prt( player, ChatColor.YELLOW + "貴方の通算接続時間は " +
+                    ChatColor.AQUA + checkDate + ChatColor.YELLOW + " 日と " +
+                    ChatColor.AQUA + checkDateHour + ChatColor.YELLOW + " 時間です",
+                    Tools.consoleMode.normal, programCode );
+        }
 
         String NowGroup = getGroup( player );
         

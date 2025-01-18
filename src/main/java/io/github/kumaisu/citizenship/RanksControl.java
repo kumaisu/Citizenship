@@ -236,19 +236,24 @@ public class RanksControl {
         Tools.Prt( ChatColor.GREEN + "progress = " + ChatColor.YELLOW + Database.logout + ChatColor.GREEN + " - " + ChatColor.AQUA + progress + ChatColor.GREEN + " days", Tools.consoleMode.max, programCode );
         Tools.Prt( "PlayTime = " + Float.toString( ( float ) BaseTick ), Tools.consoleMode.full, programCode );
 
+        String ElapsedTime = "%$6貴方の通算接続時間は";
+
         if ( checkDate == 0 ) {
             if ( checkHour == 0 ) {
-                Tools.Prt( player, ChatColor.YELLOW + "貴方の通算接続時間は " + ChatColor.AQUA + checkMin + ChatColor.YELLOW + " 分です", Tools.consoleMode.normal, programCode );
+                ElapsedTime = Utility.StringBuild( ElapsedTime, "%$3" + checkMin + "%$6 分です" );
             } else {
-                Tools.Prt( player, ChatColor.YELLOW + "貴方の通算接続時間は " + ChatColor.AQUA + checkHour + ChatColor.YELLOW + " 時間です", Tools.consoleMode.normal, programCode );
+                ElapsedTime = Utility.StringBuild( ElapsedTime, "%$3" + checkHour + "%$6 時間です" );
             }
         } else {
             int checkDateHour = checkHour - ( checkDate * 24 );
-            Tools.Prt( player, ChatColor.YELLOW + "貴方の通算接続時間は " +
-                    ChatColor.AQUA + checkDate + ChatColor.YELLOW + " 日と " +
-                    ChatColor.AQUA + checkDateHour + ChatColor.YELLOW + " 時間です",
-                    Tools.consoleMode.normal, programCode );
+            if ( checkDateHour > 0 ) {
+                ElapsedTime = Utility.StringBuild( ElapsedTime, "%$3" + checkDate + "%$6 日と", "%$3" + checkDateHour + "%$6 時間です" );
+            } else {
+                ElapsedTime = Utility.StringBuild( ElapsedTime, "%$3" + checkDate + "%$6 日です" );
+            }
         }
+
+        Tools.Prt( player, Utility.ReplaceString( ElapsedTime ), Tools.consoleMode.normal, programCode );
 
         String NowGroup = getGroup( player );
         

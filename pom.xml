@@ -55,6 +55,7 @@
     </dependencies>
 
     <build>
+        <finalName>${project.artifactId}-${project.version}-MC1.21.3</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -26,9 +26,9 @@ public class PlayerData {
     /**
      * プレイヤー情報を新規追加する
      *
-     * @param uuid
-     * @param name
-     * @param Tick
+     * @param uuid  対象プレイヤーUUID
+     * @param name  対象プレイヤー名
+     * @param Tick  登録TickTime
      */
     public static void AddSQL( UUID uuid, String name, int Tick ) {
         try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
@@ -36,15 +36,15 @@ public class PlayerData {
             //		uuid : varchar(36)	player uuid
             //		name : varchar(20)	player name
             //		logout : DATETIME	last Logout Date
-            //          rewards : DATETIME      Rewards Date
-            //          basedate : DATETIME     update Date
-            //          tick : int              total Tick Time
-            //		offset : int 		total Login Time offset
-            //		jail : int		to jail flag
-            //          Yellow : int            Yellow Card Count
-            //          imprisonment : int      Imprisonment Count
-            //          reason : int            Reason ID
-            String sql = "INSERT INTO player (uuid, name, logout, rewards, basedate, tick, offset, jail, yellow, imprisonment, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+            //      rewards : DATETIME  Rewards Date
+            //      baseDate : DATETIME First Login Date        DB記録した日
+            //      baseTick : int      First Login Tick Time   DB記録時のTickTime
+            //      offsetTick : int    Check Tick Time Base    称号検証用TickTimeベース
+            //		jail : int          to jail flag
+            //      Yellow : int        Yellow Card Count       警告回数
+            //      imprisonment : int  Imprisonment Count      投獄回数
+            //      reason : int        Reason ID               投獄理由BD-ID
+            String sql = "INSERT INTO player (uuid, name, logout, rewards, baseDate, baseTick, offsetTick, jail, yellow, imprisonment, reason) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement( sql );
             preparedStatement.setString( 1, uuid.toString() );
@@ -53,7 +53,7 @@ public class PlayerData {
             preparedStatement.setString( 4, Database.sdf.format( new Date() ) );
             preparedStatement.setString( 5, Database.sdf.format( new Date() ) );
             preparedStatement.setInt( 6, Tick );
-            preparedStatement.setInt( 7, 0 );
+            preparedStatement.setInt( 7, Tick );
             preparedStatement.setInt( 8, 0 );
             preparedStatement.setInt( 9, 0 );
             preparedStatement.setInt( 10, 0 );
@@ -66,7 +66,10 @@ public class PlayerData {
             Database.name = name;
             Database.logout = new Date();
             Database.basedate = new Date();
-            Database.offset = 0;
+            Database.Rewards = new Date();
+            Database.baseTick = Tick;
+            Database.offsetTick = Tick;
+            Database.jail = 0;
             Database.yellow = 0;
             Database.imprisonment = 0;
             Database.ReasonID = 0;
@@ -75,15 +78,21 @@ public class PlayerData {
         }
     }
 
+    /**
+     * 必要な情報を補完してから登録処理する
+     *
+     * @param player    対象プレイヤー
+     */
     public static void AddSQL( Player player ) {
         AddSQL( player.getUniqueId(), player.getName(), TickTime.get( player ) );
     }
 
     /**
      * プレイヤー情報を削除する
+     * ※実際には使用されていない
      *
-     * @param uuid
-     * @return
+     * @param uuid  削除対象プレイヤーUUID
+     * @return      成功可否
      */
     public static boolean DelSQL( UUID uuid ) {
         try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
@@ -103,8 +112,8 @@ public class PlayerData {
     /**
      * UUIDからプレイヤー情報を取得する
      *
-     * @param uuid
-     * @return
+     * @param uuid  対象プレイヤーUUID
+     * @return      成功可否
      */
     public static boolean GetSQL( UUID uuid ) {
         try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
@@ -118,8 +127,8 @@ public class PlayerData {
                 Database.logout         = rs.getTimestamp( "logout" );
                 Database.Rewards        = rs.getTimestamp( "rewards" );
                 Database.basedate       = rs.getTimestamp( "basedate" );
-                Database.tick           = rs.getInt( "tick" );
-                Database.offset         = rs.getInt( "offset" );
+                Database.baseTick       = rs.getInt( "tick" );
+                Database.offsetTick     = rs.getInt( "offset" );
                 Database.jail           = rs.getInt( "jail" );
                 Database.yellow         = rs.getInt( "yellow" );
                 Database.imprisonment   = rs.getInt( "imprisonment" );
@@ -138,7 +147,7 @@ public class PlayerData {
     /**
      * UUIDからプレイヤーのログアウト日時を更新する
      *
-     * @param uuid
+     * @param uuid  対象プレイヤー
      */
     public static void SetLogoutToSQL( UUID uuid ) {
         try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
@@ -156,7 +165,7 @@ public class PlayerData {
     /**
      * Reward 配布日のセット
      *
-     * @param uuid
+     * @param uuid  対象プレイヤー
      */
     public static void SetRewardDate( UUID uuid ) {
         try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
@@ -173,32 +182,14 @@ public class PlayerData {
     }
 
     /**
-     * UUID からプレイヤーのランク変更日を更新する
-     *
-     * @param uuid
-     */
-    public static void SetBaseDateToSQL( UUID uuid ) {
-        try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
-            String sql = "UPDATE player SET basedate = '" + Database.sdf.format( new Date() ) + "' WHERE uuid = '" + uuid.toString() + "';";
-            Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
-            PreparedStatement preparedStatement = con.prepareStatement( sql );
-            int rowsAffected = preparedStatement.executeUpdate();
-            con.close();
-            Tools.Prt( "Set logout Date to SQL Success." + rowsAffected + "row(s) inserted.", Tools.consoleMode.max, programCode );
-        } catch ( SQLException e ) {
-            Tools.Prt( ChatColor.RED + "Error SetBaseDateSQL : " + e.getMessage(), programCode );
-        }
-    }
-
-    /**
      * UUIDからプレイヤーのTickTimeを更新する
      *
-     * @param uuid
-     * @param tickTime
+     * @param uuid      対象プレイヤー
+     * @param tickTime  現在のTickTime
      */
-    public static void SetTickTimeToSQL( UUID uuid, int tickTime ) {
+    public static void SetBaseTickTimeToSQL( UUID uuid, int tickTime ) {
         try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
-            String sql = "UPDATE player SET tick = " + tickTime + " WHERE uuid = '" + uuid.toString() + "';";
+            String sql = "UPDATE player SET baseTick = " + tickTime + " WHERE uuid = '" + uuid.toString() + "';";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement( sql );
             int rowsAffected = preparedStatement.executeUpdate();
@@ -212,12 +203,12 @@ public class PlayerData {
     /**
      * UUIDからプレイヤーのオフセット値を設定する
      *
-     * @param uuid
-     * @param offset
+     * @param uuid      対象プレイヤー
+     * @param tickTime  現在のTickTime
      */
-    public static void SetOffsetToSQL( UUID uuid, int offset ) {
+    public static void SetOffsetTickToSQL( UUID uuid, int tickTime ) {
         try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
-            String sql = "UPDATE player SET offset = " + offset + " WHERE uuid = '" + uuid.toString() + "';";
+            String sql = "UPDATE player SET offsetTick = " + tickTime + " WHERE uuid = '" + uuid.toString() + "';";
             Tools.Prt( "SQL : " + sql, Tools.consoleMode.max, programCode );
             PreparedStatement preparedStatement = con.prepareStatement( sql );
             int rowsAffected = preparedStatement.executeUpdate();
@@ -234,9 +225,9 @@ public class PlayerData {
      * 1 : 未ログイン者の投獄フラグ
      * 2 : 未ログイン者の釈放フラグ（未使用）
      *
-     * @param uuid
-     * @param jail
-     * @return 
+     * @param uuid  対象プレイヤー
+     * @param jail  投獄フラグ
+     * @return      成功可否
      */
     public static boolean SetJailToSQL( UUID uuid, int jail ) {
         try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
@@ -278,7 +269,7 @@ public class PlayerData {
     /**
      * CountUP Aleart 警告回数カウントアップ
      *
-     * @param uuid
+     * @param uuid  対象プレイヤー
      */
     public static void addYellow( UUID uuid ) {
         try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
@@ -296,7 +287,7 @@ public class PlayerData {
     /**
      * 警告回数をリセット
      *
-     * @param uuid 
+     * @param uuid  対象プレイヤー
      */
     public static void zeroAleart( UUID uuid ) {
         try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
@@ -314,7 +305,7 @@ public class PlayerData {
     /**
      * CountUP imprsioment 投獄回数カウントアップ
      *
-     * @param uuid
+     * @param uuid  対象プレイヤー
      */
     public static void addImprisonment( UUID uuid ) {
         try ( Connection con = DriverManager.getConnection( Database.DB_URL, Config.username, Config.password ) ) {
@@ -332,7 +323,7 @@ public class PlayerData {
     /**
      * 投獄者のリストアップする
      *
-     * @return 
+     * @return  投獄者一覧
      */
     public static Map< UUID, Integer > ListJailMenber() {
         Map< UUID, Integer > getList = new HashMap<>();

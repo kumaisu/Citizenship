@@ -6,7 +6,7 @@
 
     <groupId>io.github.kumaisu</groupId>
     <artifactId>Citizenship</artifactId>
-    <version>1.1.1</version>
+    <version>1.2.0</version>
     <packaging>jar</packaging>
     <name>Citizenship</name>
 
@@ -51,6 +51,12 @@
             <artifactId>api</artifactId>
             <version>5.4</version>
             <scope>provided</scope>
+        </dependency>
+        <!--Discord-->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.14</version> <!-- 最新版を確認して更新してください -->
         </dependency>
     </dependencies>
 

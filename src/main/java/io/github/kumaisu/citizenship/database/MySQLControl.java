@@ -58,23 +58,23 @@ public class MySQLControl {
             //		uuid : varchar(36)	player uuid
             //		name : varchar(20)	player name
             //		logout : DATETIME	last Logout Date
-            //          rewards : DATETIME      Rewards Date
-            //          basedate : DATETIME     update Date
-            //          tick : int              total Tick Time
-            //		offset : int 		total Login Time offset
-            //		jail : int		to jail flag
-            //          Yellow : int            Yellow Card Count
-            //          imprisonment : int      Imprisonment Count
-            //          reason : int            Reason ID
+            //      rewards : DATETIME  Rewards Date
+            //      baseDate : DATETIME First Login Date        DB記録した日
+            //      baseTick : int      First Login Tick Time   DB記録時のTickTime
+            //      offsetTick : int    Check Tick Time Base    称号検証用TickTimeベース
+            //		jail : int          to jail flag
+            //      Yellow : int        Yellow Card Count       警告回数
+            //      imprisonment : int  Imprisonment Count      投獄回数
+            //      reason : int        Reason ID               投獄理由BD-ID
             //  存在すれば、無視される
             String sql = "CREATE TABLE IF NOT EXISTS player( "
                     + "uuid varchar(36), "
                     + "name varchar(20), "
                     + "logout DATETIME, "
                     + "rewards DATETIME, "
-                    + "basedate DATETIME, "
-                    + "tick int, "
-                    + "offset int, "
+                    + "baseDate DATETIME, "
+                    + "baseTick int, "
+                    + "offsetTick int, "
                     + "jail int, "
                     + "yellow int, "
                     + "imprisonment int, "
@@ -85,11 +85,11 @@ public class MySQLControl {
             Tools.Prt( "Create Table player Success." + rowsAffected + "row(s) inserted.", Tools.consoleMode.max, programCode );
 
             //  テーブルの作成
-            //          id : int auto_increment Jail_ID
-            //		uuid : varchar(36)	player uuid
-            //          date : DATETIME         update Date
-            //          Reason : varchar(50)    Last Jail Reason
-            //          enforcer : varchar(20)  The person who caught
+            //      id : int auto_increment Jail_ID
+            //		uuid : varchar(36)	    player uuid
+            //      date : DATETIME         update Date
+            //      Reason : varchar(50)    Last Jail Reason
+            //      enforcer : varchar(20)  The person who caught
             //  存在すれば、無視される
             sql = "CREATE TABLE IF NOT EXISTS reason( "
                     + "id int auto_increment, "

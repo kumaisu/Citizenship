@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.github.kumaisu.citizenship.config;
 
 import java.util.Map;
@@ -17,7 +12,6 @@ import io.github.kumaisu.citizenship.Lib.Tools;
 import static io.github.kumaisu.citizenship.config.Config.programCode;
 
 /**
- *
  * @author sugichan
  */
 public class ConfigManager {
@@ -49,6 +43,7 @@ public class ConfigManager {
         Config.database = config.getString( "mysql.database" );
         Config.username = config.getString( "mysql.username" );
         Config.password = config.getString( "mysql.password" );
+        Config.WebHookURL = config.getString( "WebhookURL" );
 
         Config.rankName = new ArrayList<>();
         List< String > getstr = ( List< String > ) config.getList( "Rank" );

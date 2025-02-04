@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.github.kumaisu.citizenship;
 
 import java.net.UnknownHostException;
@@ -35,8 +30,7 @@ import io.github.kumaisu.citizenship.database.YellowData;
 import static io.github.kumaisu.citizenship.config.Config.programCode;
 
 /**
- *
- * @author sugichan
+ * @author NineTailedFox
  */
 public class Citizenship extends JavaPlugin implements Listener {
 
@@ -70,9 +64,6 @@ public class Citizenship extends JavaPlugin implements Listener {
     /**
      * プレイヤーがログインを成功すると発生するイベント
      * ここでプレイヤーに対して、様々な処理を実行する
-     *
-     * @param event
-     * @throws UnknownHostException
      */
     @EventHandler( priority = EventPriority.HIGH )
     public void onPlayerLogin( PlayerJoinEvent event ) throws UnknownHostException {
@@ -90,14 +81,11 @@ public class Citizenship extends JavaPlugin implements Listener {
 
     /**
      * プレイヤーがログアウトした時に発生するイベント
-     *
-     * @param event
      */
     @EventHandler
     public void onPlayerQuit( PlayerQuitEvent event ) {
         Player player = event.getPlayer();
         PlayerData.SetLogoutToSQL( player.getUniqueId() );
-        PlayerData.SetTickTimeToSQL( player.getUniqueId(), TickTime.get( player ) );
         if ( Config.AutoDeop && ( !Config.OPName.contains( player.getName() ) ) && player.isOp() ) {
             Tools.Prt(
                 ChatColor.YELLOW + "Temporary Player [" +
@@ -112,16 +100,18 @@ public class Citizenship extends JavaPlugin implements Listener {
 
     /**
      * 違法コマンドを検閲するためのイベントキャッチ
-     *
-     * @param event
-     * @return 
      */
     @EventHandler
-    public boolean onPreprocess( PlayerCommandPreprocessEvent event ) {
+    public void onPreprocess( PlayerCommandPreprocessEvent event ) {
         String message = event.getMessage();
         Player player = event.getPlayer();
 
-        if ( ( player == null ) || ( player.hasPermission( "citizenship.admin" ) ) || ( player.hasPermission( "citizenship.AlertPass" ) ) ) { return false; }
+        if ( ( player == null ) ||
+                ( player.hasPermission( "citizenship.admin" ) ) ||
+                ( player.hasPermission( "citizenship.AlertPass" ) ) )
+        {
+            return;
+        }
 
         for ( String key : Config.Alert ) {
             if ( message.toLowerCase().contains( key.toLowerCase() ) ) {
@@ -150,9 +140,7 @@ public class Citizenship extends JavaPlugin implements Listener {
                         }
                     }
                 }
-                return true;
             }
         }
-        return false;
     }
 }

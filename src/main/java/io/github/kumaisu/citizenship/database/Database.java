@@ -24,8 +24,8 @@ public class Database {
     public static Date logout;
     public static Date basedate;
     public static Date Rewards;
-    public static int tick = 0;
-    public static int offset = 0;
+    public static int baseTick = 0;
+    public static int offsetTick = 0;
     public static int jail = 0;
     public static int yellow = 0;
     public static int imprisonment = 0;

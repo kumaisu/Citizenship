@@ -1,5 +1,5 @@
 name: Citizenship
-version: ${project.version}
+version: '1.2.0'
 main: io.github.kumaisu.citizenship.Citizenship
 api-version: '1.21'
 description: Citizen Ship Auto Control plugin

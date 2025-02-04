@@ -41,6 +41,10 @@ PromotBroadcast: true
 #   降格時Broadcastアナウンスを行うか
 DemotBroadcast: false
 
+#   Broadcast Message をDiscordへ送信するか？
+#   Webhook URL を記載する、送信しない場合は（NONE)
+WebhookURL: NONE
+
 #   牢獄の設定
 #   権限剥奪時のグループ名(WorldGuardに設定しているもの)
 PrisonGroup: Prisoner

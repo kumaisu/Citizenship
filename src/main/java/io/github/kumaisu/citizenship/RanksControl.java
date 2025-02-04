@@ -1,11 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.github.kumaisu.citizenship;
 
 import java.util.Date;
+
+import io.github.kumaisu.citizenship.tools.Discord;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.model.user.UserManager;
@@ -21,17 +18,15 @@ import io.github.kumaisu.citizenship.database.ReasonData;
 import static io.github.kumaisu.citizenship.config.Config.programCode;
 
 /**
- *
- * @author sugichan
+ * @author NineTailedFox
  */
 public class RanksControl {
 
     /**
      * 昇格
-     *
-     * @param player
-     * @param target
-     * @return 
+     * @param player    処理プレイヤー
+     * @param target    対象プレイヤー
+     * @return          成功可否
      */
     public static boolean Promotion( Player player, Player target ) {
         Tools.Prt( "Promotion Process", Tools.consoleMode.max, programCode );
@@ -65,7 +60,7 @@ public class RanksControl {
             if ( Config.PromotBroadcast ) {
                 LevelupMessage = "<鯖アナウンス> " + LevelupMessage;
                 Bukkit.broadcastMessage( LevelupMessage );
-                Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), "discord broadcast " + LevelupMessage );
+                Discord.sendMessage( Config.WebHookURL, "Level", LevelupMessage );
             } else {
                 Tools.Prt( target, LevelupMessage, Tools.consoleMode.normal, programCode );
             }
@@ -78,10 +73,9 @@ public class RanksControl {
 
     /**
      * 降格
-     *
-     * @param player
-     * @param target
-     * @return 
+     * @param player    処理プレイヤー
+     * @param target    対象プレイヤー
+     * @return          成功可否
      */
     public static boolean Demotion( Player player, Player target ){
         Tools.Prt( "Demotion Process", Tools.consoleMode.max, programCode );
@@ -108,8 +102,7 @@ public class RanksControl {
             String Cmd = "lp user " + target.getName() + " group set " + NewGroup;
             Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
-            PlayerData.SetOffsetToSQL( target.getUniqueId(), TickTime.get( target ) );
-            PlayerData.SetBaseDateToSQL( target.getUniqueId() );
+            PlayerData.SetOffsetTickToSQL( target.getUniqueId(), TickTime.get( target ) );
 
             String LeveldownMessage = 
                 ChatColor.YELLOW + target.getName() + " さんを " +
@@ -119,7 +112,7 @@ public class RanksControl {
             if ( Config.DemotBroadcast ) {
                 LeveldownMessage = "<鯖アナウンス> " + LeveldownMessage;
                 Bukkit.broadcastMessage( LeveldownMessage );
-                Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), "discord broadcast " + LeveldownMessage );
+                Discord.sendMessage( Config.WebHookURL, "Level", LeveldownMessage );
             } else {
                 Tools.Prt( target, LeveldownMessage, Tools.consoleMode.normal, programCode );
             }
@@ -132,9 +125,8 @@ public class RanksControl {
 
     /**
      * グループ取得
-     *
-     * @param player
-     * @return 
+     * @param player    処理プレイヤー
+     * @return          現在のグループ名（称号名）
      */
     public static String getGroup( Player player ) {
         String NowGroup = "Unknown";
@@ -146,51 +138,20 @@ public class RanksControl {
         } else {
             Tools.Prt( "ユーザーが見つかりません: " + player.getName(), Tools.consoleMode.max, programCode );
         }
-
-        /* 登録されているGroupの一覧
-        GroupManager groupManager = LuckPermsProvider.get().getGroupManager();
-        Collection<Group> groups = groupManager.getLoadedGroups();
-
-        for (Group group : groups) {
-            Tools.Prt( "Group Name: " + group.getName(), programCode );
-        }
-         */
-
-        /*　旧Permission Groupの取得
-        Permission perm = null;
-        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration( net.milkbowl.vault.permission.Permission.class );
-        if (permissionProvider != null) {
-            perm = permissionProvider.getProvider();
-        }
-        if ( perm == null ) {
-            Tools.Prt( "Cant get Group", programCode );
-            return "";
-        }
-
-        for ( String StrItem1 : perm.getPlayerGroups( player ) ) Tools.Prt( "Have Gr. {" + StrItem1 + "}", Tools.consoleMode.max, programCode );
-
-        String NowGroup = perm.getPlayerGroups( player )[0];
-        Tools.Prt( "NowGroup [" + NowGroup + "]", Tools.consoleMode.max, programCode );
-         */
         return NowGroup;
     }
 
     /**
      * グループ設定
-     *
-     * @param player
-     * @param newGroup
-     * @return 
+     * @param player    対象プレイヤー
+     * @param newGroup  登録グループ名（称号名）
+     * @return          成功可否
      */
     public static boolean setGroup( Player player, String newGroup ) {
         try {
             String Cmd = "lp user " + player.getName() + " group set " + newGroup;
             Tools.Prt( "Command : " + Cmd, Tools.consoleMode.max, programCode );
             Bukkit.getServer().dispatchCommand( Bukkit.getConsoleSender(), Cmd );
-            //  現状、牢獄処理しか使っていないので、ここでオフセットをリセットしている
-            //  本来は設定したランクに応じて再計算が必要になる
-            PlayerData.SetOffsetToSQL( player.getUniqueId(), TickTime.get( player ) );
-            PlayerData.SetBaseDateToSQL( player.getUniqueId() );
             return true;
         } catch( ArrayIndexOutOfBoundsException e ) {
             return false;
@@ -199,7 +160,6 @@ public class RanksControl {
 
     /**
      * 具体的に、昇格・降格を判断処理するメソッド
-     *
      * @param player
      */
     public static void CheckRank( Player player ) {
@@ -221,35 +181,41 @@ public class RanksControl {
         }
 
         int BaseTick = TickTime.get( player );
-        int checkMin = ( int ) Math.round( ( BaseTick - Database.offset ) * 0.05 / 60 );
-        int checkHour = ( int ) Math.round( ( BaseTick - Database.offset ) * 0.05 / 60 / 60 );
-        int checkDate = ( int ) Math.round( ( BaseTick - Database.offset ) * 0.05 / 60 / 60 / 24 );
+        int totalMin = ( int ) Math.round( ( BaseTick - Database.baseTick ) * 0.05 / 60 );
+        int totalHour = ( int ) Math.round( ( BaseTick - Database.baseTick ) * 0.05 / 60 / 60 );
+        int totalDate = ( int ) Math.round( ( BaseTick - Database.baseTick ) * 0.05 / 60 / 60 / 24 );
 
-        Tools.Prt( "Database.basedate : " + Database.basedate, Tools.consoleMode.max, programCode );
-        Tools.Prt( "Database.logout : " + Database.logout, Tools.consoleMode.max, programCode );
-        Tools.Prt( "Database.offset : " + Database.offset, Tools.consoleMode.max, programCode );
+        Tools.Prt( "Database.basedate   : " + Database.basedate, Tools.consoleMode.max, programCode );
+        Tools.Prt( "Database.logout     : " + Database.logout, Tools.consoleMode.max, programCode );
+        Tools.Prt( "Database.baseTick   : " + Database.baseTick, Tools.consoleMode.max, programCode );
+        Tools.Prt( "Database.offsetTick : " + Database.offsetTick, Tools.consoleMode.max, programCode );
         int progress = Utility.dateDiff( Database.logout, new Date() );
 
-        Tools.Prt( ChatColor.GREEN + "CheckMin = " + ChatColor.AQUA + checkMin + ChatColor.GREEN + " minutes", Tools.consoleMode.max, programCode );
-        Tools.Prt( ChatColor.GREEN + "CheckHour = " + ChatColor.AQUA + checkHour + ChatColor.GREEN + " hour", Tools.consoleMode.max, programCode );
-        Tools.Prt( ChatColor.GREEN + "CheckDate = " + ChatColor.AQUA + checkDate + ChatColor.GREEN + " days", Tools.consoleMode.max, programCode );
+        Tools.Prt( ChatColor.GREEN + "CheckMin = " + ChatColor.AQUA + totalMin + ChatColor.GREEN + " minutes", Tools.consoleMode.max, programCode );
+        Tools.Prt( ChatColor.GREEN + "CheckHour = " + ChatColor.AQUA + totalHour + ChatColor.GREEN + " hour", Tools.consoleMode.max, programCode );
+        Tools.Prt( ChatColor.GREEN + "CheckDate = " + ChatColor.AQUA + totalDate + ChatColor.GREEN + " days", Tools.consoleMode.max, programCode );
         Tools.Prt( ChatColor.GREEN + "progress = " + ChatColor.YELLOW + Database.logout + ChatColor.GREEN + " - " + ChatColor.AQUA + progress + ChatColor.GREEN + " days", Tools.consoleMode.max, programCode );
         Tools.Prt( "PlayTime = " + Float.toString( ( float ) BaseTick ), Tools.consoleMode.full, programCode );
 
-        String ElapsedTime = "%$6貴方の通算接続時間は";
+        String ElapsedTime = "%$6貴方の通算接続時間は ";
 
-        if ( checkDate == 0 ) {
-            if ( checkHour == 0 ) {
-                ElapsedTime = Utility.StringBuild( ElapsedTime, "%$3" + checkMin + "%$6 分です" );
+        if ( totalDate == 0 ) {
+            if ( totalHour == 0 ) {
+                ElapsedTime = Utility.StringBuild( ElapsedTime, "%$3" + totalMin + "%$6 分です" );
             } else {
-                ElapsedTime = Utility.StringBuild( ElapsedTime, "%$3" + checkHour + "%$6 時間です" );
+                int totalHourMin = totalMin - ( totalHour * 60 );
+                if ( totalHourMin == 0 ) {
+                    ElapsedTime = Utility.StringBuild(ElapsedTime, "%$3" + totalHour + "%$6 時間です" );
+                } else {
+                    ElapsedTime = Utility.StringBuild(ElapsedTime, "%$3" + totalHour + "%$6 時間 %$3" + totalHourMin + "%$6 分です" );
+                }
             }
         } else {
-            int checkDateHour = checkHour - ( checkDate * 24 );
-            if ( checkDateHour > 0 ) {
-                ElapsedTime = Utility.StringBuild( ElapsedTime, "%$3" + checkDate + "%$6 日と", "%$3" + checkDateHour + "%$6 時間です" );
+            int totalDateHour = totalHour - ( totalDate * 24 );
+            if ( totalDateHour > 0 ) {
+                ElapsedTime = Utility.StringBuild( ElapsedTime, "%$3" + totalDate + "%$6 日と", "%$3" + totalDateHour + "%$6 時間です" );
             } else {
-                ElapsedTime = Utility.StringBuild( ElapsedTime, "%$3" + checkDate + "%$6 日です" );
+                ElapsedTime = Utility.StringBuild( ElapsedTime, "%$3" + totalDate + "%$6 日です" );
             }
         }
 
@@ -259,8 +225,8 @@ public class RanksControl {
         
         //
         //  グループ表示 => コンソールへ
-        //
         // Tools.Prt( ChatColor.GREEN + player.getName() + " [" + NowGroup + "] Login", Tools.consoleMode.normal, programCode );
+        //
         Tools.Prt( player, ChatColor.GREEN + "現在のランクは [ " + ChatColor.AQUA + NowGroup + ChatColor.GREEN + " ] です", Tools.consoleMode.normal, programCode );
 
         //
@@ -299,10 +265,14 @@ public class RanksControl {
         //
         //  昇格判定
         //
+        int checkMin = ( int ) Math.round( ( BaseTick - Database.offsetTick ) * 0.05 / 60 );
+        int checkHour = ( int ) Math.round( ( BaseTick - Database.offsetTick ) * 0.05 / 60 / 60 );
+        int checkDate = ( int ) Math.round( ( BaseTick - Database.offsetTick ) * 0.05 / 60 / 60 / 24 );
+
         if ( Config.rankTime.get( NowGroup ).get( "E" ) == null ) {
             boolean UpCheck = false;
             if ( Config.rankTime.get( NowGroup ).get( "M" ) != null ) {
-                Tools.Prt( "Check Time " + Config.rankTime.get( NowGroup ).get( "M" ) + " : " + checkHour + " 分間", Tools.consoleMode.full, programCode );
+                Tools.Prt( "Check Time " + Config.rankTime.get( NowGroup ).get( "M" ) + " : " + checkMin + " 分間", Tools.consoleMode.full, programCode );
                 UpCheck = ( Config.rankTime.get( NowGroup ).get( "M" ) <= checkMin );
             }
             if ( Config.rankTime.get( NowGroup ).get( "H" ) != null ) {

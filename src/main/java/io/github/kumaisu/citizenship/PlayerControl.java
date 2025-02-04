@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package io.github.kumaisu.citizenship;
 
 import java.util.Map;
@@ -24,8 +19,7 @@ import io.github.kumaisu.citizenship.database.ReasonData;
 import static io.github.kumaisu.citizenship.config.Config.programCode;
 
 /**
- *
- * @author sugichan
+ * @author NineTailedFox
  */
 public class PlayerControl {
 
@@ -182,16 +176,16 @@ public class PlayerControl {
         Tools.Prt( "Get Access Time [" + lookNAME + "]", Tools.consoleMode.max, programCode );
 
         if ( PlayerData.GetSQL( uuid ) ) {
-            Tools.Prt( player, "Player Name    : " + lookNAME, programCode );
-            Tools.Prt( player, "Total TickTime : " + Float.toString( ( float ) Database.tick ) + " Ticks(0.05sec)", programCode );
-            Tools.Prt( player, "総接続時間     : " + Float.toString( ( float ) ( Database.tick * 0.05 / 60 / 60)) + " hour" , programCode );
-            Tools.Prt( player, "ランク判定時間 : " + Float.toString( ( float ) ( ( Database.tick - Database.offset ) * 0.05 / 60 / 60)) + " hour" , programCode );
-            Tools.Prt( player, "起算日         : " + Database.basedate.toString(), programCode );
-            Tools.Prt( player, "経過日数       : " + Utility.dateDiff( Database.basedate, new Date() ) + " 日", programCode );
-            Tools.Prt( player, "Logout日       : " + Database.logout.toString(), programCode );
+            Tools.Prt( player, "Player Name : " + lookNAME, programCode );
+            Tools.Prt( player, "Total TickTime : " + Float.toString( ( float ) Database.baseTick ) + " Ticks(0.05sec)", programCode );
+            Tools.Prt( player, "総接続時間    : " + Float.toString( ( float ) ( Database.baseTick * 0.05 / 60 / 60 ) ) + " hour" , programCode );
+            Tools.Prt( player, "ランク判定時間 : " + Float.toString( ( float ) ( Database.offsetTick * 0.05 / 60 / 60 ) ) + " hour" , programCode );
+            Tools.Prt( player, "起算日   : " + Database.basedate.toString(), programCode );
+            Tools.Prt( player, "経過日数 : " + Utility.dateDiff( Database.basedate, new Date() ) + " 日", programCode );
+            Tools.Prt( player, "Logout日      : " + Database.logout.toString(), programCode );
             Tools.Prt( player, "Logout経過日数 : " + Utility.dateDiff( Database.logout, new Date() ) + " 日", programCode );
-            Tools.Prt( player, "イエローカード : " + ( Database.yellow == 0 ? "無し":" " + Database.yellow + " 枚"), programCode );
-            Tools.Prt( player, "投獄回数       : 前科" + ( Database.imprisonment == 0 ? "無し":" " + Database.imprisonment + " 犯"), programCode );
+            Tools.Prt( player, "イエローカード : " + ( Database.yellow == 0 ? "無し":" " + Database.yellow + " 枚" ), programCode );
+            Tools.Prt( player, "投獄回数 : 前科" + ( Database.imprisonment == 0 ? "無し":" " + Database.imprisonment + " 犯" ), programCode );
             return true;
         } else {
             Tools.Prt( player, ChatColor.RED + "Player[" + lookNAME + "]が存在しません", programCode );

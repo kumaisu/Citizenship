@@ -22,6 +22,7 @@ public class Config {
     public static String database = "Citizenship";
     public static String username = "root";
     public static String password = "";
+    public static String WebHookURL;
 
     public static Map< String, Map< String, Integer > > rankTime = new HashMap<>();
     public static List< String > rankName;

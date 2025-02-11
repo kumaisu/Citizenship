@@ -127,8 +127,8 @@ public class PlayerData {
                 Database.logout         = rs.getTimestamp( "logout" );
                 Database.Rewards        = rs.getTimestamp( "rewards" );
                 Database.basedate       = rs.getTimestamp( "basedate" );
-                Database.baseTick       = rs.getInt( "tick" );
-                Database.offsetTick     = rs.getInt( "offset" );
+                Database.baseTick       = rs.getInt( "baseTick" );
+                Database.offsetTick     = rs.getInt( "offsetTick" );
                 Database.jail           = rs.getInt( "jail" );
                 Database.yellow         = rs.getInt( "yellow" );
                 Database.imprisonment   = rs.getInt( "imprisonment" );

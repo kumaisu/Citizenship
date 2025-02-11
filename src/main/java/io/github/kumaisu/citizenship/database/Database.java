@@ -17,8 +17,6 @@ public class Database {
     public static Connection dataSource = null;
     public static final SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
 
-    public static String IP = "0.0.0.0";
-    public static String Host = "Unknown";
     public static String DB_URL = "";
     public static String name = "Unknown";
     public static Date logout;

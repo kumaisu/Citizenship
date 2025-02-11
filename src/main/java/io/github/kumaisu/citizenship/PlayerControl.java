@@ -176,10 +176,12 @@ public class PlayerControl {
         Tools.Prt( "Get Access Time [" + lookNAME + "]", Tools.consoleMode.max, programCode );
 
         if ( PlayerData.GetSQL( uuid ) ) {
+            int BaseTick = TickTime.get( player );
             Tools.Prt( player, "Player Name : " + lookNAME, programCode );
-            Tools.Prt( player, "Total TickTime : " + Float.toString( ( float ) Database.baseTick ) + " Ticks(0.05sec)", programCode );
-            Tools.Prt( player, "総接続時間    : " + Float.toString( ( float ) ( Database.baseTick * 0.05 / 60 / 60 ) ) + " hour" , programCode );
-            Tools.Prt( player, "ランク判定時間 : " + Float.toString( ( float ) ( Database.offsetTick * 0.05 / 60 / 60 ) ) + " hour" , programCode );
+            Tools.Prt( player, "Base TickTime : " + Float.toString( ( float ) BaseTick ) + " Ticks(0.05sec)", programCode );
+            Tools.Prt( player, "Now TickTime  : " + Float.toString( ( float ) Database.baseTick ) + " Ticks(0.05sec)", programCode );
+            Tools.Prt( player, "総接続時間    : " + Float.toString( ( float ) ( ( BaseTick - Database.baseTick ) * 0.05 / 60 / 60 ) ) + " hour" , programCode );
+            Tools.Prt( player, "ランク判定時間 : " + Float.toString( ( float ) ( ( BaseTick - Database.offsetTick ) * 0.05 / 60 / 60 ) ) + " hour" , programCode );
             Tools.Prt( player, "起算日   : " + Database.basedate.toString(), programCode );
             Tools.Prt( player, "経過日数 : " + Utility.dateDiff( Database.basedate, new Date() ) + " 日", programCode );
             Tools.Prt( player, "Logout日      : " + Database.logout.toString(), programCode );

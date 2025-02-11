@@ -86,13 +86,13 @@ public class RanksControl {
             Tools.Prt( player, "グループ設定がありません", Tools.consoleMode.max, programCode );
             return false;
         }
-        if ( Config.rankName.contains( baseGroup ) == false ) {
-            Tools.Prt( player, "ランク制御対象外グループです", Tools.consoleMode.max, programCode );
+        if ( Config.demot.containsKey( baseGroup ) == false ) {
+            Tools.Prt( player, "降格対象外グループです", Tools.consoleMode.max, programCode );
             return false;
         }
         if ( Config.rankName.indexOf( baseGroup ) == 0 ) {
             if ( player != target ) {
-                Tools.Prt( player, "これ以下へ降格はできません", Tools.consoleMode.max, programCode );
+                Tools.Prt( player, "これ以上の降格はできません", Tools.consoleMode.max, programCode );
             }
             return false;
         }
@@ -185,10 +185,10 @@ public class RanksControl {
         int totalHour = ( int ) Math.round( ( BaseTick - Database.baseTick ) * 0.05 / 60 / 60 );
         int totalDate = ( int ) Math.round( ( BaseTick - Database.baseTick ) * 0.05 / 60 / 60 / 24 );
 
-        Tools.Prt( "Database.basedate   : " + Database.basedate, Tools.consoleMode.max, programCode );
-        Tools.Prt( "Database.logout     : " + Database.logout, Tools.consoleMode.max, programCode );
-        Tools.Prt( "Database.baseTick   : " + Database.baseTick, Tools.consoleMode.max, programCode );
-        Tools.Prt( "Database.offsetTick : " + Database.offsetTick, Tools.consoleMode.max, programCode );
+        Tools.Prt( "Database.basedate　: " + Database.basedate, Tools.consoleMode.max, programCode );
+        Tools.Prt( "Database.logout    : " + Database.logout, Tools.consoleMode.max, programCode );
+        Tools.Prt( "初Login時Tick : " + Database.baseTick, Tools.consoleMode.max, programCode );
+        Tools.Prt( "現時点のTick   : " + BaseTick, Tools.consoleMode.max, programCode );
         int progress = Utility.dateDiff( Database.logout, new Date() );
 
         Tools.Prt( ChatColor.GREEN + "CheckMin = " + ChatColor.AQUA + totalMin + ChatColor.GREEN + " minutes", Tools.consoleMode.max, programCode );
@@ -268,6 +268,12 @@ public class RanksControl {
         int checkMin = ( int ) Math.round( ( BaseTick - Database.offsetTick ) * 0.05 / 60 );
         int checkHour = ( int ) Math.round( ( BaseTick - Database.offsetTick ) * 0.05 / 60 / 60 );
         int checkDate = ( int ) Math.round( ( BaseTick - Database.offsetTick ) * 0.05 / 60 / 60 / 24 );
+
+        Tools.Prt( "Rank起算時Tick : " + Database.offsetTick, Tools.consoleMode.max, programCode );
+        Tools.Prt( "現時点のTick   : " + BaseTick, Tools.consoleMode.max, programCode );
+        Tools.Prt( ChatColor.GREEN + "CheckMin = " + ChatColor.AQUA + checkMin + ChatColor.GREEN + " minutes", Tools.consoleMode.max, programCode );
+        Tools.Prt( ChatColor.GREEN + "CheckHour = " + ChatColor.AQUA + checkHour + ChatColor.GREEN + " hour", Tools.consoleMode.max, programCode );
+        Tools.Prt( ChatColor.GREEN + "CheckDate = " + ChatColor.AQUA + checkDate + ChatColor.GREEN + " days", Tools.consoleMode.max, programCode );
 
         if ( Config.rankTime.get( NowGroup ).get( "E" ) == null ) {
             boolean UpCheck = false;
